@@ -9,7 +9,7 @@ bibliography: references.bib
 ---
 
 # 1. The Question Objective, and Motivation
-**Objective**
+**Objective:**
 Construct a Bayesian Vector Autoregression model to forecast major macroeconomic indicators for the United States, Australia, Japan, and China to facilitate an investigation into the prospective interdependencies between the economies of these nations.
 
 **Question:**
@@ -34,7 +34,7 @@ environments have mutually influenced their economic performances. Additionally,
 seeks to understand the ramifications of these dynamics for the predictive accuracy of
 future economic indicators, offering insights into the evolving global economic order.
 
-#2. Data and their properties
+# 2. Data and their properties
 
 **Proposed Dataset:**
 This research project will utilize data from the International Monetary Fund’s (IMF) extensive database, which offers a comprehensive collection of global economic information. The IMF’s collection includes several key databases such as the World Economic Outlook Databases, International Financial Statistics (IFS), Government Finance Statistics. The analysis will predominantly focus on the IFS database, which encompasses an sizeable collection of financial and economic data from across the global, featuring 1,681 distinct indicators such as consumer price index, interest rates, exchange rates, national accounts, government finance statistics. The data is available in various frequencies – annual, semi-annual, quarterly, monthly, daily, and weekly. As this research is primarily
@@ -109,10 +109,15 @@ where
 - T is the number of time periods under consideration
 - N is the number of variables, in our case, N = 20
 - P is the number of lags
-- Y is a 𝑇 × 𝑁 matrix of variables of response variables we aim to model.
-- A is a (1+𝑝×𝑁)xN matrix of coefficients.
-- E is a𝑇×𝑁 matrix of the error terms
-- X is a𝑇×(1+𝑝×𝑁) matrix of covariates
-- Σ is a N×N matrix representing the row-specific covariance matrix
-- $I_T$ is a𝑇×𝑇 identity matrix representing the column specific covariance matrix
+- Y is a $T \times N$ matrix of variables of response variables we aim to model.
+- A is a $(1+𝑝\times N) \times N$ matrix of coefficients.
+- E is a $T \times N$ matrix of the error terms
+- X is a $T \times (1+𝑝\times N)$ matrix of covariates
+- $\Sigma$ is a $N \times N$ matrix representing the row-specific covariance matrix
+- $I_T$ is a $T \times T$ identity matrix representing the column specific covariance matrix
 - E|X follows a matrix-variate normal distribution
+
+The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.
+The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix $\Sigma$, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.
+
+The economic context underscoring this analysis is the increased globalization over the past decade, marking an era where economies are more intertwined than ever through trade, capital flows, and policy decisions. This period has witnessed not only the strengthening of global economic ties but also recent calls from political leaders advocating for a reduction in globalization. These contrasting dynamics highlight the complexity of the current global economic landscape, where the push for deeper integration coexists with growing sentiments for retrenchment. This dual trend sets the stage for our investigation, providing a rich context to explore how economic variables across nations influence each other amidst fluctuating levels of global interconnectedness. In this environment, understanding the cross-country spillover effects is vital for policymakers and businesses alike, as decisions made in one country can have far-reaching implications. By addressing these aspects, this research will contribute to the discourse on economic policy formulation, risk assessment, and strategic planning. 

@@ -66,7 +66,7 @@ Foreign direct investment, exchange rates, balance of payments and gross domesti
 **VAR(p) Model:**
 
 $$ Y = XA+E$$
-$$E|X \sim \mathcal{MV}_{T \times N}(0_{T \times N},\Sigma, I_T)$$
+$$E|X \sim \mathcal{MV}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, I_T)$$
 $$
 A = \begin{bmatrix}
 \mu_0^T \\
@@ -106,16 +106,16 @@ $$
 
 where 
 
-- T is the number of time periods under consideration
-- N is the number of variables, in our case, N = 20
-- P is the number of lags
-- Y is a $T \times N$ matrix of variables of response variables we aim to model.
-- A is a $(1+𝑝\times N) \times N$ matrix of coefficients.
-- E is a $T \times N$ matrix of the error terms
-- X is a $T \times (1+𝑝\times N)$ matrix of covariates
+- $T$ is the number of time periods under consideration
+- $N$ is the number of variables, in our case, N = 20
+- $P$ is the number of lags
+- $Y$ is a $T \times N$ matrix of variables of response variables we aim to model.
+- $A$ is a $(1+𝑝\times N) \times N$ matrix of coefficients.
+- $E$ is a $T \times N$ matrix of the error terms
+- $X$ is a $T \times (1+𝑝\times N)$ matrix of covariates
 - $\Sigma$ is a $N \times N$ matrix representing the row-specific covariance matrix
 - $I_T$ is a $T \times T$ identity matrix representing the column specific covariance matrix
-- E|X follows a matrix-variate normal distribution
+- $E|X$ follows a matrix-variate normal distribution with mean $0_{T \times N}$, row specific covariance matrix $\Sigma_{N \times N}$ and column specific covariance matrix $I_T$
 
 The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.
 The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix $\Sigma$, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.

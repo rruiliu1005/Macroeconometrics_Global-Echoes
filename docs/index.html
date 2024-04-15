@@ -90,7 +90,11 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#the-question-objective-and-motivation" id="toc-the-question-objective-and-motivation" class="nav-link active" data-scroll-target="#the-question-objective-and-motivation">1. The Question Objective, and Motivation</a></li>
-  <li><a href="#data-and-their-properties" id="toc-data-and-their-properties" class="nav-link" data-scroll-target="#data-and-their-properties">2. Data and their properties</a></li>
+  <li><a href="#data-and-their-properties" id="toc-data-and-their-properties" class="nav-link" data-scroll-target="#data-and-their-properties">2. Data and their properties</a>
+  <ul class="collapse">
+  <li><a href="#data-plots" id="toc-data-plots" class="nav-link" data-scroll-target="#data-plots">Data Plots</a></li>
+  <li><a href="#stationarity-check" id="toc-stationarity-check" class="nav-link" data-scroll-target="#stationarity-check">Stationarity Check</a></li>
+  </ul></li>
   <li><a href="#the-model-and-hypothesis" id="toc-the-model-and-hypothesis" class="nav-link" data-scroll-target="#the-model-and-hypothesis">3. The Model and Hypothesis</a></li>
   </ul>
 </nav>
@@ -188,20 +192,249 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends. Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.</p>
 <div class="cell">
+
+</div>
+<section id="data-plots" class="level2">
+<h2 class="anchored" data-anchor-id="data-plots">Data Plots</h2>
+<p><strong>Original Variables</strong></p>
+<div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="1152"></p>
 </div>
+</div>
+<p><strong>Transformed Variables</strong></p>
+<div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="1152"></p>
 </div>
 </div>
+</section>
+<section id="stationarity-check" class="level2">
+<h2 class="anchored" data-anchor-id="stationarity-check">Stationarity Check</h2>
+<p><strong>Stationary Tests</strong></p>
+<p>The Augmented Dickey-Fuller Test is used in this section to test the null hypothesis that a unit root is present in the time series and the time series is non-stationary.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>ADF Test Results for CPI Data by Country</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Dickey-Fuller Statistic</th>
+<th style="text-align: left;">Lag Order</th>
+<th style="text-align: left;">P-value</th>
+<th style="text-align: left;">Country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">-3.537365</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.04688628</td>
+<td style="text-align: left;">China</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-2.099504</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.5343704</td>
+<td style="text-align: left;">Japan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">-2.466873</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.3866844</td>
+<td style="text-align: left;">United_States</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-1.548745</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.7557808</td>
+<td style="text-align: left;">Australia</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>ADF Test Results for Foreign Direct Investment (% change) Data by Country</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Dickey-Fuller Statistic</th>
+<th style="text-align: left;">Lag Order</th>
+<th style="text-align: left;">P-value</th>
+<th style="text-align: left;">Country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">-4.381655</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">China</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-3.753413</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.02935319</td>
+<td style="text-align: left;">Japan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">-3.629899</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.03957787</td>
+<td style="text-align: left;">United_States</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-3.243447</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.09050886</td>
+<td style="text-align: left;">Australia</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The ADF results shows that we have enough evidence to reject the null hypothesis that the foreign direct investment (% change) data is not unit-root stationary for Australia, the United States and Japan at 1% significance level and we do have enough evidence to reject the null hypothesis for China at 1% significance level.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>ADF Test Results for Exchange Rate (% change) Data by Country</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Dickey-Fuller Statistic</th>
+<th style="text-align: left;">Lag Order</th>
+<th style="text-align: left;">P-value</th>
+<th style="text-align: left;">Country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">-3.062323</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.1481656</td>
+<td style="text-align: left;">China</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-3.278626</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.08503945</td>
+<td style="text-align: left;">Japan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">-2.92166</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.2045889</td>
+<td style="text-align: left;">Australia</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate (%change) against the dollar series is unit root non-stationary at 1% significance level.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>ADF Test Results for Balance of Payments (% change) Data by Country</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Dickey-Fuller Statistic</th>
+<th style="text-align: left;">Lag Order</th>
+<th style="text-align: left;">P-value</th>
+<th style="text-align: left;">Country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">-5.054486</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.01</td>
+<td style="text-align: left;">China</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-2.489133</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.3780855</td>
+<td style="text-align: left;">Japan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">-2.189916</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.4981083</td>
+<td style="text-align: left;">United_States</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-3.495608</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.05130479</td>
+<td style="text-align: left;">Australia</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments (%change) series is unit root non-stationary at 5% significance level for all countries except for China.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>ADF Test Results for GDP (% change) Data by Country</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Dickey-Fuller Statistic</th>
+<th style="text-align: left;">Lag Order</th>
+<th style="text-align: left;">P-value</th>
+<th style="text-align: left;">Country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">-2.699632</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.2936494</td>
+<td style="text-align: left;">China</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-2.528094</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.3624574</td>
+<td style="text-align: left;">Japan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">-2.894114</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.2156383</td>
+<td style="text-align: left;">United_States</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">-3.114811</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.1271114</td>
+<td style="text-align: left;">Australia</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The result of the ADF test on the GDP data shows that we do not have enough evidence to reject the null hypothesis that the GDP (%change) series is unit root non-stationary at 5% significance level.</p>
+<p>The results from the ADF tests indicates that further transformations are needed to achieve stationarity for most of the variables included in this research.</p>
 <!--
-![CPI plot](./plots/CPI.png){width=49%}
-![FDI plot](./plots/FDI.png){width=49%}
-![XCH plot](./plots/XCH.png){width=49%}
-![BOP plot](./plots/BOP.png){width=49%}
-![GDP plot](./plots/GDP.png){width=49%}
+**ACF and PACF plots ** 
+The Autocorrelation Function (ACF) shows the correlation of the series with its own lags, which is typically used to identify the potential moving average (MA) order. The Partial Autocorrelation Function shows the correlation of the series with its own lags that is not explained by correlations at all lower-lag oders, which can be helpful in idendifying the potential autoregressive order (AR). 
+
+::: {.cell}
+::: {.cell-output-display}
+![](index_files/figure-html/unnamed-chunk-9-1.png){width=1152}
+:::
+
+::: {.cell-output-display}
+![](index_files/figure-html/unnamed-chunk-9-2.png){width=1152}
+:::
+:::
+
+
 -->
+</section>
 </section>
 <section id="the-model-and-hypothesis" class="level1">
 <h1>3. The Model and Hypothesis</h1>

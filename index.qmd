@@ -80,7 +80,7 @@ CodeSearch(IFS.available.codes, "CL_INDICATOR_IFS", "CPI")
 
 #Make API call to get data
 databaseID <- "IFS"
-startdate = "2011-01-01"
+startdate = "2000-01-01"
 enddate = "2023-09-01"
 checkquery = FALSE
 

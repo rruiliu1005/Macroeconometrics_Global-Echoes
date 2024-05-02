@@ -21,6 +21,25 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 
@@ -95,7 +114,23 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#data-plots" id="toc-data-plots" class="nav-link" data-scroll-target="#data-plots">Data Plots</a></li>
   <li><a href="#stationarity-check" id="toc-stationarity-check" class="nav-link" data-scroll-target="#stationarity-check">Stationarity Check</a></li>
   </ul></li>
-  <li><a href="#the-model-and-hypothesis" id="toc-the-model-and-hypothesis" class="nav-link" data-scroll-target="#the-model-and-hypothesis">3. The Model and Hypothesis</a></li>
+  <li><a href="#the-model-and-hypothesis" id="toc-the-model-and-hypothesis" class="nav-link" data-scroll-target="#the-model-and-hypothesis">3. The Model and Hypothesis</a>
+  <ul class="collapse">
+  <li><a href="#model-1-standard-bvarp-model" id="toc-model-1-standard-bvarp-model" class="nav-link" data-scroll-target="#model-1-standard-bvarp-model">3.1 Model 1: Standard BVAR(p) Model</a>
+  <ul class="collapse">
+  <li><a href="#model-specification" id="toc-model-specification" class="nav-link" data-scroll-target="#model-specification">3.1.1 Model Specification</a></li>
+  <li><a href="#prior-settings" id="toc-prior-settings" class="nav-link" data-scroll-target="#prior-settings">3.1.2 Prior Settings</a></li>
+  <li><a href="#posterior-distributions" id="toc-posterior-distributions" class="nav-link" data-scroll-target="#posterior-distributions">3.1.3 Posterior Distributions</a></li>
+  <li><a href="#estimation-procedure" id="toc-estimation-procedure" class="nav-link" data-scroll-target="#estimation-procedure">3.1.4 Estimation Procedure</a></li>
+  </ul></li>
+  <li><a href="#model-2-large-bvars-model-ma1-gaussian-innovations" id="toc-model-2-large-bvars-model-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#model-2-large-bvars-model-ma1-gaussian-innovations">3.2 Model 2: Large BVARs model MA(1) Gaussian innovations</a>
+  <ul class="collapse">
+  <li><a href="#model-specification-1" id="toc-model-specification-1" class="nav-link" data-scroll-target="#model-specification-1">3.2.1 Model Specification</a></li>
+  <li><a href="#prior-specification" id="toc-prior-specification" class="nav-link" data-scroll-target="#prior-specification">3.2.2 Prior Specification</a></li>
+  <li><a href="#posterior-distribution" id="toc-posterior-distribution" class="nav-link" data-scroll-target="#posterior-distribution">3.2.3 Posterior Distribution</a></li>
+  <li><a href="#estimation-procedure-1" id="toc-estimation-procedure-1" class="nav-link" data-scroll-target="#estimation-procedure-1">3.2.4 Estimation Procedure</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -287,9 +322,9 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: left;">United_States</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">-3.243447</td>
+<td style="text-align: left;">-3.251905</td>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">0.09050886</td>
+<td style="text-align: left;">0.08919385</td>
 <td style="text-align: left;">Australia</td>
 </tr>
 </tbody>
@@ -347,27 +382,27 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">-5.054486</td>
+<td style="text-align: left;">-5.055137</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: left;">0.01</td>
 <td style="text-align: left;">China</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">-2.489133</td>
+<td style="text-align: left;">-2.491177</td>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">0.3780855</td>
+<td style="text-align: left;">0.3772656</td>
 <td style="text-align: left;">Japan</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">-2.189916</td>
+<td style="text-align: left;">-2.256564</td>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">0.4981083</td>
+<td style="text-align: left;">0.4713741</td>
 <td style="text-align: left;">United_States</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">-3.495608</td>
+<td style="text-align: left;">-3.495297</td>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">0.05130479</td>
+<td style="text-align: left;">0.05135306</td>
 <td style="text-align: left;">Australia</td>
 </tr>
 </tbody>
@@ -418,27 +453,15 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>The result of the ADF test on the GDP data shows that we do not have enough evidence to reject the null hypothesis that the GDP (%change) series is unit root non-stationary at 5% significance level.</p>
 <p>The results from the ADF tests indicates that further transformations are needed to achieve stationarity for most of the variables included in this research.</p>
-<!--
-**ACF and PACF plots ** 
-The Autocorrelation Function (ACF) shows the correlation of the series with its own lags, which is typically used to identify the potential moving average (MA) order. The Partial Autocorrelation Function shows the correlation of the series with its own lags that is not explained by correlations at all lower-lag oders, which can be helpful in idendifying the potential autoregressive order (AR). 
-
-::: {.cell}
-::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-9-1.png){width=1152}
-:::
-
-::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-9-2.png){width=1152}
-:::
-:::
-
-
--->
 </section>
 </section>
 <section id="the-model-and-hypothesis" class="level1">
 <h1>3. The Model and Hypothesis</h1>
-<p><strong>VAR(p) Model:</strong></p>
+<p>We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and indentically distributed innovations, as outlined in details in <span class="citation" data-cites="wozniakBsvarsBayesianEstimation2022">Woźniak (<a href="#ref-wozniakBsvarsBayesianEstimation2022" role="doc-biblioref">2022</a>)</span>. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by <span class="citation" data-cites="Chan_2015">Chan (<a href="#ref-Chan_2015" role="doc-biblioref">2015</a>)</span>. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating t-distributed innovations to better handle outliers than the Gaussian approach, which will be useful to handle extreme events like the Covid-19 Global Pandemic and economic slow down. The final model will combined a common stochastic volatility frame work with t-distributed innovations, offering a robust approach to volatility modelling.</p>
+<section id="model-1-standard-bvarp-model" class="level2">
+<h2 class="anchored" data-anchor-id="model-1-standard-bvarp-model">3.1 Model 1: Standard BVAR(p) Model</h2>
+<section id="model-specification" class="level3">
+<h3 class="anchored" data-anchor-id="model-specification">3.1.1 Model Specification</h3>
 <p><span class="math display">\[ Y = XA+E\]</span> <span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, I_T)\]</span> <span class="math display">\[
 A = \begin{bmatrix}
 \mu_0^T \\
@@ -481,20 +504,256 @@ e_T^T
 <li><span class="math inline">\(N\)</span> is the number of variables, in our case, N = 20</li>
 <li><span class="math inline">\(P\)</span> is the number of lags</li>
 <li><span class="math inline">\(Y\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of variables of response variables we aim to model.</li>
-<li><span class="math inline">\(A\)</span> is a <span class="math inline">\((1+𝑝\times N) \times N\)</span> matrix of coefficients.</li>
+<li><span class="math inline">\(A\)</span> is a <span class="math inline">\(K \times N\)</span> matrix of coefficients, <span class="math inline">\(K = (1+𝑝\times N)\)</span>.</li>
 <li><span class="math inline">\(E\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of the error terms</li>
 <li><span class="math inline">\(X\)</span> is a <span class="math inline">\(T \times (1+𝑝\times N)\)</span> matrix of covariates</li>
 <li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
 <li><span class="math inline">\(I_T\)</span> is a <span class="math inline">\(T \times T\)</span> identity matrix representing the column specific covariance matrix</li>
 <li><span class="math inline">\(E|X\)</span> follows a matrix-variate normal distribution with mean <span class="math inline">\(0_{T \times N}\)</span>, row specific covariance matrix <span class="math inline">\(\Sigma_{N \times N}\)</span> and column specific covariance matrix <span class="math inline">\(I_T\)</span></li>
 </ul>
-<p>The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders. The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix <span class="math inline">\(\Sigma\)</span>, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.</p>
+<p>The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.</p>
+<p>The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix <span class="math inline">\(\Sigma\)</span>, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.</p>
 <p>The economic context underscoring this analysis is the increased globalization over the past decade, marking an era where economies are more intertwined than ever through trade, capital flows, and policy decisions. This period has witnessed not only the strengthening of global economic ties but also recent calls from political leaders advocating for a reduction in globalization. These contrasting dynamics highlight the complexity of the current global economic landscape, where the push for deeper integration coexists with growing sentiments for retrenchment. This dual trend sets the stage for our investigation, providing a rich context to explore how economic variables across nations influence each other amidst fluctuating levels of global interconnectedness. In this environment, understanding the cross-country spillover effects is vital for policymakers and businesses alike, as decisions made in one country can have far-reaching implications. By addressing these aspects, this research will contribute to the discourse on economic policy formulation, risk assessment, and strategic planning.</p>
+</section>
+<section id="prior-settings" class="level3">
+<h3 class="anchored" data-anchor-id="prior-settings">3.1.2 Prior Settings</h3>
+<p>We will employ a Normal-Inverse Wshart distribution for the joint distribution of coefficient matrices A and the row-specific variance matrix <span class="math inline">\(\Sigma\)</span>. Specifically, we have:</p>
+<p><span class="math display">\[\Sigma \sim \mathcal{IW}(S_0, \nu_0) \]</span></p>
+<p><span class="math display">\[p(\Sigma) \propto |\Sigma|^{-\frac{\nu_0+N+1}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\]</span></p>
+<p><span class="math display">\[A|\Sigma \sim \mathcal{MN}_{K \times N}(A_0, \Sigma, V_A)\]</span></p>
+<p><span class="math display">\[p(A|\Sigma) \propto |\Sigma|^{-\frac{K}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^T(A-A_0)))\]</span></p>
+<p><span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\]</span></p>
+<p><span class="math display">\[p(A,\Sigma) \propto |\Sigma|^{-\frac{K+\nu_0+N+1}{2}} \times exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\times exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^T(A-A_0)))\]</span></p>
+<p>where</p>
+<p><span class="math display">\[V_A = diag(v_{A,ii})\]</span></p>
+<p><span class="math display">\[v_{A,ii} = \begin{cases}
+\kappa_l(\frac{l^2}{\hat{s}_r}) &amp; \text{for a coefficient associated to lag l of variable r} \\
+\kappa_2&amp; \text{for an intercept}
+\end{cases}\]</span></p>
+<p>where <span class="math inline">\(\hat{s}_r\)</span> is the sample variance of an AR(4) model for the variable r.</p>
+<p>Additionally, we adopt commonly used values for the hyperparameters as established in the literature.</p>
+<p><span class="math display">\[A_0 = 0\]</span></p>
+<p><span class="math display">\[v_0 = n+3\]</span></p>
+<p><span class="math display">\[S_0 = I_n\]</span></p>
+<p><span class="math display">\[\kappa_1 = 0.2^2 \quad \kappa_2 = 10^2\]</span></p>
+<p>The hyperparameters <span class="math inline">\(\kappa_1\)</span> and <span class="math inline">\(\kappa_2\)</span> are specified in a way such that the coefficient associated with a lag l variable is shrunk more heavily to - as lag length increases whereas the intercepts are not shrunk to 0.</p>
+</section>
+<section id="posterior-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-distributions">3.1.3 Posterior Distributions</h3>
+<p>The posterior distribution specified above has the form</p>
+<p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))\]</span></p>
+<p>and the joint posterior distribution</p>
+<p><span class="math display">\[p(A, \Sigma \mid Y)  = \frac{p(A,\Sigma,Y)}{p(Y)}\propto p(A, \Sigma, Y) \propto p(Y|A,\Sigma)\times p(A,\Sigma) =  p(Y|A,\Sigma) p(A \mid \Sigma) p(\Sigma)\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))) \times\]</span></p>
+<p><span class="math display">\[\mid \Sigma \mid^{-\frac{\nu_0+N+K}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_o))exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^TV_A^{-1}(A-A_0))\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma^{-1}S_0)) \times \]</span></p>
+<p><span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^TY-\bar{A}^T\bar{V}^{-1}\bar{A})\times\]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))\]</span> where <span class="math inline">\(\hat{A}\)</span> is the MLE estimation of the coefficients A. Hence,</p>
+<p><span class="math display">\[p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)\]</span></p>
+<p><span class="math display">\[p(A \mid Y, X, \Sigma) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\]</span></p>
+<p><span class="math display">\[p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\bar{V} = (X^TX + V_A^{-1})^{-1}\]</span></p>
+<p><span class="math display">\[\bar{A} = \bar{V}(X^TY + V_A^{-1}A_0)\]</span></p>
+<p><span class="math display">\[\bar{\nu} = T + \nu_0\]</span></p>
+<p><span class="math display">\[\bar{S} = S_0 + Y^TY + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}\]</span></p>
+</section>
+<section id="estimation-procedure" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-procedure">3.1.4 Estimation Procedure</h3>
+<p>In this setting, we have</p>
+<ul>
+<li><span class="math inline">\((A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\)</span></li>
+</ul>
+<p>then, prior draws can be sampled from</p>
+<ul>
+<li><span class="math inline">\(\Sigma \sim \mathcal{IW}(S_0, \nu_0)\)</span></li>
+<li><span class="math inline">\(A|\Sigma \sim \mathcal{MN}_{K \times N}(A_0, \Sigma, V_A)\)</span></li>
+</ul>
+<p>we use the following Gibb’s Sampler algorithm to sample from the posterior distribution:</p>
+<ul>
+<li>Initialize <span class="math inline">\(\Sigma\)</span> at <span class="math inline">\(\Sigma^0\)</span></li>
+<li>For <span class="math inline">\(s = 1,...,S_1+S_2\)</span>
+<ol type="1">
+<li>Draw a sample <span class="math inline">\(A^{(s)}\)</span> from <span class="math inline">\(p(A \mid Y, X, \Sigma^{(s-1)}) \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\)</span></li>
+<li>Draw a sample <span class="math inline">\(\Sigma^{(s)}\)</span> from <span class="math inline">\(p(\Sigma \mid Y, X, A^{(s)}) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\)</span></li>
+</ol></li>
+</ul>
+<p>We discard the first <span class="math inline">\(S_1\)</span> sample draws to allow the algorithm to converge to the stationary posterior distributiion to obtain <span class="math inline">\(S_2\)</span> sampled draws from the joint posterior distribution.</p>
+<p><span class="math display">\[\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}\]</span></p>
+<p>The draws from joint predictive density can then be obtained using the following algorithm:</p>
+<ol type="1">
+<li>Sample S draws <span class="math inline">\(\left\{ A^{(s)}, \Sigma^{(s)} \right\}_{s=1}^{S}\)</span> from <span class="math inline">\(p(A,\Sigma|Y, X)\)</span></li>
+<li>Sample S draws <span class="math inline">\(\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S\)</span> from <span class="math inline">\(Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}]|A^{(s)}, \Sigma^{(s)}]\)</span></li>
+</ol>
+</section>
+</section>
+<section id="model-2-large-bvars-model-ma1-gaussian-innovations" class="level2">
+<h2 class="anchored" data-anchor-id="model-2-large-bvars-model-ma1-gaussian-innovations">3.2 Model 2: Large BVARs model MA(1) Gaussian innovations</h2>
+<section id="model-specification-1" class="level3">
+<h3 class="anchored" data-anchor-id="model-specification-1">3.2.1 Model Specification</h3>
+<p>Incorporating MA(1) Gaussian innovations in a large BVARs model lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables for several reasons. Firstly, the variances of economic shocks is rarely constant over time. For example, volatility tends to cluster during periods of economic crisis and is more tranquil during stable times. Incorporating stochastic volatility allows the model to adapt to changing volatility in the data, improving forecasting performance especially in the presence of financial market instability or economic policy shifts. In addition, by allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model’s ability to predict future values by considering the path-dependent nature of the economy. Our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below:</p>
+<p><span class="math display">\[ Y = XA+E\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+A = \begin{bmatrix}
+\mu_0^T \\
+A_1^T \\
+\vdots \\
+A_p^T
+\end{bmatrix}
+, \quad
+Y = \begin{bmatrix}
+y_1^T \\
+y_2^T \\
+\vdots \\
+y_T^T
+\end{bmatrix}
+, \quad
+x_t = \begin{bmatrix}
+1 \\
+y_{t-1}^T \\
+\vdots \\
+y_{t-p}^T
+\end{bmatrix}
+, \quad
+X = \begin{bmatrix}
+x_1^T \\
+x_2^T \\
+\vdots \\
+x_T^T
+\end{bmatrix}
+, \quad
+E = \begin{bmatrix}
+e_1^T \\
+e_2^T \\
+\vdots \\
+e_T^T
+\end{bmatrix}
+\]</span> where</p>
+<ul>
+<li><span class="math inline">\(T\)</span> is the number of time periods under consideration</li>
+<li><span class="math inline">\(N\)</span> is the number of variables, in our case, N = 20</li>
+<li><span class="math inline">\(P\)</span> is the number of lags</li>
+<li><span class="math inline">\(Y\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of variables of response variables we aim to model.</li>
+<li><span class="math inline">\(A\)</span> is a <span class="math inline">\(K \times N\)</span> matrix of coefficients, <span class="math inline">\(K = (1+𝑝\times N)\)</span></li>
+<li><span class="math inline">\(E\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of the error terms</li>
+<li><span class="math inline">\(X\)</span> is a <span class="math inline">\(T \times (1+𝑝\times N)\)</span> matrix of covariates</li>
+<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
+</ul>
+<p>the same as before. But, instead of the column specific matrix as the identity matrix, we specify the column specific matrix as a diagonal matrix <span class="math inline">\(\Omega\)</span>. Specifically, we have:</p>
+<p><span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span></p>
+<p>and,</p>
+<p><span class="math display">\[\epsilon_t = u_t + \psi_1 u_{t-1}\]</span></p>
+<p><span class="math display">\[u_t \sim \mathcal{N}(0,e^{h_t} \Sigma)\]</span></p>
+<p><span class="math display">\[h_t = \rho h_{t-1} + u_t^h \quad \text{ follows an Autoregressive process of lag 1 AR(1), and}\]</span></p>
+<p><span class="math display">\[u_t^h \sim N(0,\sigma_h^2)\]</span></p>
+<p><span class="math display">\[\Omega = \left(
+\begin{array}{cccc}
+(1 + \psi_1^2) e^{h_1} &amp; \psi_1 e^{h_1} &amp; \cdots &amp; 0 \\
+\psi_1 e^{h_1} &amp; \psi_1^2 e^{h_1} + e^{h_2} &amp; \cdots &amp; \vdots \\
+0 &amp; \cdots &amp; \ddots &amp; \vdots \\
+\vdots &amp; \cdots &amp; \psi_1^2 e^{h_{T-2}} + e^{h_{T-1}} &amp; \psi_1 e^{h_{T-1}} \\
+0 &amp; \cdots &amp; \psi_1 e^{h_{T-1}} &amp; \psi_1^2 e^{h_{T-1}} + e^{h_T}
+\end{array}
+\right)\]</span></p>
+<p>In this specification, each element of <span class="math inline">\(e_t\)</span> may have distinct variances, and the variances of all innovations can be scaled by a common factor. This approach is economically intuitive, as the volatility of macroeconomic variables often exhibit co-movement. It is important to emphasize that each component of <span class="math inline">\(e_t\)</span> must adhere to the same univariate time series model.</p>
+</section>
+<section id="prior-specification" class="level3">
+<h3 class="anchored" data-anchor-id="prior-specification">3.2.2 Prior Specification</h3>
+<p>Here, we consider a priori independent distributions for <span class="math inline">\((A, \Sigma, \Omega)\)</span>, namely:</p>
+<p><span class="math display">\[p(A, \Sigma, \Omega) = p(A, \Sigma) \times p(\Omega)\]</span> Given this structure, we can sample from the posterior distribution by sequentially sampling from:</p>
+<ul>
+<li><span class="math inline">\(P(A, \Sigma | Y, X, \Omega)\)</span></li>
+<li><span class="math inline">\(P(\Omega | Y, X, A, \Sigma)\)</span></li>
+</ul>
+<p>The prior distribution of <span class="math inline">\((A,\Sigma)\)</span> follow the same normal inverse Wishart prior distribution as outlined in model one.</p>
+<p>For the moving average coefficients, we adopt an uninformative truncated normal prior for the MA coefficient <span class="math inline">\(\psi\)</span>:</p>
+<p><span class="math display">\[
+\psi \sim \mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|&lt;1)
+\]</span></p>
+<p>and we set <span class="math inline">\(\psi_0 = 0\)</span> and <span class="math inline">\(V_\psi = 1\)</span> so that the prior centers around 0 with a relatively large variance and has support within (-1,1). Further more, we assume independent priors for <span class="math inline">\(\sigma^2_h\)</span> and <span class="math inline">\(\rho\)</span>:</p>
+<p><span class="math display">\[\sigma_h^2 \sim \mathcal{IG}(\nu_{h_0}, s_{h_0})\]</span></p>
+<p><span class="math display">\[\rho \sim \mathcal{N}(\rho_0, V_\rho) \mathbb{1}(|\rho|&lt;1)\]</span></p>
+<p>We set the hyperparameters <span class="math inline">\(\nu_{h_0} = 5\)</span>, <span class="math inline">\(s_{h_0} = 0.04\)</span>, <span class="math inline">\(\rho_0 = 0.9\)</span> and <span class="math inline">\(V_\rho = 0.04\)</span> so that the prior mean of <span class="math inline">\(\sigma_h^2\)</span> is 0.01 and <span class="math inline">\(\rho\)</span> is centered at 0.9.</p>
+</section>
+<section id="posterior-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-distribution">3.2.3 Posterior Distribution</h3>
+<p>The posterior distribution specified above has the form</p>
+<p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}|\Omega|^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA))\]</span></p>
+<p>and the joint posterior distribution</p>
+<p><span class="math display">\[p(A, \Sigma \mid Y, \Omega)  = \frac{p(A,\Sigma,Y, \Omega)}{p(Y, \Omega)}\]</span> <span class="math display">\[\propto p(A, \Sigma, Y, \Omega) \propto p(Y \mid A,\Sigma, \Omega)\times p(A,\Sigma, \Omega)\]</span> <span class="math display">\[=  p(Y \mid A,\Sigma, \Omega) p(A, \Sigma) p(\Omega) = p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma) p(\Omega)\]</span></p>
+<p><span class="math display">\[\propto p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma)\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA)) \times\]</span></p>
+<p><span class="math display">\[\mid \Sigma \mid^{-\frac{\nu_0+N+K}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_o))exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^TV_A^{-1}(A-A_0))\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma^{-1}S_0)) \times \]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^T\Omega^{-1}Y-\bar{A}^T\bar{V}^{-1}\bar{A})\times\]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))\]</span></p>
+<p>Hence,</p>
+<p><span class="math display">\[p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)\]</span></p>
+<p><span class="math display">\[p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\]</span></p>
+<p><span class="math display">\[p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\bar{V} = (X^T\Omega^{-1}X + V_A^{-1})^{-1}\]</span></p>
+<p><span class="math display">\[\bar{A} = \bar{V}(X^T\Omega^{-1}Y + V_A^{-1}A_0)\]</span></p>
+<p><span class="math display">\[\bar{\nu} = T + \nu_0\]</span></p>
+<p><span class="math display">\[\bar{S} = S_0 + Y^T\Omega^{-1}Y + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}\]</span></p>
+</section>
+<section id="estimation-procedure-1" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-procedure-1">3.2.4 Estimation Procedure</h3>
+<p>In this setting, we have</p>
+<ul>
+<li><span class="math inline">\((A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\)</span></li>
+<li><span class="math inline">\(p(A, \Sigma, \Omega) = p(A, \Sigma) \times p(\Omega)\)</span></li>
+</ul>
+<p>then, prior draws can be sampled from</p>
+<ul>
+<li><p><span class="math inline">\(\Sigma \sim \mathcal{IW}(S_0, \nu_0)\)</span></p></li>
+<li><p><span class="math inline">\(A|\Sigma \sim \mathcal{MN}_{K \times N}(A_0, \Sigma, V_A)\)</span></p></li>
+<li><p><span class="math inline">\(\Omega = \left( \begin{array}{cccc} (1 + \psi_1^2) e^{h_1} &amp; \psi_1 e^{h_1} &amp; \cdots &amp; 0 \\ \psi_1 e^{h_1} &amp; \psi_1^2 e^{h_1} + e^{h_2} &amp; \cdots &amp; \vdots \\ 0 &amp; \cdots &amp; \ddots &amp; \vdots \\ \vdots &amp; \cdots &amp; \psi_1^2 e^{h_{T-2}} + e^{h_{T-1}} &amp; \psi_1 e^{h_{T-1}} \\ 0 &amp; \cdots &amp; \psi_1 e^{h_{T-1}} &amp; \psi_1^2 e^{h_{T-1}} + e^{h_T} \end{array} \right)\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_t = u_t + \psi_1 u_{t-1}\)</span></p></li>
+<li><p><span class="math inline">\(\psi \sim \mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|&lt;1)\)</span></p></li>
+<li><p><span class="math inline">\(u_t \sim \mathcal{N}(0,e^{h_t} \Sigma)\)</span></p></li>
+<li><p><span class="math inline">\(h_t = \rho h_{t-1} + u_t^h\)</span></p></li>
+<li><p><span class="math inline">\(\rho \sim \mathcal{N}(\rho_0, V_\rho) \mathbb{1}(|\rho|&lt;1)\)</span></p></li>
+<li><p><span class="math inline">\(u_t^h \sim N(0,\sigma_h^2)\)</span></p></li>
+<li><p><span class="math inline">\(\sigma_h^2 \sim \mathcal{IG}(\nu_{h_0}, s_{h_0})\)</span></p></li>
+</ul>
+<p>To sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{\Omega^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span></p>
+<ol type="1">
+<li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{\sigma^{2,(s)}_h\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(\mathcal{IG}(v_{h_0}, s_{h_0})\)</span></li>
+<li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{\rho^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(\mathcal{N}(\rho_0, V_\rho) \mathbb{1}(|\rho|&lt;1)\)</span></li>
+<li>For each <span class="math inline">\(\sigma^{2,(s)}_h\)</span>, sample <span class="math inline">\(\left\{u_t^{h,(s)}\right\}_{t=1}^T\)</span> from <span class="math inline">\(N(0,\sigma_h^{2,(s)})\)</span></li>
+<li>For t = 1,…,T and s = 1,…, <span class="math inline">\(S_1+S_2\)</span>, compute <span class="math inline">\(h_t^{(s)} = \rho h_{t-1}^{(s)} + u_t^{h,(s)}\)</span></li>
+<li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{u_t^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(u_t \sim \mathcal{N}(0,e^{h_t^{(s)}} \Sigma)\)</span> for t = 1,…,T</li>
+<li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{\psi^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(\mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|&lt;1)\)</span></li>
+<li>for each t = 1,…,T and s = 1,…<span class="math inline">\(S_1+S_2\)</span>, compute <span class="math inline">\(\epsilon_t^{(s)} = u_t^{(s)} + \psi^{(s)}u_t^{(s-1)}\)</span></li>
+</ol>
+<p>After we have obtained <span class="math inline">\(\left\{\Omega^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span>, we can use the following Gibb’s Sampler algorithm to sample from the posterior distribution <span class="math inline">\(p(A \mid Y, X, \Sigma, \Omega)\)</span>:</p>
+<ul>
+<li>Initialize <span class="math inline">\(\Sigma\)</span> at <span class="math inline">\(\Sigma^0\)</span></li>
+<li>For <span class="math inline">\(s = 1,...,S_1+S_2\)</span>
+<ol type="1">
+<li>Draw a sample <span class="math inline">\(A^{(s)}\)</span> from <span class="math inline">\(p(A \mid Y, X, \Omega^{(s)}, \Sigma^{(s-1)}) \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\)</span></li>
+<li>Draw a sample <span class="math inline">\(\Sigma^{(s)}\)</span> from <span class="math inline">\(p(\Sigma \mid Y, X, A^{(s)}, \Omega^{(s)}) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\)</span></li>
+</ol></li>
+</ul>
+<p>We discard the first <span class="math inline">\(S_1\)</span> sample draws to allow the algorithm to converge to the stationary posterior distributiion to obtain <span class="math inline">\(S_2\)</span> sampled draws from the joint posterior distribution.</p>
+<p><span class="math display">\[\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}\]</span></p>
+<p>Sampling from the jpoint predictive density is the same as before.</p>
+<!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
+economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->
+
 
 
 </section>
+</section>
+</section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-Chan_2015" class="csl-entry" role="doc-biblioentry">
+Chan, Joshua C. 2015. <span>“Large Bayesian Vars: A Flexible Kronecker Error Covariance Structure.”</span> <em>SSRN Electronic Journal</em>.
+</div>
+<div id="ref-wozniakBsvarsBayesianEstimation2022" class="csl-entry" role="doc-biblioentry">
+Woźniak, Tomasz. 2022. <em>Bsvars: Bayesian Estimation of Structural Vector Autoregressive Models</em>. R Package. <a href="https://cran.r-project.org/package=bsvars">https://cran.r-project.org/package=bsvars</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

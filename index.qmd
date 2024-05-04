@@ -53,7 +53,7 @@ focused on analyzing macroeconomic data that are published on a monthly or quart
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends.
 Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 #################################################################################
 #################################################################################
 #Download Data 
@@ -489,12 +489,12 @@ blank_plot <- ggplot() +
 
 ## Data Plots 
 **Original Variables** 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 layout <- (FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
 **Transformed Variables**
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 layout <- (CPI_plot | FDI_plot) / (XCH_plot | BOP_plot) / (GDP_plot | blank_plot)
 layout 
 ```
@@ -506,7 +506,7 @@ layout
 The Augmented Dickey-Fuller Test is used in this section to test the null hypothesis that a unit root is present in the time series and the time series is non-stationary. 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 #install.packages("tseries")
 library(tseries)
 library(knitr)
@@ -527,7 +527,7 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for CPI Data by Country")
 ```
 The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level. 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 results <- sapply(FDI_data[2:nrow(FDI_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -541,7 +541,7 @@ The ADF results shows that we have enough evidence to reject the null hypothesis
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 results <- sapply(XCH_data[2:nrow(XCH_data),2:4], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -552,7 +552,7 @@ kable(results_df, caption = "ADF Test Results for Exchange Rate (% change) Data 
 
 The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate (%change) against the dollar series is unit root non-stationary at 1% significance level. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 
 results <- sapply(BOP_data[2:nrow(BOP_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -563,7 +563,7 @@ kable(results_df, caption = "ADF Test Results for Balance of Payments (% change)
 ```
 The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments (%change) series is unit root non-stationary at 5% significance level for all countries except for China. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 
 results <- sapply(GDP_data_percent[2:nrow(GDP_data_percent),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -680,9 +680,9 @@ Additionally, we adopt commonly used values for the hyperparameters as establish
 
 $$A_0 = 0$$
 
-$$v_0 = n+3$$
+$$v_0 = N+3$$
 
-$$S_0 = I_n$$
+$$S_0 = I_N$$
 
 $$\kappa_1 = 0.2^2 \quad \kappa_2 = 10^2$$
 
@@ -709,7 +709,7 @@ $$\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma
 
 $$exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^TY-\bar{A}^T\bar{V}^{-1}\bar{A})\times$$
 $$exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))$$
-where $\hat{A}$ is the MLE estimation of the coefficients A. Hence, 
+Hence, 
 
 $$p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)$$
 
@@ -979,7 +979,111 @@ We discard the first $S_1$ sample draws to allow the algorithm to converge to th
 
 $$\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}$$
 
-Sampling from the jpoint predictive density is the same as before. 
+Sampling from the joint predictive density is the same as before. 
+
+# 4. Model Estimation
+## 4.1 Standard Bayesian VAR
+### 4.1.1 Model Building Code and Validation 
+
+We verify that our model can replicate the true parameter of the data generate process by: 
+1. Generate artificial data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. That is, 
+
+$$\mathbf{y_t} = \begin{pmatrix} y_t,1 \\ y_t,2\end{pmatrix} = \mathbf{y_{t-1}} + \mathbf{\epsilon_t} = \begin{pmatrix}y_{t-1,1}\\y_{t-1, 2}\end{pmatrix} + \begin{pmatrix}\epsilon_{t,1}\\ \epsilon_{t, 2}\end{pmatrix}$$ and 
+
+$$\mathbf{\epsilon} \sim iid \mathcal{N}(\mathbf{0}, \mathbf{I_2} )$$
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+if (!require(MASS)) {install.packages('MASS')}
+library(MASS)
+library(ggplot2)
+library(reshape2)
+
+set.seed(123)
+
+n = 1000  
+cov_matrix = diag(2)  
+
+random_walk_sample = matrix(nrow = n, ncol = 2)
+#initialize the random walk at 0,0
+random_walk_sample[1, ] = c(0, 0) 
+
+for (i in 2:n) {
+  random_walk_sample[i, ] = random_walk_sample[i - 1, ] + mvrnorm(n = 1, mu = c(0, 0), Sigma = cov_matrix)
+}
+
+mat_plot = random_walk_sample 
+colnames(mat_plot) = c("Series1", "Series2")
+mat_plot = as.data.frame(mat_plot)
+mat_plot$Index = 1:nrow(mat_plot) 
+mat_plot = melt(mat_plot, id.vars = "Index")
+
+ggplot(mat_plot, aes(x = Index, y = value, color = variable)) +
+    geom_line() +
+    labs(title = "1000 observations simulated from a bi-variate Gaussian random walk process", x = "", y = "") +
+    theme_minimal()
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+#if (!require(matrixNormal)) {install_packages('matrixNormal')}
+BVAR_fit <- function(data, p, S, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T){
+  N = ncol(data)
+  T = nrow(data)
+  X = matrix(1,T,1)
+  for (i in 1:p){
+    X     = cbind(X,data[p+1:T-i,])
+  }
+
+  V_bar = solve(t(X)%*%X + solve(V_prior))
+  A_bar = V_bar%*%(t(X)%*%data + solve(V_prior)%*%A_prior)
+  nu_bar = T + nu_prior
+  #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar = S_prior +  t(data)%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar_inv = solve(S_bar)
+  #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = apply(Sigma_posterior,3,solve)
+  Sigma_posterior  = array(Sigma_posterior,c(N,N,S))
+  A_posterior = array(rnorm(prod(c(dim(A_bar),S))),c(dim(A_bar),S))
+  L = t(chol(V_bar))
+  for (s in 1:S){
+    A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+    }
+  return(list(A_posterior, Sigma_posterior))
+}
+```
+Then we estimate a model with a constant term and 1 lag using the simulated data, show that the posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the posterior mean of the constant term is close to a vector of zeros.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+p = 1
+S = 1000
+kappa1 = 0.1^2
+kappa2 = 10^2
+N = ncol(random_walk_sample)
+A_prior     = matrix(0, 1+p*N, ncol = N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(random_walk_sample)+1
+
+
+posterior_samples = BVAR_fit(data = random_walk_sample, p = p, S = S, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
+
+posterior_samples_A = posterior_samples[[1]]
+posterior_samples_Sigma = posterior_samples[[2]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,sd),3)
+print('Posterior mean of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,mean),3)
+print('Posterior standard deviation of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,sd),3)
+```
+
+
+
 
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->

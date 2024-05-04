@@ -40,5 +40,12 @@
     "title": "Global Echoes: Analyzing the Interplay of Economic Indicators Across Leading Economies",
     "section": "4.1 Standard Bayesian VAR",
     "text": "4.1 Standard Bayesian VAR\n\n4.1.1 Model Building Code and Validation\nWe verify that our model can replicate the true parameter of the data generate process by: 1. Generate artificial data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. That is,\n\\[\\mathbf{y_t} = \\begin{pmatrix} y_t,1 \\\\ y_t,2\\end{pmatrix} = \\mathbf{y_{t-1}} + \\mathbf{\\epsilon_t} = \\begin{pmatrix}y_{t-1,1}\\\\y_{t-1, 2}\\end{pmatrix} + \\begin{pmatrix}\\epsilon_{t,1}\\\\ \\epsilon_{t, 2}\\end{pmatrix}\\] and\n\\[\\mathbf{\\epsilon} \\sim iid \\mathcal{N}(\\mathbf{0}, \\mathbf{I_2} )\\]\n\n\n\n\n\n\n\n\n\nThen we estimate a model with a constant term and 1 lag using the simulated data, show that the posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the posterior mean of the constant term is close to a vector of zeros.\n\n\n[1] \"Posterior mean of autoregressive parameter:\"\n\n\n      [,1]  [,2]\n[1,] 0.000 0.015\n[2,] 0.999 0.000\n[3,] 0.000 0.999\n\n\n[1] \"Posterior standard deviation of autoregressive parameter:\"\n\n\n      [,1]  [,2]\n[1,] 0.023 0.024\n[2,] 0.001 0.001\n[3,] 0.001 0.001\n\n\n[1] \"Posterior mean of covariance matrix:\"\n\n\n      [,1]  [,2]\n[1,] 0.101 0.000\n[2,] 0.000 0.101\n\n\n[1] \"Posterior standard deviation of covariance matrix:\"\n\n\n      [,1]  [,2]\n[1,] 0.005 0.003\n[2,] 0.003 0.004"
+  },
+  {
+    "objectID": "index.html#standard-bayesian-var-1",
+    "href": "index.html#standard-bayesian-var-1",
+    "title": "Global Echoes: Analyzing the Interplay of Economic Indicators Across Leading Economies",
+    "section": "4.2 Standard Bayesian VAR",
+    "text": "4.2 Standard Bayesian VAR"
   }
 ]

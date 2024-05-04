@@ -53,7 +53,7 @@ focused on analyzing macroeconomic data that are published on a monthly or quart
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends.
 Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 #################################################################################
 #################################################################################
 #Download Data 
@@ -489,12 +489,12 @@ blank_plot <- ggplot() +
 
 ## Data Plots 
 **Original Variables** 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 layout <- (FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
 **Transformed Variables**
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 layout <- (CPI_plot | FDI_plot) / (XCH_plot | BOP_plot) / (GDP_plot | blank_plot)
 layout 
 ```
@@ -506,7 +506,7 @@ layout
 The Augmented Dickey-Fuller Test is used in this section to test the null hypothesis that a unit root is present in the time series and the time series is non-stationary. 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 #install.packages("tseries")
 library(tseries)
 library(knitr)
@@ -527,7 +527,7 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for CPI Data by Country")
 ```
 The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level. 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 results <- sapply(FDI_data[2:nrow(FDI_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -541,7 +541,7 @@ The ADF results shows that we have enough evidence to reject the null hypothesis
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 results <- sapply(XCH_data[2:nrow(XCH_data),2:4], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -552,7 +552,7 @@ kable(results_df, caption = "ADF Test Results for Exchange Rate (% change) Data 
 
 The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate (%change) against the dollar series is unit root non-stationary at 1% significance level. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 
 results <- sapply(BOP_data[2:nrow(BOP_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -563,7 +563,7 @@ kable(results_df, caption = "ADF Test Results for Balance of Payments (% change)
 ```
 The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments (%change) series is unit root non-stationary at 5% significance level for all countries except for China. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, eval = FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
 
 results <- sapply(GDP_data_percent[2:nrow(GDP_data_percent),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -1082,7 +1082,8 @@ print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
-
+## 4.2 Standard Bayesian VAR
+### 4.1.1 Model Building Code and Validation 
 
 
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 

@@ -761,7 +761,7 @@ The draws from joint predictive density can then be obtained using the following
 
 
 
-## 3.2 Model 2: Large BVARs model MA(1) Gaussian innovations
+## 3.2 Model 2: Large BVARs model with MA(1) Gaussian innovations
 
 
 ### 3.2.1 Model Specification
@@ -1027,10 +1027,11 @@ ggplot(mat_plot, aes(x = Index, y = value, color = variable)) +
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}
-BVAR_fit <- function(data, p, S, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T){
+BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T){
   N = ncol(data)
   T = nrow(data)
   X = matrix(1,T,1)
+  S = S1 + S2
   for (i in 1:p){
     X     = cbind(X,data[p+1:T-i,])
   }
@@ -1050,6 +1051,8 @@ BVAR_fit <- function(data, p, S, kappa1, kappa2, A_prior, V_prior, S_prior, nu_p
   for (s in 1:S){
     A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
     }
+  A_posterior = A_posterior[,,(S1+1):(S1+S2)]
+  Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
   return(list(A_posterior, Sigma_posterior))
 }
 ```
@@ -1058,7 +1061,6 @@ Then we estimate a model with a constant term and 1 lag using the simulated data
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 p = 1
-S = 1000
 kappa1 = 0.1^2
 kappa2 = 10^2
 N = ncol(random_walk_sample)
@@ -1066,9 +1068,10 @@ A_prior     = matrix(0, 1+p*N, ncol = N)
 V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
 S_prior     = diag(1, N)
 nu_prior    = ncol(random_walk_sample)+1
+S1 = 1000 
+S2 = 2000
 
-
-posterior_samples = BVAR_fit(data = random_walk_sample, p = p, S = S, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
+posterior_samples = BVAR_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
 
 posterior_samples_A = posterior_samples[[1]]
 posterior_samples_Sigma = posterior_samples[[2]]
@@ -1082,9 +1085,111 @@ print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
-## 4.2 Standard Bayesian VAR
-### 4.1.1 Model Building Code and Validation 
+## 4.2  Large BVARs model with MA(1) Gaussian innovations
+### 4.2.1 Model Building Code and Validation 
 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+#if (!require(matrixNormal)) {install_packages('matrixNormal')}
+library(extraDistr)
+library(truncnorm)
+BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T, vho_prior, sh0_prior, rho_prior, Vrho_prior, psi_prior, Vpsi_prior){
+  N = ncol(data)
+  T = nrow(data)
+  X = matrix(1,T,1)
+  for (i in 1:p){
+    X     = cbind(X,data[p+1:T-i,])
+  }
+  S = S1 + S2
+  K = 1+p*N
+ 
+  nu_bar = T + nu_prior
+  #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+ 
+  #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+
+ 
+  sigma_h_squared_sample = rinvgamma(n=S, alpha = vh0_prior, beta = sh0_prior)
+  rho_sample = rtnorm(n=S, mean = rho_prior, sd = sqrt(Vrho_prior), a = -1, b = 1)
+  u_h_sample = array(dim = c(T, 1, S))
+  h_t_sample = array(dim = c(T, 1, S))
+  psi_sample = rtnorm(n = S, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1 )
+  u_sample = array(dim = c(T, N, S))
+  epsilon_sample = array(dim=c(T,N,S))
+  Omega = array(0, dim = c(T,T,S))
+  V_bar_sample = array(dim = c(K,K,S))
+  A_bar_sample = array(dim = c(p,p,S))
+  S_bar_sample = array(dim = c(N,N,S))
+  Sigma_posterior = array(dim = c(N,N,S))
+  A_posterior = array(rnorm(prod(c(array(p,p),S))),c(array(p,p),S))
+  for (s in 1:S){
+    h_t_sample[1,,s] = 0
+    for (t in 2:T){
+      u_h_sample[t,,s] = rnorm(n=1, mean =0, sd = sqrt(sigma_h_squared_sample[s]))
+      h_t_sample[t,,s] = rho_sample[s]*h_t_sample[t-1,1,s] + u_h_sample[t,1,s]
+      u_sample[t,,s] = mvrnorm(n = N, mu = 0, Sigma = exp(h_t_sample[t,1,s])*Sigma_posterior[,,s])
+      epsilon_sample = u_sample[t,,s] + psi_sample[s]*u_sample[t,,s-1]
+      if(t == 1){
+         Omega[t,t,s] = (1+psi_sample[s]^2)*exp(h_t_sample[t,1,s])
+      }
+      else{
+        Omega[t,t,s] = psi_sample[s]^2*exp(h_sample[t-1,1,s]) + exp(h_sample[t,1,s])
+      }
+      if(t < T){
+       Omega[t,t+1,s] = psi_sample[s] * exp(h_sample[t-1,1,s])
+       }
+      if(t>1){
+        Omega[t-1,t,s] = psi_sample[s] * exp(h_sample[t-1,1,s])
+      } 
+     
+    }
+    V_bar_sample[,,s] = solve(t(X)%*%solve(Omega[,,s])%*%X + solve(V_prior))
+    A_bar_sample[,,s] = V_bar_sample[,,s]%*%(t(X)%*%solve()%*%Omega[,,s]%*%data + solve(V_prior)%*%A_prior)
+    S_bar[,,s] = S_prior +  t(data)%*%solve(Omega[,,s])%*%data + t(A_prior)%*%A_prior - t(A_bar_sample[,,s])%*%solve(V_bar_smple[,,s])%*%A_bar_sample[,,s]
+    L = t(chol(V_bar_sample[,,s]))
+    Sigma_posterior[,,s] = rWishart(1, df=nu_bar, Sigma=solve(S_bar[,,s]))
+    Sigma_posterior[,,s] = apply(Sigma_posterior[,,s],3,solve)
+    Sigma_posterior[,,s]  = array(Sigma_posterior[,,s],c(N,N,S))
+    A_posterior[,,s]= A_bar[,,s] + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+  }
+  
+  A_posterior = A_posterior[,,(S1+1):(S1+S2)]
+  Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
+  return(list(A_posterior, Sigma_posterior))
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+p = 1
+kappa1 = 0.1^2
+kappa2 = 10^2
+N = ncol(random_walk_sample)
+A_prior     = matrix(0, 1+p*N, ncol = N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(random_walk_sample)+1
+S1 = 1000 
+S2 = 2000
+vh0_prior = 5
+sh0_prior = 0.04
+rho_prior = 0.9
+Vrho_prior = 0.04
+psi_prior = 0
+Vpsi_prior = 1
+
+#posterior_samples = BVAR_MA_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, vho_prior = vho_prior, sh0_prior = sh0_prior, rho_prior = rho_prior, Vrho_prior = Vrho_prior, psi_prior = psi_prior, Vpsi_prior = Vpsi_prior)
+
+posterior_samples_A = posterior_samples[[1]]
+posterior_samples_Sigma = posterior_samples[[2]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,sd),3)
+print('Posterior mean of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,mean),3)
+print('Posterior standard deviation of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,sd),3)
+```
 
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->

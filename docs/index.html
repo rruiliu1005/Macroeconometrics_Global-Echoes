@@ -169,16 +169,20 @@ window.Quarto = {
   <li><a href="#posterior-distribution" id="toc-posterior-distribution" class="nav-link" data-scroll-target="#posterior-distribution">3.2.3 Posterior Distribution</a></li>
   <li><a href="#estimation-procedure-1" id="toc-estimation-procedure-1" class="nav-link" data-scroll-target="#estimation-procedure-1">3.2.4 Estimation Procedure</a></li>
   </ul></li>
+  <li><a href="#model-3-bvar-with-common-stochastic-volatilities" id="toc-model-3-bvar-with-common-stochastic-volatilities" class="nav-link" data-scroll-target="#model-3-bvar-with-common-stochastic-volatilities">3.3 Model 3: BVAR with Common Stochastic Volatilities</a></li>
+  <li><a href="#model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" id="toc-model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations">3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations</a></li>
   </ul></li>
   <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">4. Model Estimation</a>
   <ul class="collapse">
   <li><a href="#standard-bayesian-var" id="toc-standard-bayesian-var" class="nav-link" data-scroll-target="#standard-bayesian-var">4.1 Standard Bayesian VAR</a>
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation" id="toc-model-building-code-and-validation" class="nav-link" data-scroll-target="#model-building-code-and-validation">4.1.1 Model Building Code and Validation</a></li>
+  <li><a href="#empirical-result" id="toc-empirical-result" class="nav-link" data-scroll-target="#empirical-result">4.1.2 Empirical Result</a></li>
   </ul></li>
   <li><a href="#large-bvars-model-with-ma1-gaussian-innovations" id="toc-large-bvars-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#large-bvars-model-with-ma1-gaussian-innovations">4.2 Large BVARs model with MA(1) Gaussian innovations</a>
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation-1" id="toc-model-building-code-and-validation-1" class="nav-link" data-scroll-target="#model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</a></li>
+  <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.2.2 Empirical Result</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -514,7 +518,7 @@ window.Quarto = {
 </section>
 <section id="the-model-and-hypothesis" class="level1">
 <h1>3. The Model and Hypothesis</h1>
-<p>We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and indentically distributed innovations, as outlined in details in <span class="citation" data-cites="wozniakBsvarsBayesianEstimation2022">Woźniak (<a href="#ref-wozniakBsvarsBayesianEstimation2022" role="doc-biblioref">2022</a>)</span>. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by <span class="citation" data-cites="Chan_2015">Chan (<a href="#ref-Chan_2015" role="doc-biblioref">2015</a>)</span>. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating t-distributed innovations to better handle outliers than the Gaussian approach, which will be useful to handle extreme events like the Covid-19 Global Pandemic and economic slow down. The final model will combined a common stochastic volatility frame work with t-distributed innovations, offering a robust approach to volatility modelling.</p>
+<p>We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in <span class="citation" data-cites="wozniakBsvarsBayesianEstimation2022">Woźniak (<a href="#ref-wozniakBsvarsBayesianEstimation2022" role="doc-biblioref">2022</a>)</span>. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by <span class="citation" data-cites="Chan_2015">Chan (<a href="#ref-Chan_2015" role="doc-biblioref">2015</a>)</span>. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combined a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling.</p>
 <section id="model-1-standard-bvarp-model" class="level2">
 <h2 class="anchored" data-anchor-id="model-1-standard-bvarp-model">3.1 Model 1: Standard BVAR(p) Model</h2>
 <section id="model-specification" class="level3">
@@ -574,7 +578,7 @@ e_T^T
 </section>
 <section id="prior-settings" class="level3">
 <h3 class="anchored" data-anchor-id="prior-settings">3.1.2 Prior Settings</h3>
-<p>We will employ a Normal-Inverse Wshart distribution for the joint distribution of coefficient matrices A and the row-specific variance matrix <span class="math inline">\(\Sigma\)</span>. Specifically, we have:</p>
+<p>We will employ a Normal-Inverse Wishart distribution for the joint distribution of coefficient matrices A and the row-specific variance matrix <span class="math inline">\(\Sigma\)</span>, and a Minnesota prior on the coefficients A. Specifically, we have:</p>
 <p><span class="math display">\[\Sigma \sim \mathcal{IW}(S_0, \nu_0) \]</span></p>
 <p><span class="math display">\[p(\Sigma) \propto |\Sigma|^{-\frac{\nu_0+N+1}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\]</span></p>
 <p><span class="math display">\[A|\Sigma \sim \mathcal{MN}_{K \times N}(A_0, \Sigma, V_A)\]</span></p>
@@ -582,12 +586,12 @@ e_T^T
 <p><span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\]</span></p>
 <p><span class="math display">\[p(A,\Sigma) \propto |\Sigma|^{-\frac{K+\nu_0+N+1}{2}} \times exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\times exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^T(A-A_0)))\]</span></p>
 <p>where</p>
-<p><span class="math display">\[V_A = diag(v_{A,ii})\]</span></p>
-<p><span class="math display">\[v_{A,ii} = \begin{cases}
-\kappa_l(\frac{l^2}{\hat{s}_r}) &amp; \text{for a coefficient associated to lag l of variable r} \\
-\kappa_2&amp; \text{for an intercept}
-\end{cases}\]</span></p>
-<p>where <span class="math inline">\(\hat{s}_r\)</span> is the sample variance of an AR(4) model for the variable r.</p>
+<p><span class="math display">\[V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))\]</span></p>
+<ul>
+<li><span class="math display">\[\mathbf{p} = [1 \quad 2 \quad ... \quad p]\]</span> <span class="math display">\[I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N\]</span></li>
+<li><span class="math display">\[\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}\]</span></li>
+<li><span class="math display">\[\kappa_2 \text{ is the overall shrinkage lvel for the constant term }\]</span></li>
+</ul>
 <p>Additionally, we adopt commonly used values for the hyperparameters as established in the literature.</p>
 <p><span class="math display">\[A_0 = 0\]</span></p>
 <p><span class="math display">\[v_0 = N+3\]</span></p>
@@ -697,8 +701,6 @@ e_T^T
 <li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
 </ul>
 <p>the same as before. But, instead of the column specific matrix as the identity matrix, we specify the column specific matrix as a diagonal matrix <span class="math inline">\(\Omega\)</span>. Specifically, we have:</p>
-<p><span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span></p>
-<p>and,</p>
 <p><span class="math display">\[\epsilon_t = u_t + \psi_1 u_{t-1}\]</span></p>
 <p><span class="math display">\[u_t \sim \mathcal{N}(0,e^{h_t} \Sigma)\]</span></p>
 <p><span class="math display">\[h_t = \rho h_{t-1} + u_t^h \quad \text{ follows an Autoregressive process of lag 1 AR(1), and}\]</span></p>
@@ -722,7 +724,15 @@ e_T^T
 <li><span class="math inline">\(P(A, \Sigma | Y, X, \Omega)\)</span></li>
 <li><span class="math inline">\(P(\Omega | Y, X, A, \Sigma)\)</span></li>
 </ul>
-<p>The prior distribution of <span class="math inline">\((A,\Sigma)\)</span> follow the same normal inverse Wishart prior distribution as outlined in model one.</p>
+<p>The prior distribution of <span class="math inline">\((A,\Sigma)\)</span> follow the same normal inverse Wishart prior distribution as outlined in model one. But the variance matrix <span class="math inline">\(V_A\)</span> for A is different:</p>
+<p><span class="math display">\[V_A = diag(v_{A,ii})\]</span></p>
+<p><span class="math display">\[v_{A,ii} = \begin{cases}
+\kappa_1(\frac{l^2}{\hat{s}_r}) &amp; \text{for a coefficient associated to lag l of variable r} \\
+\kappa_2&amp; \text{for an intercept}
+\end{cases}\]</span></p>
+<p>where <span class="math inline">\(\hat{s}_r\)</span> is the sample variance of an AR(4) model for the variable r.</p>
+<p><span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span></p>
+<p>and,</p>
 <p>For the moving average coefficients, we adopt an uninformative truncated normal prior for the MA coefficient <span class="math inline">\(\psi\)</span>:</p>
 <p><span class="math display">\[
 \psi \sim \mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|&lt;1)
@@ -804,6 +814,12 @@ e_T^T
 <p>Sampling from the joint predictive density is the same as before.</p>
 </section>
 </section>
+<section id="model-3-bvar-with-common-stochastic-volatilities" class="level2">
+<h2 class="anchored" data-anchor-id="model-3-bvar-with-common-stochastic-volatilities">3.3 Model 3: BVAR with Common Stochastic Volatilities</h2>
+</section>
+<section id="model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" class="level2">
+<h2 class="anchored" data-anchor-id="model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations">3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations</h2>
+</section>
 </section>
 <section id="model-estimation" class="level1">
 <h1>4. Model Estimation</h1>
@@ -861,6 +877,9 @@ e_T^T
 </div>
 </div>
 </section>
+<section id="empirical-result" class="level3">
+<h3 class="anchored" data-anchor-id="empirical-result">4.1.2 Empirical Result</h3>
+</section>
 </section>
 <section id="large-bvars-model-with-ma1-gaussian-innovations" class="level2">
 <h2 class="anchored" data-anchor-id="large-bvars-model-with-ma1-gaussian-innovations">4.2 Large BVARs model with MA(1) Gaussian innovations</h2>
@@ -902,6 +921,10 @@ e_T^T
 [2,] 0.003 0.005</code></pre>
 </div>
 </div>
+</section>
+<section id="empirical-result-1" class="level3">
+<h3 class="anchored" data-anchor-id="empirical-result-1">4.2.2 Empirical Result</h3>
+<p>```</p>
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->
 

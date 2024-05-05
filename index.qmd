@@ -581,7 +581,7 @@ The results from the ADF tests indicates that further transformations are needed
 
 # 3. The Model and Hypothesis
 
-We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and indentically distributed innovations, as outlined in details in @wozniakBsvarsBayesianEstimation2022. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by @Chan_2015. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating t-distributed innovations to better handle outliers than the Gaussian approach, which will be useful to handle extreme events like the Covid-19 Global Pandemic and economic slow down. The final model will combined a common stochastic volatility frame work with t-distributed innovations, offering a robust approach to volatility modelling. 
+We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in @wozniakBsvarsBayesianEstimation2022. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by @Chan_2015. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combined a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling. 
 
 ## 3.1 Model 1: Standard BVAR(p) Model
 
@@ -649,7 +649,7 @@ The economic context underscoring this analysis is the increased globalization o
 
 
 ### 3.1.2 Prior Settings 
-We will employ a Normal-Inverse Wshart distribution for the joint distribution of coefficient matrices A and the row-specific variance matrix $\Sigma$. Specifically, we have:
+We will employ a Normal-Inverse Wishart distribution for the joint distribution of coefficient matrices A and the row-specific variance matrix $\Sigma$, and a Minnesota prior on the coefficients A. Specifically, we have:
 
 $$\Sigma \sim \mathcal{IW}(S_0, \nu_0) $$
 
@@ -666,14 +666,12 @@ $$p(A,\Sigma) \propto |\Sigma|^{-\frac{K+\nu_0+N+1}{2}} \times exp(-\frac{1}{2}t
 
 where 
 
-$$V_A = diag(v_{A,ii})$$
+$$V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))$$
 
-$$v_{A,ii} = \begin{cases} 
-\kappa_l(\frac{l^2}{\hat{s}_r}) & \text{for a coefficient associated to lag l of variable r} \\ 
-\kappa_2& \text{for an intercept}
-\end{cases}$$
-
-where $\hat{s}_r$ is the sample variance of an AR(4) model for the variable r. 
+- $$\mathbf{p} = [1 \quad 2 \quad ... \quad p]$$
+$$I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N$$
+- $$\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}$$ 
+- $$\kappa_2 \text{ is the overall shrinkage lvel for the constant term }$$ 
 
 
 Additionally, we adopt commonly used values for the hyperparameters as established in the literature.
@@ -822,11 +820,6 @@ where
 
 the same as before. But, instead of the column specific matrix as the identity matrix, we specify the column specific matrix as a diagonal matrix $\Omega$. Specifically, we have: 
 
-$$E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})$$
-
-and, 
-
-
 $$\epsilon_t = u_t + \psi_1 u_{t-1}$$
 
 $$u_t \sim \mathcal{N}(0,e^{h_t} \Sigma)$$
@@ -858,7 +851,22 @@ Given this structure, we can sample from the posterior distribution by sequentia
 - $P(A, \Sigma | Y, X, \Omega)$
 - $P(\Omega | Y, X, A, \Sigma)$
 
-The prior distribution of $(A,\Sigma)$ follow the same normal inverse Wishart prior distribution as outlined in model one. 
+The prior distribution of $(A,\Sigma)$ follow the same normal inverse Wishart prior distribution as outlined in model one. But the variance matrix $V_A$ for A is different: 
+
+$$V_A = diag(v_{A,ii})$$
+
+$$v_{A,ii} = \begin{cases} 
+\kappa_1(\frac{l^2}{\hat{s}_r}) & \text{for a coefficient associated to lag l of variable r} \\ 
+\kappa_2& \text{for an intercept}
+\end{cases}$$
+
+where $\hat{s}_r$ is the sample variance of an AR(4) model for the variable r. 
+
+
+$$E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})$$
+
+and, 
+
 
 For the moving average coefficients, we adopt an uninformative truncated normal prior for the MA coefficient $\psi$:
 
@@ -981,6 +989,11 @@ $$\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}$$
 
 Sampling from the joint predictive density is the same as before. 
 
+## 3.3 Model 3: BVAR with Common Stochastic Volatilities
+
+## 3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations 
+
+
 # 4. Model Estimation
 ## 4.1 Standard Bayesian VAR
 ### 4.1.1 Model Building Code and Validation 
@@ -1083,6 +1096,14 @@ print('Posterior mean of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,mean),3)
 print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,sd),3)
+```
+
+
+
+### 4.1.2 Empirical Result
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+
+
 ```
 
 ## 4.2  Large BVARs model with MA(1) Gaussian innovations
@@ -1195,6 +1216,93 @@ round(apply(posterior_samples_Sigma_MA,1:2,mean),3)
 print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
 ```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6, }
+#Code for S draws f Omega
+# data = random_walk_sample
+# N = ncol(data)
+# T = nrow(data)
+# X = matrix(1,T,1)
+# S1 = 0
+# S2 = 2
+# S = S1 + S2
+# set.seed(123)
+# for (i in 1:p){
+#   X     = cbind(X,data[p+1:T-i,])
+# }
+# 
+# #dim 1 variables
+# sigma_h_squared = rinvgamma(n = S, alpha = vh0_prior, beta = sh0_prior)
+# rho = rtnorm(n = S, mean = rho_prior, sqrt(Vrho_prior), a = -1, b = 1)
+# psi = rtnorm(n = S, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1)
+# 
+# #dim NxN variables
+# Sigma_prior = array(dim = c(N,N,S))
+# 
+# #dim Tx1  variables 
+# u_h = array(dim = c(T,1,S))
+# h = array(dim = c(T,1,S))
+# 
+# # dim T by N variables
+# u = array(dim = c(N,1,T, S))
+# epsilon = array(dim = c(N,1,T, S))
+# uvar = array(dim = c(N,N,T,S))
+# #dim TxT variables 
+# Omega = array(0, dim = c(T,T,S))
+# 
+# for (s in 1:S){
+#   u_h[,,s] = rnorm(n = T, mean = 0, sd = sqrt(sigma_h_squared[s]))
+#   h[1,1,s] = rho[s] * 0 + u_h[1,1,s]
+#   Sigma_prior[,,s] = rWishart(n = 1, df = nu_prior, Sigma = S_prior)[,,1]
+#   Sigma_prior[,,s] = solve(Sigma_prior[,,s])
+#   for (t in 2:T){
+#     h[t,1,s] = rho[s]*h[t-1,1,s] + u_h[t,1,s]
+#   } 
+#   for (t in 1:T){
+#     uvar[,,t,s] = exp(h[t,1,s])*Sigma_prior[,,s]
+#     u[,,t,s] = mvrnorm(n=1,mu = rep(0,N), Sigma = uvar[,,t,s])
+#     if(t==1){
+#       epsilon[,,t,s] = u[,,t,s]
+#       Omega[t,t,s] = (1-psi[s]^2)*exp(h[t,1,s])
+#     }
+#     else{
+#       epsilon[,,t,s] = u[,,t,s] + psi[s]*u[,,t-1,s]
+#       Omega[t,t,s] = psi[s]^2 * exp(h[t-1,1,s])+exp(h[t,1,s])
+#       Omega[t-1,t,s] = psi[s] * exp(h[t-1,1,s])
+#       Omega[t,t-1,s] = psi[s] * exp(h[t-1,1,s])
+#     }
+#   }
+# }
+# 
+# 
+# 
+# for (s in 1:S){
+#   V_bar = solve(t(X)%*%solve(Omega[,,s])%*%X + solve(V_prior))
+#   A_bar = V_bar%*%(t(X)%*%solve(Omega[,,s])%*%data + solve(V_prior)%*%A_prior)
+#   nu_bar = T + nu_prior
+#   #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+#   S_bar = S_prior +  t(data)%*%solve(Omega[,,s])%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+#   S_bar_inv = solve(S_bar)
+#   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+#   Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+#   Sigma_posterior = apply(Sigma_posterior,3,solve)
+#   Sigma_posterior  = array(Sigma_posterior,c(N,N,S))
+#   A_posterior = array(rnorm(prod(c(dim(A_bar),S))),c(dim(A_bar),S))
+#   L = t(chol(V_bar))
+#   A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+#   }
+# A_posterior = A_posterior[,,(S1+1):(S1+S2)]
+# Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
+# 
+# round(apply(A_posterior,1:2,mean),3)
+# round(apply(A_posterior,1:2,sd),3)
+# round(apply(Sigma_posterior,1:2,mean),3)
+# round(apply(Sigma_posterior,1:2,sd),3)
+```
+### 4.2.2 Empirical Result
+
+```
+
 
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->

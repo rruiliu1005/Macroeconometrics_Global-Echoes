@@ -788,7 +788,7 @@ e_T^T
 <li>For t = 1,…,T and s = 1,…, <span class="math inline">\(S_1+S_2\)</span>, compute <span class="math inline">\(h_t^{(s)} = \rho h_{t-1}^{(s)} + u_t^{h,(s)}\)</span></li>
 <li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{u_t^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(u_t \sim \mathcal{N}(0,e^{h_t^{(s)}} \Sigma)\)</span> for t = 1,…,T</li>
 <li>Sample <span class="math inline">\(S_1+S_2\)</span> draws of <span class="math inline">\(\left\{\psi^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span> from <span class="math inline">\(\mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|&lt;1)\)</span></li>
-<li>for each t = 1,…,T and s = 1,…<span class="math inline">\(S_1+S_2\)</span>, compute <span class="math inline">\(\epsilon_t^{(s)} = u_t^{(s)} + \psi^{(s)}u_t^{(s-1)}\)</span></li>
+<li>for each t = 1,…,T and s = 1,…<span class="math inline">\(S_1+S_2\)</span>, compute <span class="math inline">\(\epsilon_t^{(s)} = u_t^{(s)} + \psi^{(s)}u_{t-1}^{(s)}\)</span></li>
 </ol>
 <p>After we have obtained <span class="math inline">\(\left\{\Omega^{(s)}\right\}_{s=1}^{S_1+S_2}\)</span>, we can use the following Gibb’s Sampler algorithm to sample from the posterior distribution <span class="math inline">\(p(A \mid Y, X, \Sigma, \Omega)\)</span>:</p>
 <ul>
@@ -872,7 +872,7 @@ e_T^T
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.002 0.015
+[1,] 0.003 0.025
 [2,] 0.999 0.000
 [3,] 0.000 0.999</code></pre>
 </div>
@@ -881,7 +881,7 @@ e_T^T
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.023 0.023
+[1,] 0.031 0.031
 [2,] 0.001 0.001
 [3,] 0.001 0.001</code></pre>
 </div>
@@ -898,8 +898,8 @@ e_T^T
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.005 0.003
-[2,] 0.003 0.004</code></pre>
+[1,] 0.004 0.003
+[2,] 0.003 0.005</code></pre>
 </div>
 </div>
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 

@@ -965,7 +965,7 @@ To sample $S_1+S_2$ draws of $\left\{\Omega^{(s)}\right\}_{s=1}^{S_1+S_2}$
 4. For t = 1,...,T and s = 1,..., $S_1+S_2$, compute $h_t^{(s)} = \rho h_{t-1}^{(s)} + u_t^{h,(s)}$
 5. Sample $S_1+S_2$ draws of $\left\{u_t^{(s)}\right\}_{s=1}^{S_1+S_2}$ from $u_t \sim \mathcal{N}(0,e^{h_t^{(s)}} \Sigma)$ for t = 1,...,T
 6. Sample $S_1+S_2$ draws of $\left\{\psi^{(s)}\right\}_{s=1}^{S_1+S_2}$ from $\mathcal{N}(\psi_0, V_\psi) \mathbb{1}(|\psi|<1)$
-7. for each t = 1,...,T and s = 1,...$S_1+S_2$, compute $\epsilon_t^{(s)} = u_t^{(s)} + \psi^{(s)}u_t^{(s-1)}$
+7. for each t = 1,...,T and s = 1,...$S_1+S_2$, compute $\epsilon_t^{(s)} = u_t^{(s)} + \psi^{(s)}u_{t-1}^{(s)}$
 
 After we have obtained $\left\{\Omega^{(s)}\right\}_{s=1}^{S_1+S_2}$, we can use the following Gibb's Sampler algorithm to sample from the posterior distribution $p(A \mid Y, X, \Sigma, \Omega)$: 
 
@@ -1109,49 +1109,54 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
 
  
-  sigma_h_squared_sample = rinvgamma(n=S, alpha = vh0_prior, beta = sh0_prior)
-  rho_sample = rtnorm(n=S, mean = rho_prior, sd = sqrt(Vrho_prior), a = -1, b = 1)
-  u_h_sample = array(dim = c(T, 1, S))
-  h_t_sample = array(dim = c(T, 1, S))
-  psi_sample = rtnorm(n = S, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1 )
-  u_sample = array(dim = c(T, N, S))
-  epsilon_sample = array(dim=c(T,N,S))
-  Omega = array(0, dim = c(T,T,S))
-  V_bar_sample = array(dim = c(K,K,S))
-  A_bar_sample = array(dim = c(p,p,S))
-  S_bar_sample = array(dim = c(N,N,S))
-  Sigma_posterior = array(dim = c(N,N,S))
-  A_posterior = array(rnorm(prod(c(array(p,p),S))),c(array(p,p),S))
-  for (s in 1:S){
-    h_t_sample[1,,s] = 0
-    for (t in 2:T){
-      u_h_sample[t,,s] = rnorm(n=1, mean =0, sd = sqrt(sigma_h_squared_sample[s]))
-      h_t_sample[t,,s] = rho_sample[s]*h_t_sample[t-1,1,s] + u_h_sample[t,1,s]
-      u_sample[t,,s] = mvrnorm(n = N, mu = 0, Sigma = exp(h_t_sample[t,1,s])*Sigma_posterior[,,s])
-      epsilon_sample = u_sample[t,,s] + psi_sample[s]*u_sample[t,,s-1]
-      if(t == 1){
-         Omega[t,t,s] = (1+psi_sample[s]^2)*exp(h_t_sample[t,1,s])
-      }
-      else{
-        Omega[t,t,s] = psi_sample[s]^2*exp(h_sample[t-1,1,s]) + exp(h_sample[t,1,s])
-      }
-      if(t < T){
-       Omega[t,t+1,s] = psi_sample[s] * exp(h_sample[t-1,1,s])
-       }
-      if(t>1){
-        Omega[t-1,t,s] = psi_sample[s] * exp(h_sample[t-1,1,s])
-      } 
-     
+  sigma_h_squared = rinvgamma(n = 1, alpha = vh0_prior, beta = sh0_prior)
+  rho = rtnorm(n = 1, mean = rho_prior, sqrt(Vrho_prior), a = -1, b = 1)
+  u_h = rnorm(n = T, mean = 0, sd = sqrt(sigma_h_squared))
+  h = array(dim = T)
+  u = array(dim = c(N,1,T))
+  h [1] = rho * 0 + u_h[1]
+  psi = rtnorm(n = 1, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1)
+  epsilon = array(dim = c(N,1,T))
+  Omega = array(0, dim = c(T,T))
+    
+  for (t in 2:T){
+    h[t] = rho*h[t-1] + u_h[t]
+  } 
+  
+  Sigma_prior = rWishart(n = 1, df = nu_prior, Sigma = S_prior)[,,1]
+  Sigma_prior = solve(Sigma_prior)
+  
+  for (t in 1:T){
+    u_var = exp(h[t])*Sigma_prior
+    u[,,t] = mvrnorm(n = 1, mu = rep(0,N), Sigma = u_var)
+    if (t == 1){
+      epsilon[,,t] = u[,,t]
+      Omega[t,t] = (1+psi^2)*exp(h[t])
     }
-    V_bar_sample[,,s] = solve(t(X)%*%solve(Omega[,,s])%*%X + solve(V_prior))
-    A_bar_sample[,,s] = V_bar_sample[,,s]%*%(t(X)%*%solve()%*%Omega[,,s]%*%data + solve(V_prior)%*%A_prior)
-    S_bar[,,s] = S_prior +  t(data)%*%solve(Omega[,,s])%*%data + t(A_prior)%*%A_prior - t(A_bar_sample[,,s])%*%solve(V_bar_smple[,,s])%*%A_bar_sample[,,s]
-    L = t(chol(V_bar_sample[,,s]))
-    Sigma_posterior[,,s] = rWishart(1, df=nu_bar, Sigma=solve(S_bar[,,s]))
-    Sigma_posterior[,,s] = apply(Sigma_posterior[,,s],3,solve)
-    Sigma_posterior[,,s]  = array(Sigma_posterior[,,s],c(N,N,S))
-    A_posterior[,,s]= A_bar[,,s] + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+    else{
+      epsilon[,,t] = u[,,t] + psi*u[,,t-1]
+      Omega[t,t] = psi^2*exp(h[t-1]) + exp(h[t])
+      Omega[t-1,t] = psi * exp(h[t-1])
+      Omega[t,t-1] = psi * exp(h[t-1]) 
+    }
   }
+  
+  V_bar = solve(t(X)%*%solve(Omega)%*%X + solve(V_prior))
+  A_bar = V_bar%*%(t(X)%*%solve(Omega)%*%data + solve(V_prior)%*%A_prior)
+  nu_bar = T + nu_prior
+  #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar = S_prior +  t(data)%*%solve(Omega)%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar_inv = solve(S_bar)
+  #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = apply(Sigma_posterior,3,solve)
+  Sigma_posterior  = array(Sigma_posterior,c(N,N,S))
+  A_posterior = array(rnorm(prod(c(dim(A_bar),S))),c(dim(A_bar),S))
+  L = t(chol(V_bar))
+  
+  for (s in 1:S){
+    A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+    }
   
   A_posterior = A_posterior[,,(S1+1):(S1+S2)]
   Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
@@ -1177,18 +1182,18 @@ Vrho_prior = 0.04
 psi_prior = 0
 Vpsi_prior = 1
 
-#posterior_samples = BVAR_MA_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, vho_prior = vho_prior, sh0_prior = sh0_prior, rho_prior = rho_prior, Vrho_prior = Vrho_prior, psi_prior = psi_prior, Vpsi_prior = Vpsi_prior)
+posterior_samples_MA = BVAR_MA_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, vho_prior = vho_prior, sh0_prior = sh0_prior, rho_prior = rho_prior, Vrho_prior = Vrho_prior, psi_prior = psi_prior, Vpsi_prior = Vpsi_prior)
 
-posterior_samples_A = posterior_samples[[1]]
-posterior_samples_Sigma = posterior_samples[[2]]
+posterior_samples_A_MA = posterior_samples_MA[[1]]
+posterior_samples_Sigma_MA = posterior_samples_MA[[2]]
 print('Posterior mean of autoregressive parameter:')
-round(apply(posterior_samples_A,1:2,mean),3)
+round(apply(posterior_samples_A_MA,1:2,mean),3)
 print('Posterior standard deviation of autoregressive parameter:')
-round(apply(posterior_samples_A,1:2,sd),3)
+round(apply(posterior_samples_A_MA,1:2,sd),3)
 print('Posterior mean of covariance matrix:')
-round(apply(posterior_samples_Sigma,1:2,mean),3)
+round(apply(posterior_samples_Sigma_MA,1:2,mean),3)
 print('Posterior standard deviation of covariance matrix:')
-round(apply(posterior_samples_Sigma,1:2,sd),3)
+round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
 ```
 
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 

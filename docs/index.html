@@ -162,15 +162,20 @@ window.Quarto = {
   <li><a href="#posterior-distributions" id="toc-posterior-distributions" class="nav-link" data-scroll-target="#posterior-distributions">3.1.3 Posterior Distributions</a></li>
   <li><a href="#estimation-procedure" id="toc-estimation-procedure" class="nav-link" data-scroll-target="#estimation-procedure">3.1.4 Estimation Procedure</a></li>
   </ul></li>
-  <li><a href="#model-2-large-bvars-model-with-ma1-gaussian-innovations" id="toc-model-2-large-bvars-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#model-2-large-bvars-model-with-ma1-gaussian-innovations">3.2 Model 2: Large BVARs model with MA(1) Gaussian innovations</a>
+  <li><a href="#model-2-large-bvar-model-with-ma1-gaussian-innovations" id="toc-model-2-large-bvar-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#model-2-large-bvar-model-with-ma1-gaussian-innovations">3.2 Model 2: Large BVAR model with MA(1) Gaussian Innovations</a>
   <ul class="collapse">
-  <li><a href="#model-specification-1" id="toc-model-specification-1" class="nav-link" data-scroll-target="#model-specification-1">3.2.1 Model Specification</a></li>
   <li><a href="#prior-specification" id="toc-prior-specification" class="nav-link" data-scroll-target="#prior-specification">3.2.2 Prior Specification</a></li>
-  <li><a href="#posterior-distribution" id="toc-posterior-distribution" class="nav-link" data-scroll-target="#posterior-distribution">3.2.3 Posterior Distribution</a></li>
+  <li><a href="#posterior-distributions-1" id="toc-posterior-distributions-1" class="nav-link" data-scroll-target="#posterior-distributions-1">3.2.3 Posterior Distributions</a></li>
   <li><a href="#estimation-procedure-1" id="toc-estimation-procedure-1" class="nav-link" data-scroll-target="#estimation-procedure-1">3.2.4 Estimation Procedure</a></li>
   </ul></li>
-  <li><a href="#model-3-bvar-with-common-stochastic-volatilities" id="toc-model-3-bvar-with-common-stochastic-volatilities" class="nav-link" data-scroll-target="#model-3-bvar-with-common-stochastic-volatilities">3.3 Model 3: BVAR with Common Stochastic Volatilities</a></li>
-  <li><a href="#model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" id="toc-model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations">3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations</a></li>
+  <li><a href="#model-3-large-bvar-model-with-ommon-stochastic-volatility" id="toc-model-3-large-bvar-model-with-ommon-stochastic-volatility" class="nav-link" data-scroll-target="#model-3-large-bvar-model-with-ommon-stochastic-volatility">3.3 Model 3: Large BVAR model with ommon Stochastic Volatility</a></li>
+  <li><a href="#model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility</a>
+  <ul class="collapse">
+  <li><a href="#model-specification-1" id="toc-model-specification-1" class="nav-link" data-scroll-target="#model-specification-1">3.4.1 Model Specification</a></li>
+  <li><a href="#prior-specification-1" id="toc-prior-specification-1" class="nav-link" data-scroll-target="#prior-specification-1">3.4.2 Prior Specification</a></li>
+  <li><a href="#posterior-distribution" id="toc-posterior-distribution" class="nav-link" data-scroll-target="#posterior-distribution">3.4.3 Posterior Distribution</a></li>
+  <li><a href="#estimation-procedure-2" id="toc-estimation-procedure-2" class="nav-link" data-scroll-target="#estimation-procedure-2">3.4.4 Estimation Procedure</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">4. Model Estimation</a>
   <ul class="collapse">
@@ -179,10 +184,14 @@ window.Quarto = {
   <li><a href="#model-building-code-and-validation" id="toc-model-building-code-and-validation" class="nav-link" data-scroll-target="#model-building-code-and-validation">4.1.1 Model Building Code and Validation</a></li>
   <li><a href="#empirical-result" id="toc-empirical-result" class="nav-link" data-scroll-target="#empirical-result">4.1.2 Empirical Result</a></li>
   </ul></li>
-  <li><a href="#large-bvars-model-with-ma1-gaussian-innovations" id="toc-large-bvars-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#large-bvars-model-with-ma1-gaussian-innovations">4.2 Large BVARs model with MA(1) Gaussian innovations</a>
+  <li><a href="#large-bvar-model-with-ma1-gaussian-innovations" id="toc-large-bvar-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations">4.2 Large BVAR model with MA(1) Gaussian Innovations</a>
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation-1" id="toc-model-building-code-and-validation-1" class="nav-link" data-scroll-target="#model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</a></li>
-  <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.2.2 Empirical Result</a></li>
+  </ul></li>
+  <li><a href="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</a>
+  <ul class="collapse">
+  <li><a href="#model-building-code-and-validation-2" id="toc-model-building-code-and-validation-2" class="nav-link" data-scroll-target="#model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</a></li>
+  <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.4.2 Empirical Result</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -289,7 +298,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -299,7 +308,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -326,25 +335,25 @@ window.Quarto = {
 <td style="text-align: left;">-3.537365</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: left;">0.04688628</td>
-<td style="text-align: left;">China</td>
+<td style="text-align: left;">CPI_CN</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">-2.099504</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: left;">0.5343704</td>
-<td style="text-align: left;">Japan</td>
+<td style="text-align: left;">CPI_JP</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">-2.466873</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: left;">0.3866844</td>
-<td style="text-align: left;">United_States</td>
+<td style="text-align: left;">CPI_US</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">-1.548745</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: left;">0.7557808</td>
-<td style="text-align: left;">Australia</td>
+<td style="text-align: left;">CPI_AU</td>
 </tr>
 </tbody>
 </table>
@@ -647,11 +656,173 @@ e_T^T
 </ol>
 </section>
 </section>
-<section id="model-2-large-bvars-model-with-ma1-gaussian-innovations" class="level2">
-<h2 class="anchored" data-anchor-id="model-2-large-bvars-model-with-ma1-gaussian-innovations">3.2 Model 2: Large BVARs model with MA(1) Gaussian innovations</h2>
-<section id="model-specification-1" class="level3">
-<h3 class="anchored" data-anchor-id="model-specification-1">3.2.1 Model Specification</h3>
+<section id="model-2-large-bvar-model-with-ma1-gaussian-innovations" class="level2">
+<h2 class="anchored" data-anchor-id="model-2-large-bvar-model-with-ma1-gaussian-innovations">3.2 Model 2: Large BVAR model with MA(1) Gaussian Innovations</h2>
 <p>Incorporating MA(1) Gaussian innovations in a large BVARs model lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables for several reasons. Firstly, the variances of economic shocks is rarely constant over time. For example, volatility tends to cluster during periods of economic crisis and is more tranquil during stable times. Incorporating stochastic volatility allows the model to adapt to changing volatility in the data, improving forecasting performance especially in the presence of financial market instability or economic policy shifts. In addition, by allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model’s ability to predict future values by considering the path-dependent nature of the economy. Our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below:</p>
+<p>3.2.1 Model Specification</p>
+<p><span class="math display">\[ Y = XA+E\]</span> <span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span> <span class="math display">\[
+A = \begin{bmatrix}
+\mu_0^T \\
+A_1^T \\
+\vdots \\
+A_p^T
+\end{bmatrix}
+, \quad
+Y = \begin{bmatrix}
+y_1^T \\
+y_2^T \\
+\vdots \\
+y_T^T
+\end{bmatrix}
+, \quad
+x_t = \begin{bmatrix}
+1 \\
+y_{t-1}^T \\
+\vdots \\
+y_{t-p}^T
+\end{bmatrix}
+, \quad
+X = \begin{bmatrix}
+x_1^T \\
+x_2^T \\
+\vdots \\
+x_T^T
+\end{bmatrix}
+, \quad
+E = \begin{bmatrix}
+e_1^T \\
+e_2^T \\
+\vdots \\
+e_T^T
+\end{bmatrix}
+\]</span></p>
+<p>where</p>
+<ul>
+<li><span class="math inline">\(T\)</span> is the number of time periods under consideration</li>
+<li><span class="math inline">\(N\)</span> is the number of variables, in our case, N = 20</li>
+<li><span class="math inline">\(P\)</span> is the number of lags</li>
+<li><span class="math inline">\(Y\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of variables of response variables we aim to model.</li>
+<li><span class="math inline">\(A\)</span> is a <span class="math inline">\(K \times N\)</span> matrix of coefficients, <span class="math inline">\(K = (1+𝑝\times N)\)</span>.</li>
+<li><span class="math inline">\(E\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of the error terms</li>
+<li><span class="math inline">\(X\)</span> is a <span class="math inline">\(T \times (1+𝑝\times N)\)</span> matrix of covariates</li>
+<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
+<li><span class="math inline">\(I_T\)</span> is a <span class="math inline">\(T \times T\)</span> identity matrix representing the column specific covariance matrix</li>
+<li><span class="math inline">\(E|X\)</span> follows a matrix-variate normal distribution with mean <span class="math inline">\(0_{T \times N}\)</span>, row specific covariance matrix <span class="math inline">\(\Sigma_{N \times N}\)</span> and column specific covariance matrix <span class="math inline">\(I_T\)</span></li>
+</ul>
+<p>with MA(1) innovations, we have, for i = 1,….,N and t = 1,…,T, <span class="math display">\[u_{it} = \eta_{it} + \psi \eta_{i,t-1}\]</span> where <span class="math inline">\(|\psi|&lt;1\)</span> and <span class="math inline">\(\eta_{it} \sim \mathcal{N}(0,1)\)</span></p>
+<p>In matrix notation, we have:</p>
+<p><span class="math display">\[u_i = H_{\psi} \eta_i\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+u_i = \begin{bmatrix}
+u_{i1} \\
+u_{i2} \\
+\vdots \\
+u_{iT}
+\end{bmatrix} \qquad
+\eta_i = \begin{bmatrix}
+\eta_{i1} \\
+\eta_{i2} \\
+\vdots \\
+\eta_{iT}
+\end{bmatrix} \qquad
+H_{\psi} = \left(
+\begin{array}{cccc}
+1 &amp; 0  &amp; \cdots &amp; 0 \\
+\psi &amp; 1  &amp; \cdots &amp; 0 \\
+\vdots &amp; \ddots &amp; \ddots &amp; \vdots \\
+0 &amp; \cdots &amp; \psi &amp; 1
+\end{array}
+\right)
+\]</span> Hence, we have</p>
+<p><span class="math display">\[u_1 \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T\]</span> Note that the covariance matrix <span class="math inline">\(\Omega\)</span> depends on <span class="math inline">\(\psi\)</span> only.</p>
+<section id="prior-specification" class="level3">
+<h3 class="anchored" data-anchor-id="prior-specification">3.2.2 Prior Specification</h3>
+<p>We consider a prior independent distributions for <span class="math inline">\((A, \Sigma, \Omega)\)</span>, specifically, we have: <span class="math display">\[P(A, \Sigma, \Omega) = P(A, \Sigma) \times P(\Omega)\]</span></p>
+<p>We will employ a Normal-Inverse Wishart distribution for the joint distribution of A and <span class="math inline">\(\Sigma\)</span> and before, <span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N}(A_0, V_A, S_0, \nu_0)\]</span></p>
+<p>We apply a truncated normal prior on <span class="math inline">\(\psi\)</span>, <span class="math display">\[\psi \sim \mathcal{N}(\psi_0, V_{\psi})\]</span></p>
+<p>For estimation purposes, we initialize with the following setting:</p>
+<ul>
+<li><span class="math inline">\(u_{i1} \sim \mathcal{N}(0, 1+\psi^2)\)</span></li>
+<li><span class="math inline">\(\psi_0 = 0\)</span> and <span class="math inline">\(V_{\psi} = 1\)</span> so that the prior centers around 0 with a relatively large variance and has support within (-1, 1)</li>
+</ul>
+</section>
+<section id="posterior-distributions-1" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-distributions-1">3.2.3 Posterior Distributions</h3>
+<ol type="1">
+<li>The posterior distribution of Y specified above has the form:</li>
+</ol>
+<p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}|\Omega|^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA))\]</span></p>
+<p><span class="math display">\[= (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}(1+\psi^2)^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(H_{\psi}O_{\psi}H_{\psi}^T)^{-1}(Y-XA))\]</span></p>
+<ol start="2" type="1">
+<li>The joint posterior distribution of A and <span class="math inline">\(\Sigma\)</span> can be derived as follows:</li>
+</ol>
+<p><span class="math display">\[p(A, \Sigma \mid Y, \Omega)  = \frac{p(A,\Sigma,Y, \Omega)}{p(Y, \Omega)}\]</span> <span class="math display">\[\propto p(A, \Sigma, Y, \Omega) \propto p(Y \mid A,\Sigma, \Omega)\times p(A,\Sigma, \Omega)\]</span> <span class="math display">\[=  p(Y \mid A,\Sigma, \Omega) p(A, \Sigma) p(\Omega) = p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma) p(\Omega)\]</span></p>
+<p><span class="math display">\[\propto p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma)\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA)) \times\]</span></p>
+<p><span class="math display">\[\mid \Sigma \mid^{-\frac{\nu_0+N+K}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_o))exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^TV_A^{-1}(A-A_0))\]</span></p>
+<p><span class="math display">\[\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma^{-1}S_0)) \times \]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^T\Omega^{-1}Y-\bar{A}^T\bar{V}^{-1}\bar{A})\times\]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))\]</span></p>
+<p>Hence,</p>
+<p><span class="math display">\[p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)\]</span></p>
+<p><span class="math display">\[p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\]</span></p>
+<p><span class="math display">\[p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\bar{V} = (X^T\Omega^{-1}X + V_A^{-1})^{-1}\]</span></p>
+<p><span class="math display">\[\bar{A} = \bar{V}(X^T\Omega^{-1}Y + V_A^{-1}A_0)\]</span></p>
+<p><span class="math display">\[\bar{\nu} = T + \nu_0\]</span></p>
+<p><span class="math display">\[\bar{S} = S_0 + Y^T\Omega^{-1}Y + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}\]</span> 3. The posterior distribution for the parameter <span class="math inline">\(\psi\)</span> can be obtained as follows: <span class="math display">\[P(\psi|Y, A, \Sigma) = \frac{P(\psi, Y, A, \Sigma)}{P(Y, A, \Sigma)} \propto P(\psi, Y, A, \Sigma) = P(Y|A, \Sigma, \psi) \times P(A,\Sigma, \psi) \]</span></p>
+<p><span class="math display">\[= P(Y|A, \Sigma, \psi) \times P(A, \Sigma) \times P(\psi) \propto P(Y|A, \Sigma, \psi) \times P(\psi)\]</span></p>
+<p>we can sample from the posterior distribution of <span class="math inline">\(\psi\)</span> using an independence-chain Metropolis-Hastings algorithm.</p>
+</section>
+<section id="estimation-procedure-1" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-procedure-1">3.2.4 Estimation Procedure</h3>
+<p>We obtain posterior estimates of <span class="math inline">\(A, \Sigma, \psi\)</span> using a Gibbs sampler, specifically, we initialize <span class="math inline">\(\psi^{(0)}\)</span> and for s = 1,…,S1+S2, we sequentially sample:</p>
+<ul>
+<li><span class="math inline">\(\Sigma^{(s)} | Y, X, \psi^{(s-1)} \sim \mathcal{IW}_N(\bar{S}, \bar{\nu})\)</span></li>
+<li><span class="math inline">\(A^{(s)} | Y, X, \Sigma^{(s)}, \psi^{(s-1)} \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma^{(s)}, \bar{V})\)</span></li>
+<li><span class="math inline">\(\psi^{(s)} | Y, X, A^{(s)}, \Sigma^{(s)} \propto P(Y|A^{(s)}, \Sigma^{(s)}, \psi^{s-1})\times p(\psi)\)</span></li>
+</ul>
+<p>The Metropolis-Hastings Algorithm for Sampling <span class="math inline">\(\psi\)</span> is given as follows:</p>
+<p><strong>Initialization:</strong></p>
+<ul>
+<li>Choose an initial value <span class="math inline">\(\psi^{(0)}\)</span> within the bounds <span class="math inline">\((-1, 1)\)</span>.</li>
+</ul>
+<p><strong>Proposal Distribution:</strong></p>
+<ul>
+<li>Select the proposal distribution <span class="math inline">\(q(\psi' | \psi^{(t)}) \sim N(\psi^{(t)}, \tau^2)\)</span>. <span class="math inline">\(\tau^2\)</span> is a tuning parameter that controls the step size.</li>
+</ul>
+<p><strong>Sampling Loop:</strong></p>
+<p>For t = 1,…,<span class="math inline">\(T_1+T_2\)</span></p>
+<ul>
+<li><p>Generate a candidate <span class="math inline">\(\psi'^{(t)}\)</span> from <span class="math inline">\(q(\psi' | \psi^{(t-1)})\)</span>.</p></li>
+<li><p>Check if <span class="math inline">\(\psi'\)</span> is within the bounds <span class="math inline">\((-1, 1)\)</span>. If not, reject <span class="math inline">\(\psi'\)</span> (set <span class="math inline">\(\alpha = 0\)</span>).</p></li>
+<li><p>Compute the acceptance ratio <span class="math inline">\(\alpha\)</span>: <span class="math display">\[ \alpha(\psi^{(t-1)}, \psi') = \min\left(1, \frac{p(Y | A, \Sigma, \psi') p(\psi') q(\psi^{(t-1)} | \psi')}{p(Y | A, \Sigma, \psi^{(t-1)}) p(\psi^{(t-1)}) q(\psi' | \psi^{(t-1)})}\right)\]</span></p></li>
+</ul>
+<p><strong>Decide to accept or reject:</strong></p>
+<ul>
+<li><p>Generate a random number <span class="math inline">\(u\)</span> from <span class="math inline">\(U[0,1]\)</span>.</p></li>
+<li><p>If <span class="math inline">\(u \leq \alpha\)</span>, accept <span class="math inline">\(\psi'\)</span> and set <span class="math inline">\(\psi^{(t)} = \psi'\)</span>.</p></li>
+<li><p>Otherwise, reject <span class="math inline">\(\psi'\)</span> and set <span class="math inline">\(\psi^{(t)} = \psi^{(t-1)}\)</span>.</p></li>
+</ul>
+<p><strong>Burn in period</strong></p>
+<ul>
+<li>Discard the first <span class="math inline">\(T_1\)</span> samples to allow the algorithm to converge to the true distribution</li>
+</ul>
+<p><strong>Obtain one sample of <span class="math inline">\(\psi\)</span></strong></p>
+<ul>
+<li>Randomly draw a <span class="math inline">\(\psi^*\)</span> from the <span class="math inline">\(T_2\)</span> draws and set <span class="math inline">\(\psi^{(s)} = \psi^*\)</span></li>
+</ul>
+<p>We monitor the acceptance rate and adjust <span class="math inline">\(\tau^2\)</span> as necessary to achieve an optimal rate of about 20-40%.</p>
+<p>We note that since <span class="math inline">\(\Omega\)</span> is a band matrix, we do not need compute <span class="math inline">\(\Omega^{-1}\)</span>, instead, we obtain the Cholesky decomposition <span class="math inline">\(C_{\Omega}\)</span> of <span class="math inline">\(\Omega\)</span>, which has a time complexity of <span class="math inline">\(O(T)\)</span>. Terms involving <span class="math inline">\(\Omega^{-1}\)</span> such as <span class="math inline">\(X^T\Omega^{-1}X\)</span> can be obtained by: <span class="math display">\[X^T\Omega^{-1}X = X^T(C_{\Omega}^{-1})^{T}C_{\Omega}^{-1}X=(C_{\Omega}^{-1}X)^T(C_{\Omega}^{-1}X) = \tilde{X}^T\tilde{X}\]</span></p>
+</section>
+</section>
+<section id="model-3-large-bvar-model-with-ommon-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="model-3-large-bvar-model-with-ommon-stochastic-volatility">3.3 Model 3: Large BVAR model with ommon Stochastic Volatility</h2>
+</section>
+<section id="model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility</h2>
+<section id="model-specification-1" class="level3">
+<h3 class="anchored" data-anchor-id="model-specification-1">3.4.1 Model Specification</h3>
 <p><span class="math display">\[ Y = XA+E\]</span></p>
 <p>where</p>
 <p><span class="math display">\[
@@ -716,8 +887,8 @@ e_T^T
 \right)\]</span></p>
 <p>In this specification, each element of <span class="math inline">\(e_t\)</span> may have distinct variances, and the variances of all innovations can be scaled by a common factor. This approach is economically intuitive, as the volatility of macroeconomic variables often exhibit co-movement. It is important to emphasize that each component of <span class="math inline">\(e_t\)</span> must adhere to the same univariate time series model.</p>
 </section>
-<section id="prior-specification" class="level3">
-<h3 class="anchored" data-anchor-id="prior-specification">3.2.2 Prior Specification</h3>
+<section id="prior-specification-1" class="level3">
+<h3 class="anchored" data-anchor-id="prior-specification-1">3.4.2 Prior Specification</h3>
 <p>Here, we consider a priori independent distributions for <span class="math inline">\((A, \Sigma, \Omega)\)</span>, namely:</p>
 <p><span class="math display">\[p(A, \Sigma, \Omega) = p(A, \Sigma) \times p(\Omega)\]</span> Given this structure, we can sample from the posterior distribution by sequentially sampling from:</p>
 <ul>
@@ -743,8 +914,8 @@ e_T^T
 <p>We set the hyperparameters <span class="math inline">\(\nu_{h_0} = 5\)</span>, <span class="math inline">\(s_{h_0} = 0.04\)</span>, <span class="math inline">\(\rho_0 = 0.9\)</span> and <span class="math inline">\(V_\rho = 0.04\)</span> so that the prior mean of <span class="math inline">\(\sigma_h^2\)</span> is 0.01 and <span class="math inline">\(\rho\)</span> is centered at 0.9.</p>
 </section>
 <section id="posterior-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="posterior-distribution">3.2.3 Posterior Distribution</h3>
-<p>The posterior distribution specified above has the form</p>
+<h3 class="anchored" data-anchor-id="posterior-distribution">3.4.3 Posterior Distribution</h3>
+<p>The posterior distribution specified above has the following form:</p>
 <p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}|\Omega|^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA))\]</span></p>
 <p>and the joint posterior distribution</p>
 <p><span class="math display">\[p(A, \Sigma \mid Y, \Omega)  = \frac{p(A,\Sigma,Y, \Omega)}{p(Y, \Omega)}\]</span> <span class="math display">\[\propto p(A, \Sigma, Y, \Omega) \propto p(Y \mid A,\Sigma, \Omega)\times p(A,\Sigma, \Omega)\]</span> <span class="math display">\[=  p(Y \mid A,\Sigma, \Omega) p(A, \Sigma) p(\Omega) = p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma) p(\Omega)\]</span></p>
@@ -762,8 +933,8 @@ e_T^T
 <p><span class="math display">\[\bar{\nu} = T + \nu_0\]</span></p>
 <p><span class="math display">\[\bar{S} = S_0 + Y^T\Omega^{-1}Y + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}\]</span></p>
 </section>
-<section id="estimation-procedure-1" class="level3">
-<h3 class="anchored" data-anchor-id="estimation-procedure-1">3.2.4 Estimation Procedure</h3>
+<section id="estimation-procedure-2" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-procedure-2">3.4.4 Estimation Procedure</h3>
 <p>In this setting, we have</p>
 <ul>
 <li><span class="math inline">\((A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\)</span></li>
@@ -814,12 +985,6 @@ e_T^T
 <p>Sampling from the joint predictive density is the same as before.</p>
 </section>
 </section>
-<section id="model-3-bvar-with-common-stochastic-volatilities" class="level2">
-<h2 class="anchored" data-anchor-id="model-3-bvar-with-common-stochastic-volatilities">3.3 Model 3: BVAR with Common Stochastic Volatilities</h2>
-</section>
-<section id="model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations" class="level2">
-<h2 class="anchored" data-anchor-id="model-4-bvar-with-common-stochastic-volatilities-and-ma1-gaussian-innovations">3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations</h2>
-</section>
 </section>
 <section id="model-estimation" class="level1">
 <h1>4. Model Estimation</h1>
@@ -834,7 +999,7 @@ e_T^T
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -845,35 +1010,35 @@ e_T^T
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.002 0.015
-[2,] 0.999 0.000
-[3,] 0.000 0.999</code></pre>
+<pre><code>       [,1]  [,2]
+[1,]  0.068 0.165
+[2,]  1.000 0.001
+[3,] -0.003 0.995</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.023 0.023
-[2,] 0.001 0.001
-[3,] 0.001 0.001</code></pre>
+[1,] 0.074 0.071
+[2,] 0.003 0.002
+[3,] 0.002 0.002</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.101 0.000
-[2,] 0.000 0.101</code></pre>
+[1,] 1.051 0.067
+[2,] 0.067 0.949</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.005 0.003
-[2,] 0.003 0.004</code></pre>
+[1,] 0.048 0.032
+[2,] 0.032 0.042</code></pre>
 </div>
 </div>
 </section>
@@ -881,8 +1046,8 @@ e_T^T
 <h3 class="anchored" data-anchor-id="empirical-result">4.1.2 Empirical Result</h3>
 </section>
 </section>
-<section id="large-bvars-model-with-ma1-gaussian-innovations" class="level2">
-<h2 class="anchored" data-anchor-id="large-bvars-model-with-ma1-gaussian-innovations">4.2 Large BVARs model with MA(1) Gaussian innovations</h2>
+<section id="large-bvar-model-with-ma1-gaussian-innovations" class="level2">
+<h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations">4.2 Large BVAR model with MA(1) Gaussian Innovations</h2>
 <section id="model-building-code-and-validation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</h3>
 <div class="cell">
@@ -890,19 +1055,61 @@ e_T^T
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.003 0.025
-[2,] 0.999 0.000
-[3,] 0.000 0.999</code></pre>
+<pre><code>       [,1]  [,2]
+[1,]  0.060 0.163
+[2,]  1.000 0.002
+[3,] -0.003 0.995</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.031 0.031
-[2,] 0.001 0.001
-[3,] 0.001 0.001</code></pre>
+[1,] 0.077 0.072
+[2,] 0.003 0.003
+[3,] 0.002 0.002</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 1.057 0.066
+[2,] 0.066 0.952</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 0.048 0.033
+[2,] 0.033 0.042</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</h2>
+<section id="model-building-code-and-validation-2" class="level3">
+<h3 class="anchored" data-anchor-id="model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    0    0
+[2,]    1    0
+[3,]    0    1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    0    0
+[2,]    0    0
+[3,]    0    0</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
@@ -918,12 +1125,36 @@ e_T^T
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
 [1,] 0.004 0.003
+[2,] 0.003 0.004</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]  [,2]
+[1,]  0.335 0.041
+[2,] -0.225 0.225
+[3,]  0.007 0.038</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 1.110 0.884
+[2,] 1.041 0.993
+[3,] 0.942 0.791</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 0.101 0.001
+[2,] 0.001 0.100</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 0.005 0.003
 [2,] 0.003 0.005</code></pre>
 </div>
 </div>
 </section>
 <section id="empirical-result-1" class="level3">
-<h3 class="anchored" data-anchor-id="empirical-result-1">4.2.2 Empirical Result</h3>
+<h3 class="anchored" data-anchor-id="empirical-result-1">4.4.2 Empirical Result</h3>
 <p>```</p>
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->

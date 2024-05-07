@@ -53,7 +53,25 @@ focused on analyzing macroeconomic data that are published on a monthly or quart
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends.
 Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+library(IMFData)
+library(patchwork)
+library(zoo)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(tseries)
+library(knitr)
+library(MASS)
+library(ggplot2)
+library(reshape2)
+library(progress)
+library(psych)
+library(truncnorm)
+library(extraDistr)
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 #################################################################################
 #################################################################################
 #Download Data 
@@ -61,8 +79,6 @@ Foreign direct investment, exchange rates, balance of payments and gross domesti
 #################################################################################
 
 #devtools::install_github('mingjerli/IMFData')
-library(IMFData)
-library(patchwork)
 # https://github.com/mingjerli/IMFData
 #find out available dataset in IMF data
 availableDB <- DataflowMethod()
@@ -274,10 +290,7 @@ AU.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 #################################################################################
 #################################################################################
 
-library(zoo)
-library(ggplot2)
-library(tidyr)
-library(dplyr)
+
 
 CPI_data <- data.frame(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`, CN.CPI.query$Obs[[1]]$`@OBS_VALUE`, JP.CPI.query$Obs[[1]]$`@OBS_VALUE`, 
                        US.CPI.query$Obs[[1]]$`@OBS_VALUE`, AU.CPI.query$Obs[[1]]$`@OBS_VALUE`)
@@ -487,14 +500,21 @@ blank_plot <- ggplot() +
 ```
 
 
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+colnames(CPI_data) = c('Time', 'CPI_CN', 'CPI_JP', 'CPI_US', 'CPI_AU')
+colnames(FDI_original) = c('Time', 'FDI_CN', 'FDI_JP', 'FDI_US', 'FDI_AU')
+data <- inner_join(CPI_data, FDI_original, by = "Time")
+
+
+```
 ## Data Plots 
 **Original Variables** 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 layout <- (FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
 **Transformed Variables**
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 layout <- (CPI_plot | FDI_plot) / (XCH_plot | BOP_plot) / (GDP_plot | blank_plot)
 layout 
 ```
@@ -506,10 +526,9 @@ layout
 The Augmented Dickey-Fuller Test is used in this section to test the null hypothesis that a unit root is present in the time series and the time series is non-stationary. 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 #install.packages("tseries")
-library(tseries)
-library(knitr)
+
 perform_adf_test <- function(series) {
   adf_test <- adf.test(series, alternative = "stationary", k = 4)
   list(
@@ -527,7 +546,7 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for CPI Data by Country")
 ```
 The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level. 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 results <- sapply(FDI_data[2:nrow(FDI_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -541,7 +560,7 @@ The ADF results shows that we have enough evidence to reject the null hypothesis
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 results <- sapply(XCH_data[2:nrow(XCH_data),2:4], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -552,7 +571,7 @@ kable(results_df, caption = "ADF Test Results for Exchange Rate (% change) Data 
 
 The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate (%change) against the dollar series is unit root non-stationary at 1% significance level. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 
 results <- sapply(BOP_data[2:nrow(BOP_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -563,7 +582,7 @@ kable(results_df, caption = "ADF Test Results for Balance of Payments (% change)
 ```
 The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments (%change) series is unit root non-stationary at 5% significance level for all countries except for China. 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 
 results <- sapply(GDP_data_percent[2:nrow(GDP_data_percent),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -758,13 +777,224 @@ The draws from joint predictive density can then be obtained using the following
 2. Sample S draws $\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S$ from $Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}]|A^{(s)}, \Sigma^{(s)}]$
 
 
-
-## 3.2 Model 2: Large BVARs model with MA(1) Gaussian innovations
-
-
-### 3.2.1 Model Specification
-
+## 3.2 Model 2: Large BVAR model with MA(1) Gaussian Innovations 
 Incorporating MA(1) Gaussian innovations in a large BVARs model lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables for several reasons. Firstly, the variances of economic shocks is rarely constant over time. For example, volatility tends to cluster during periods of economic crisis and is more tranquil during stable times. Incorporating stochastic volatility allows the model to adapt to changing volatility in the data, improving forecasting performance especially in the presence of financial market instability or economic policy shifts. In addition, by allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model's ability to predict future values by considering the path-dependent nature of the economy. Our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below: 
+
+3.2.1 Model Specification 
+
+$$ Y = XA+E$$
+$$E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})$$
+$$
+A = \begin{bmatrix}
+\mu_0^T \\
+A_1^T \\
+\vdots \\
+A_p^T
+\end{bmatrix}
+, \quad
+Y = \begin{bmatrix}
+y_1^T \\
+y_2^T \\
+\vdots \\
+y_T^T
+\end{bmatrix}
+, \quad
+x_t = \begin{bmatrix}
+1 \\
+y_{t-1}^T \\
+\vdots \\
+y_{t-p}^T
+\end{bmatrix}
+, \quad
+X = \begin{bmatrix}
+x_1^T \\
+x_2^T \\
+\vdots \\
+x_T^T
+\end{bmatrix}
+, \quad
+E = \begin{bmatrix}
+e_1^T \\
+e_2^T \\
+\vdots \\
+e_T^T
+\end{bmatrix}
+$$
+
+where 
+
+- $T$ is the number of time periods under consideration
+- $N$ is the number of variables, in our case, N = 20
+- $P$ is the number of lags
+- $Y$ is a $T \times N$ matrix of variables of response variables we aim to model.
+- $A$ is a $K \times N$ matrix of coefficients, $K = (1+𝑝\times N)$.
+- $E$ is a $T \times N$ matrix of the error terms
+- $X$ is a $T \times (1+𝑝\times N)$ matrix of covariates
+- $\Sigma$ is a $N \times N$ matrix representing the row-specific covariance matrix
+- $I_T$ is a $T \times T$ identity matrix representing the column specific covariance matrix
+- $E|X$ follows a matrix-variate normal distribution with mean $0_{T \times N}$, row specific covariance matrix $\Sigma_{N \times N}$ and column specific covariance matrix $I_T$
+
+with MA(1) innovations, we have, for i = 1,....,N and t = 1,...,T, $$u_{it} = \eta_{it} + \psi \eta_{i,t-1}$$ where $|\psi|<1$ and $\eta_{it} \sim \mathcal{N}(0,1)$
+
+In matrix notation, we have: 
+
+$$u_i = H_{\psi} \eta_i$$ 
+
+where 
+
+
+$$
+u_i = \begin{bmatrix}
+u_{i1} \\
+u_{i2} \\
+\vdots \\
+u_{iT}
+\end{bmatrix} \qquad 
+\eta_i = \begin{bmatrix}
+\eta_{i1} \\
+\eta_{i2} \\
+\vdots \\
+\eta_{iT}
+\end{bmatrix} \qquad 
+H_{\psi} = \left(
+\begin{array}{cccc}
+1 & 0  & \cdots & 0 \\
+\psi & 1  & \cdots & 0 \\
+\vdots & \ddots & \ddots & \vdots \\
+0 & \cdots & \psi & 1
+\end{array}
+\right)
+$$
+Hence, we have 
+
+$$u_1 \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T$$
+Note that the covariance matrix $\Omega$ depends on $\psi$ only. 
+
+### 3.2.2 Prior Specification 
+
+We consider a prior independent distributions for $(A, \Sigma, \Omega)$, specifically, we have: $$P(A, \Sigma, \Omega) = P(A, \Sigma) \times P(\Omega)$$
+
+We will employ a Normal-Inverse Wishart distribution for the joint distribution of A and $\Sigma$ and before, $$(A,\Sigma) \sim \mathcal{NIW}_{K \times N}(A_0, V_A, S_0, \nu_0)$$
+
+We apply a truncated normal prior on $\psi$, $$\psi \sim \mathcal{N}(\psi_0, V_{\psi})$$
+
+For estimation purposes, we initialize with the following setting: 
+
+- $u_{i1} \sim \mathcal{N}(0, 1+\psi^2)$
+- $\psi_0 = 0$ and $V_{\psi} = 1$ so that the prior centers around 0 with a relatively large variance and has support within (-1, 1)
+
+### 3.2.3 Posterior Distributions 
+
+1. The posterior distribution of Y specified above has the form: 
+
+$$p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}|\Omega|^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA))$$
+
+$$= (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}(1+\psi^2)^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(H_{\psi}O_{\psi}H_{\psi}^T)^{-1}(Y-XA))$$
+
+2. The joint posterior distribution of A and $\Sigma$ can be derived as follows:
+
+$$p(A, \Sigma \mid Y, \Omega)  = \frac{p(A,\Sigma,Y, \Omega)}{p(Y, \Omega)}$$
+$$\propto p(A, \Sigma, Y, \Omega) \propto p(Y \mid A,\Sigma, \Omega)\times p(A,\Sigma, \Omega)$$
+$$=  p(Y \mid A,\Sigma, \Omega) p(A, \Sigma) p(\Omega) = p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma) p(\Omega)$$
+
+$$\propto p(Y \mid A,\Sigma, \Omega) p(A \mid \Sigma) p(\Sigma)$$
+
+
+
+$$\propto |\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA)) \times$$
+
+$$\mid \Sigma \mid^{-\frac{\nu_0+N+K}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}S_o))exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^TV_A^{-1}(A-A_0))$$
+
+
+$$\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma^{-1}S_0)) \times $$
+$$exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^T\Omega^{-1}Y-\bar{A}^T\bar{V}^{-1}\bar{A})\times$$
+$$exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))$$
+
+Hence, 
+
+$$p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)$$
+
+
+$$p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})$$
+
+$$p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})$$
+
+where
+
+$$\bar{V} = (X^T\Omega^{-1}X + V_A^{-1})^{-1}$$
+
+
+
+$$\bar{A} = \bar{V}(X^T\Omega^{-1}Y + V_A^{-1}A_0)$$
+
+$$\bar{\nu} = T + \nu_0$$
+
+$$\bar{S} = S_0 + Y^T\Omega^{-1}Y + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}$$
+3. The posterior distribution for the parameter $\psi$ can be obtained as follows: 
+$$P(\psi|Y, A, \Sigma) = \frac{P(\psi, Y, A, \Sigma)}{P(Y, A, \Sigma)} \propto P(\psi, Y, A, \Sigma) = P(Y|A, \Sigma, \psi) \times P(A,\Sigma, \psi) $$
+
+$$= P(Y|A, \Sigma, \psi) \times P(A, \Sigma) \times P(\psi) \propto P(Y|A, \Sigma, \psi) \times P(\psi)$$
+
+we can sample from the posterior distribution of $\psi$ using an independence-chain Metropolis-Hastings algorithm. 
+
+### 3.2.4 Estimation Procedure 
+
+We obtain posterior estimates of $A, \Sigma, \psi$ using a Gibbs sampler, specifically, we initialize $\psi^{(0)}$ and for s = 1,...,S1+S2, we sequentially sample: 
+
+- $\Sigma^{(s)} | Y, X, \psi^{(s-1)} \sim \mathcal{IW}_N(\bar{S}, \bar{\nu})$
+- $A^{(s)} | Y, X, \Sigma^{(s)}, \psi^{(s-1)} \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma^{(s)}, \bar{V})$
+- $\psi^{(s)} | Y, X, A^{(s)}, \Sigma^{(s)} \propto P(Y|A^{(s)}, \Sigma^{(s)}, \psi^{s-1})\times p(\psi)$
+
+The Metropolis-Hastings Algorithm for Sampling $\psi$ is given as follows: 
+
+
+
+**Initialization:**
+
+- Choose an initial value $\psi^{(0)}$ within the bounds $(-1, 1)$. 
+
+**Proposal Distribution:**
+
+- Select the proposal distribution $q(\psi' | \psi^{(t)}) \sim N(\psi^{(t)}, \tau^2)$. $\tau^2$ is a tuning parameter that controls the step size.
+    
+**Sampling Loop:**
+
+For t = 1,...,$T_1+T_2$
+
+- Generate a candidate $\psi'^{(t)}$ from $q(\psi' | \psi^{(t-1)})$.
+
+- Check if $\psi'$ is within the bounds $(-1, 1)$. If not, reject $\psi'$ (set $\alpha = 0$).
+
+- Compute the acceptance ratio $\alpha$:
+            $$ \alpha(\psi^{(t-1)}, \psi') = \min\left(1, \frac{p(Y | A, \Sigma, \psi') p(\psi') q(\psi^{(t-1)} | \psi')}{p(Y | A, \Sigma, \psi^{(t-1)}) p(\psi^{(t-1)}) q(\psi' | \psi^{(t-1)})}\right)$$
+
+**Decide to accept or reject:**
+
+- Generate a random number $u$ from $U[0,1]$.
+
+- If $u \leq \alpha$, accept $\psi'$ and set $\psi^{(t)} = \psi'$.
+
+- Otherwise, reject $\psi'$ and set $\psi^{(t)} = \psi^{(t-1)}$.
+  
+**Burn in period**
+
+- Discard the first $T_1$ samples to allow the algorithm to converge to the true distribution 
+
+**Obtain one sample of $\psi$**
+
+- Randomly draw a $\psi^*$ from the $T_2$ draws and set $\psi^{(s)} = \psi^*$
+
+We monitor the acceptance rate and adjust $\tau^2$ as necessary to achieve an optimal rate of about 20-40\%.
+
+We note that since $\Omega$ is a band matrix, we do not need compute $\Omega^{-1}$, instead, we obtain the Cholesky decomposition $C_{\Omega}$ of $\Omega$, which has a time complexity of $O(T)$. Terms involving $\Omega^{-1}$ such as $X^T\Omega^{-1}X$ can be obtained by: $$X^T\Omega^{-1}X = X^T(C_{\Omega}^{-1})^{T}C_{\Omega}^{-1}X=(C_{\Omega}^{-1}X)^T(C_{\Omega}^{-1}X) = \tilde{X}^T\tilde{X}$$
+
+## 3.3 Model 3: Large BVAR model with ommon Stochastic Volatility
+
+## 3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility
+
+
+### 3.4.1 Model Specification
+
 
 $$ Y = XA+E$$ 
 
@@ -840,7 +1070,7 @@ $$\Omega = \left(
 
 In this specification, each element of $e_t$ may have distinct variances, and the variances of all innovations can be scaled by a common factor. This approach is economically intuitive, as the volatility of macroeconomic variables often exhibit co-movement. It is important to emphasize that each component of $e_t$ must adhere to the same univariate time series model. 
 
-### 3.2.2 Prior Specification
+### 3.4.2 Prior Specification
 
 
 Here, we consider a priori independent distributions for $(A, \Sigma, \Omega)$, namely: 
@@ -882,9 +1112,9 @@ $$\rho \sim \mathcal{N}(\rho_0, V_\rho) \mathbb{1}(|\rho|<1)$$
 
 We set the hyperparameters $\nu_{h_0} = 5$, $s_{h_0} = 0.04$, $\rho_0 = 0.9$ and $V_\rho = 0.04$ so that the prior mean of $\sigma_h^2$ is 0.01 and $\rho$ is centered at 0.9. 
 
-### 3.2.3 Posterior Distribution
+### 3.4.3 Posterior Distribution
 
-The posterior distribution specified above has the form 
+The posterior distribution specified above has the following form: 
 
 $$p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}|\Omega|^{-\frac{N}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T\Omega^{-1}(Y-XA))$$
 
@@ -928,7 +1158,7 @@ $$\bar{\nu} = T + \nu_0$$
 
 $$\bar{S} = S_0 + Y^T\Omega^{-1}Y + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}$$
 
-### 3.2.4 Estimation Procedure 
+### 3.4.4 Estimation Procedure 
 
 
 In this setting, we have 
@@ -989,11 +1219,6 @@ $$\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}$$
 
 Sampling from the joint predictive density is the same as before. 
 
-## 3.3 Model 3: BVAR with Common Stochastic Volatilities
-
-## 3.4 Model 4: BVAR with Common Stochastic Volatilities and MA(1) Gaussian Innovations 
-
-
 # 4. Model Estimation
 ## 4.1 Standard Bayesian VAR
 ### 4.1.1 Model Building Code and Validation 
@@ -1008,10 +1233,21 @@ $$\mathbf{\epsilon} \sim iid \mathcal{N}(\mathbf{0}, \mathbf{I_2} )$$
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
-if (!require(MASS)) {install.packages('MASS')}
+library(IMFData)
+library(patchwork)
+library(zoo)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(tseries)
+library(knitr)
 library(MASS)
 library(ggplot2)
 library(reshape2)
+library(progress)
+library(psych)
+library(truncnorm)
+library(extraDistr)
 
 set.seed(123)
 
@@ -1020,12 +1256,11 @@ cov_matrix = diag(2)
 
 random_walk_sample = matrix(nrow = n, ncol = 2)
 #initialize the random walk at 0,0
-random_walk_sample[1, ] = c(0, 0) 
+random_walk_sample[1, ] = c(0, 0)
 
 for (i in 2:n) {
   random_walk_sample[i, ] = random_walk_sample[i - 1, ] + mvrnorm(n = 1, mu = c(0, 0), Sigma = cov_matrix)
-}
-
+  }
 mat_plot = random_walk_sample 
 colnames(mat_plot) = c("Series1", "Series2")
 mat_plot = as.data.frame(mat_plot)
@@ -1040,21 +1275,22 @@ ggplot(mat_plot, aes(x = Index, y = value, color = variable)) +
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}
-BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T){
-  N = ncol(data)
-  T = nrow(data)
-  X = matrix(1,T,1)
+BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){
+  N = ncol(Y)
+  Ty = nrow(Y)
   S = S1 + S2
+  Y = (data[(p+1):nrow(data),c(1,2)])
+  X = matrix(1,nrow(Y),1) 
   for (i in 1:p){
-    X     = cbind(X,data[p+1:T-i,])
+    X     = cbind(X, (data[(p+1):nrow(data)-i,c(1,2)]))
   }
-
   V_bar = solve(t(X)%*%X + solve(V_prior))
-  A_bar = V_bar%*%(t(X)%*%data + solve(V_prior)%*%A_prior)
-  nu_bar = T + nu_prior
-  #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
-  S_bar = S_prior +  t(data)%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  A_bar = V_bar%*%(t(X)%*%Y + solve(V_prior)%*%A_prior)
+  nu_bar = Ty + nu_prior
+  #S_bar  = S_prior + t(Y)%*%Y + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar = S_prior +  t(Y)%*%Y + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
   S_bar_inv = solve(S_bar)
+
   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   Sigma_posterior = apply(Sigma_posterior,3,solve)
@@ -1074,15 +1310,17 @@ Then we estimate a model with a constant term and 1 lag using the simulated data
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 p = 1
-kappa1 = 0.1^2
+kappa1 = 0.02^2
 kappa2 = 10^2
 N = ncol(random_walk_sample)
-A_prior     = matrix(0, 1+p*N, ncol = N)
+A_prior             = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
 V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
 S_prior     = diag(1, N)
 nu_prior    = ncol(random_walk_sample)+1
 S1 = 1000 
 S2 = 2000
+Y = (random_walk_sample[(p+1):nrow(random_walk_sample),c(1,2)])
 
 posterior_samples = BVAR_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
 
@@ -1098,33 +1336,111 @@ print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
-
-
 ### 4.1.2 Empirical Result
+
+## 4.2 Large BVAR model with MA(1) Gaussian Innovations 
+### 4.2.1 Model Building Code and Validation 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 
 
+BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){
+  Y = (data[(p+1):nrow(data),c(1,2)])
+  N = ncol(Y)
+  Ty = nrow(Y)
+  S = S1 + S2
+  X = matrix(1,nrow(Y),1) 
+  K = 1+p*N
+  for (i in 1:p){
+    X     = cbind(X, (data[(p+1):nrow(data)-i,c(1,2)]))
+  }
+  
+  nu_bar = Ty + nu_prior
+  psi = 0
+  H_psi = matrix(0, nrow = Ty, ncol = Ty)
+  O_psi = diag(rep(1, Ty))
+  O_psi[1,1] = 1+psi^2
+  for (t in 1:Ty){
+    H_psi[t,t] = 1
+    if (t < Ty){
+      H_psi[t+1, t] = psi
+    }
+  }
+  A_posterior = array(rnorm(prod(c(c(K,N),S))),c(c(K,N),S))
+  Sigma_posterior = array(dim = c(N,N,S))
+  Omega_posterior = array(dim = c(Ty, Ty, S+1))
+  Omega_posterior[,,1] = H_psi %*% O_psi %*% t(H_psi)
+  
+  
+  pb <- progress_bar$new(total = S)
+    
+  for (s in 1:S){
+    pb$tick()
+    chol_Omega = chol(Omega_posterior[,,1]) #########change 
+    chol_Omega_inv = solve(chol_Omega)
+    #V_bar = solve(t(X)%*%X + solve(V_prior))
+    V_bar = solve(t(chol_Omega_inv%*%X)%*%(chol_Omega_inv%*%X) + solve(V_prior))
+    L = t(chol(V_bar))
+    #A_bar = V_bar%*%(t(X)%*%Y + solve(V_prior)%*%A_prior)
+    A_bar = V_bar%*%(t(chol_Omega_inv%*%X)%*%(chol_Omega_inv%*%Y) + solve(V_prior)%*%A_prior)
+    #S_bar = S_prior +  t(Y)%*%Y + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+    S_bar = S_prior +  t(chol_Omega_inv%*%Y)%*%(chol_Omega_inv%*%Y) + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+    S_bar_inv = solve(S_bar)
+    Sigma_posterior[,,s] = solve(rWishart(1, df=nu_bar, Sigma=S_bar_inv)[,,1])
+    A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,1]) ############change 
+  }
+  A_posterior = A_posterior[,,(S1+1):(S1+S2)]
+  Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
+  return(list(A_posterior, Sigma_posterior))}
 ```
 
-## 4.2  Large BVARs model with MA(1) Gaussian innovations
-### 4.2.1 Model Building Code and Validation 
+```{r}
+data = random_walk_sample
+N = ncol(data)
+p = 1
+kappa1 = 0.02^2
+kappa2 = 10^2
+A_prior             = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(random_walk_sample)+1
+S1 = 100
+S2 = 200
+
+posterior_samples = BVAR_MA_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
+posterior_samples_A = posterior_samples[[1]]
+posterior_samples_Sigma = posterior_samples[[2]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,sd),3)
+print('Posterior mean of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,mean),3)
+print('Posterior standard deviation of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,sd),3)
+
+```
+
+
+
+## 4.4  Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility
+### 4.4.1 Model Building Code and Validation 
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}
-library(extraDistr)
-library(truncnorm)
+
 BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T, vho_prior, sh0_prior, rho_prior, Vrho_prior, psi_prior, Vpsi_prior){
   N = ncol(data)
-  T = nrow(data)
-  X = matrix(1,T,1)
+  Ty = nrow(data)
+  X = matrix(1,Ty,1)
   for (i in 1:p){
-    X     = cbind(X,data[p+1:T-i,])
+    X     = cbind(X,data[p+1:Ty-i,])
   }
   S = S1 + S2
   K = 1+p*N
  
-  nu_bar = T + nu_prior
+  nu_bar = Ty + nu_prior
   #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
  
   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
@@ -1132,22 +1448,22 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
  
   sigma_h_squared = rinvgamma(n = 1, alpha = vh0_prior, beta = sh0_prior)
   rho = rtnorm(n = 1, mean = rho_prior, sqrt(Vrho_prior), a = -1, b = 1)
-  u_h = rnorm(n = T, mean = 0, sd = sqrt(sigma_h_squared))
-  h = array(dim = T)
-  u = array(dim = c(N,1,T))
+  u_h = rnorm(n = Ty, mean = 0, sd = sqrt(sigma_h_squared))
+  h = array(dim = Ty)
+  u = array(dim = c(N,1,Ty))
   h [1] = rho * 0 + u_h[1]
   psi = rtnorm(n = 1, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1)
-  epsilon = array(dim = c(N,1,T))
-  Omega = array(0, dim = c(T,T))
+  epsilon = array(dim = c(N,1,Ty))
+  Omega = array(0, dim = c(Ty,Ty))
     
-  for (t in 2:T){
+  for (t in 2:Ty){
     h[t] = rho*h[t-1] + u_h[t]
   } 
   
   Sigma_prior = rWishart(n = 1, df = nu_prior, Sigma = S_prior)[,,1]
   Sigma_prior = solve(Sigma_prior)
   
-  for (t in 1:T){
+  for (t in 1:Ty){
     u_var = exp(h[t])*Sigma_prior
     u[,,t] = mvrnorm(n = 1, mu = rep(0,N), Sigma = u_var)
     if (t == 1){
@@ -1164,9 +1480,9 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   
   V_bar = solve(t(X)%*%solve(Omega)%*%X + solve(V_prior))
   A_bar = V_bar%*%(t(X)%*%solve(Omega)%*%data + solve(V_prior)%*%A_prior)
-  nu_bar = T + nu_prior
+  nu_bar = Ty + nu_prior
   #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
-  S_bar = S_prior +  t(data)%*%solve(Omega)%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar = S_prior +  t(data)%*%solve(Omega)%*%data + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
   S_bar_inv = solve(S_bar)
   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
@@ -1217,89 +1533,105 @@ print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6, }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #Code for S draws f Omega
-# data = random_walk_sample
-# N = ncol(data)
-# T = nrow(data)
-# X = matrix(1,T,1)
-# S1 = 0
-# S2 = 2
-# S = S1 + S2
-# set.seed(123)
-# for (i in 1:p){
-#   X     = cbind(X,data[p+1:T-i,])
-# }
-# 
-# #dim 1 variables
-# sigma_h_squared = rinvgamma(n = S, alpha = vh0_prior, beta = sh0_prior)
-# rho = rtnorm(n = S, mean = rho_prior, sqrt(Vrho_prior), a = -1, b = 1)
-# psi = rtnorm(n = S, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1)
-# 
-# #dim NxN variables
-# Sigma_prior = array(dim = c(N,N,S))
-# 
-# #dim Tx1  variables 
-# u_h = array(dim = c(T,1,S))
-# h = array(dim = c(T,1,S))
-# 
-# # dim T by N variables
-# u = array(dim = c(N,1,T, S))
-# epsilon = array(dim = c(N,1,T, S))
-# uvar = array(dim = c(N,N,T,S))
-# #dim TxT variables 
-# Omega = array(0, dim = c(T,T,S))
-# 
-# for (s in 1:S){
-#   u_h[,,s] = rnorm(n = T, mean = 0, sd = sqrt(sigma_h_squared[s]))
-#   h[1,1,s] = rho[s] * 0 + u_h[1,1,s]
-#   Sigma_prior[,,s] = rWishart(n = 1, df = nu_prior, Sigma = S_prior)[,,1]
-#   Sigma_prior[,,s] = solve(Sigma_prior[,,s])
-#   for (t in 2:T){
-#     h[t,1,s] = rho[s]*h[t-1,1,s] + u_h[t,1,s]
-#   } 
-#   for (t in 1:T){
-#     uvar[,,t,s] = exp(h[t,1,s])*Sigma_prior[,,s]
-#     u[,,t,s] = mvrnorm(n=1,mu = rep(0,N), Sigma = uvar[,,t,s])
-#     if(t==1){
-#       epsilon[,,t,s] = u[,,t,s]
-#       Omega[t,t,s] = (1-psi[s]^2)*exp(h[t,1,s])
-#     }
-#     else{
-#       epsilon[,,t,s] = u[,,t,s] + psi[s]*u[,,t-1,s]
-#       Omega[t,t,s] = psi[s]^2 * exp(h[t-1,1,s])+exp(h[t,1,s])
-#       Omega[t-1,t,s] = psi[s] * exp(h[t-1,1,s])
-#       Omega[t,t-1,s] = psi[s] * exp(h[t-1,1,s])
-#     }
-#   }
-# }
-# 
-# 
-# 
-# for (s in 1:S){
-#   V_bar = solve(t(X)%*%solve(Omega[,,s])%*%X + solve(V_prior))
-#   A_bar = V_bar%*%(t(X)%*%solve(Omega[,,s])%*%data + solve(V_prior)%*%A_prior)
-#   nu_bar = T + nu_prior
-#   #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
-#   S_bar = S_prior +  t(data)%*%solve(Omega[,,s])%*%data + t(A_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
-#   S_bar_inv = solve(S_bar)
-#   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
-#   Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
-#   Sigma_posterior = apply(Sigma_posterior,3,solve)
-#   Sigma_posterior  = array(Sigma_posterior,c(N,N,S))
-#   A_posterior = array(rnorm(prod(c(dim(A_bar),S))),c(dim(A_bar),S))
-#   L = t(chol(V_bar))
-#   A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
-#   }
-# A_posterior = A_posterior[,,(S1+1):(S1+S2)]
-# Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
-# 
-# round(apply(A_posterior,1:2,mean),3)
-# round(apply(A_posterior,1:2,sd),3)
-# round(apply(Sigma_posterior,1:2,mean),3)
-# round(apply(Sigma_posterior,1:2,sd),3)
+
+p = 1
+kappa1 = 0.1^2
+kappa2 = 10^2
+N = ncol(random_walk_sample)
+A_prior     = matrix(0, 1+p*N, ncol = N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(random_walk_sample)+1
+vh0_prior = 5
+sh0_prior = 0.04
+rho_prior = 0
+Vrho_prior = 0.04
+psi_prior = 0
+Vpsi_prior = 1
+
+data = random_walk_sample
+N = ncol(data)
+Ty = nrow(data)
+X = matrix(1,Ty,1)
+S1 = 50
+S2 = 50
+S = S1 + S2
+set.seed(123)
+for (i in 1:p){
+  X     = cbind(X,data[p+1:Ty-i,])
+}
+
+#dim 1 variables
+sigma_h_squared = rinvgamma(n = S, alpha = vh0_prior, beta = sh0_prior)
+rho = rtnorm(n = S, mean = rho_prior, sqrt(Vrho_prior), a = -1, b = 1)
+psi = rtnorm(n = S, mean = psi_prior, sd = sqrt(Vpsi_prior), a = -1, b = 1)
+
+#dim NxN variables
+Sigma_prior = array(dim = c(N,N,S))
+
+#dim Tx1  variables
+u_h = array(dim = c(Ty,1,S))
+h = array(dim = c(Ty,1,S))
+
+# dim T by N variables
+u = array(dim = c(N,1,Ty, S))
+epsilon = array(dim = c(N,1,Ty, S))
+uvar = array(dim = c(N,N,Ty,S))
+#dim TxT variables
+Omega = array(0, dim = c(Ty,Ty,S))
+
+for (s in 1:S){
+  u_h[,,s] = rnorm(n = Ty, mean = 0, sd = sqrt(sigma_h_squared[s]))
+  h[1,1,s] = rho[s] * 0 + u_h[1,1,s]
+  Sigma_prior[,,s] = rWishart(n = 1, df = nu_prior, Sigma = S_prior)[,,1]
+  Sigma_prior[,,s] = solve(Sigma_prior[,,s])
+  for (t in 2:Ty){
+    h[t,1,s] = rho[s]*h[t-1,1,s] + u_h[t,1,s]
+  }
+  for (t in 1:Ty){
+    uvar[,,t,s] = exp(h[t,1,s])*Sigma_prior[,,s]
+    u[,,t,s] = mvrnorm(n=1,mu = rep(0,N), Sigma = uvar[,,t,s])
+    if(t==1){
+      epsilon[,,t,s] = u[,,t,s]
+      Omega[t,t,s] = (1-psi[s]^2)*exp(h[t,1,s])
+    }
+    else{
+      epsilon[,,t,s] = u[,,t,s] + psi[s]*u[,,t-1,s]
+      Omega[t,t,s] = psi[s]^2 * exp(h[t-1,1,s])+exp(h[t,1,s])
+      Omega[t-1,t,s] = psi[s] * exp(h[t-1,1,s])
+      Omega[t,t-1,s] = psi[s] * exp(h[t-1,1,s])
+    }
+  }
+}
+
+
+
+for (s in 1:S){
+  V_bar = solve(t(X)%*%solve(Omega[,,s])%*%X + solve(V_prior))
+  A_bar = V_bar%*%(t(X)%*%solve(Omega[,,s])%*%data + solve(V_prior)%*%A_prior)
+  nu_bar = Ty + nu_prior
+  #S_bar  = S_prior + t(data)%*%data + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar = S_prior +  t(data)%*%solve(Omega[,,s])%*%data + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
+  S_bar_inv = solve(S_bar)
+  #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
+  Sigma_posterior = apply(Sigma_posterior,3,solve)
+  Sigma_posterior  = array(Sigma_posterior,c(N,N,S))
+  A_posterior = array(rnorm(prod(c(dim(A_bar),S))),c(dim(A_bar),S))
+  L = t(chol(V_bar))
+  A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,s])
+  }
+A_posterior = A_posterior[,,(S1+1):(S1+S2)]
+Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
+
+round(apply(A_posterior,1:2,mean),3)
+round(apply(A_posterior,1:2,sd),3)
+round(apply(Sigma_posterior,1:2,mean),3)
+round(apply(Sigma_posterior,1:2,sd),3)
 ```
-### 4.2.2 Empirical Result
+### 4.4.2 Empirical Result
 
 ```
 

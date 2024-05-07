@@ -640,7 +640,6 @@ where
 
 
 
-
 The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.
 
 The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix $\Sigma$, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.
@@ -691,7 +690,7 @@ The hyperparameters $\kappa_1$ and $\kappa_2$ are specified in a way such that t
 
 The posterior distribution specified above has the form 
 
-$$p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))$$
+$$p(Y|A, \Sigma) = (2\pi)^{-\frac{TN}{2}}|\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))$$
 
 and the joint posterior distribution
 
@@ -745,7 +744,7 @@ we use the following Gibb's Sampler algorithm to sample from the posterior distr
 
 - Initialize $\Sigma$ at $\Sigma^0$ 
 - For $s = 1,...,S_1+S_2$
-    1. Draw a sample $A^{(s)}$ from $p(A \mid Y, X, \Sigma^{(s-1)}) \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})$
+    1. Draw a sample $A^{(s)}$ from $p(A \mid Y, X, \Sigma^{(s-1)}) \sim \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})$
     2. Draw a sample $\Sigma^{(s)}$ from $p(\Sigma \mid Y, X, A^{(s)}) = \mathcal{IW}_N(\bar{S}, \bar{\nu})$
     
 We discard the first $S_1$ sample draws to allow the algorithm to converge to the stationary posterior distributiion to obtain $S_2$ sampled draws from the joint posterior distribution. 
@@ -755,7 +754,7 @@ $$\left\{A^{(s)}, \Sigma^{(s)}\right\}_{s=S_1+1}^{S_1+S_2}$$
 The draws from joint predictive density can then be obtained using the following algorithm: 
 
 1. Sample S draws $\left\{ A^{(s)}, \Sigma^{(s)} \right\}_{s=1}^{S}$ from $p(A,\Sigma|Y, X)$ 
-2. Sample S draws $\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S$ from $Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}]|A^{(s)}, \Sigma^{(s)}]$
+2. Sample S draws $\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S$ from $Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}|A^{(s)}, \Sigma^{(s)}])$
 
 
 
@@ -912,7 +911,7 @@ Hence,
 $$p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)$$
 
 
-$$p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})$$
+$$p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})$$
 
 $$p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})$$
 

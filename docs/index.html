@@ -733,14 +733,16 @@ H_{\psi} = \left(
 \vdots &amp; \ddots &amp; \ddots &amp; \vdots \\
 0 &amp; \cdots &amp; \psi &amp; 1
 \end{array}
-\right)
-\]</span> Hence, we have</p>
+\right) \qquad
+O_{\psi} = diag(1+s\psi^2, 1, ..., 1)
+\]</span></p>
+<p>Hence, we have</p>
 <p><span class="math display">\[u_1 \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T\]</span> Note that the covariance matrix <span class="math inline">\(\Omega\)</span> depends on <span class="math inline">\(\psi\)</span> only.</p>
 <section id="prior-specification" class="level3">
 <h3 class="anchored" data-anchor-id="prior-specification">3.2.2 Prior Specification</h3>
 <p>We consider a prior independent distributions for <span class="math inline">\((A, \Sigma, \Omega)\)</span>, specifically, we have: <span class="math display">\[P(A, \Sigma, \Omega) = P(A, \Sigma) \times P(\Omega)\]</span></p>
 <p>We will employ a Normal-Inverse Wishart distribution for the joint distribution of A and <span class="math inline">\(\Sigma\)</span> and before, <span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N}(A_0, V_A, S_0, \nu_0)\]</span></p>
-<p>We apply a truncated normal prior on <span class="math inline">\(\psi\)</span>, <span class="math display">\[\psi \sim \mathcal{N}(\psi_0, V_{\psi})\]</span></p>
+<p>We apply a truncated normal prior on <span class="math inline">\(\psi\)</span>, <span class="math display">\[\psi \sim \mathcal{N}(\psi_0, V_{\psi})\mathbb{1}_{\{|\psi|&lt;1\}}\]</span></p>
 <p>For estimation purposes, we initialize with the following setting:</p>
 <ul>
 <li><span class="math inline">\(u_{i1} \sim \mathcal{N}(0, 1+\psi^2)\)</span></li>
@@ -1050,42 +1052,6 @@ e_T^T
 <h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations">4.2 Large BVAR model with MA(1) Gaussian Innovations</h2>
 <section id="model-building-code-and-validation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</h3>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]
-[1,]  0.060 0.163
-[2,]  1.000 0.002
-[3,] -0.003 0.995</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.077 0.072
-[2,] 0.003 0.003
-[3,] 0.002 0.002</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 1.057 0.066
-[2,] 0.066 0.952</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.048 0.033
-[2,] 0.033 0.042</code></pre>
-</div>
-</div>
 </section>
 </section>
 <section id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
@@ -1097,19 +1063,19 @@ e_T^T
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2]
-[1,]    0    0
-[2,]    1    0
-[3,]    0    1</code></pre>
+<pre><code>      [,1]  [,2]
+[1,] 0.003 0.025
+[2,] 0.999 0.000
+[3,] 0.000 0.999</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2]
-[1,]    0    0
-[2,]    0    0
-[3,]    0    0</code></pre>
+<pre><code>      [,1]  [,2]
+[1,] 0.031 0.031
+[2,] 0.001 0.001
+[3,] 0.001 0.001</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
@@ -1125,7 +1091,7 @@ e_T^T
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
 [1,] 0.004 0.003
-[2,] 0.003 0.004</code></pre>
+[2,] 0.003 0.005</code></pre>
 </div>
 </div>
 <div class="cell">

@@ -71,10 +71,6 @@ Vpsi_prior = 1
   }
   
   nu_bar = Ty + nu_prior
-  #S_bar = S_prior +  t(Y)%*%Y + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
-  #S_bar_inv = solve(S_bar)
-  
-  #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   psi = 0
   H_psi = matrix(0, nrow = Ty, ncol = Ty)
   O_psi = diag(rep(1, Ty))

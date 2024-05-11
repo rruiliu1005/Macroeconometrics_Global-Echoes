@@ -188,11 +188,6 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation-1" id="toc-model-building-code-and-validation-1" class="nav-link" data-scroll-target="#model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</a></li>
   </ul></li>
-  <li><a href="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</a>
-  <ul class="collapse">
-  <li><a href="#model-building-code-and-validation-2" id="toc-model-building-code-and-validation-2" class="nav-link" data-scroll-target="#model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</a></li>
-  <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.4.2 Empirical Result</a></li>
-  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -282,7 +277,7 @@ window.Quarto = {
 <td>BGS_BP6_USD</td>
 </tr>
 <tr class="odd">
-<td>Gross Domestic Product, Nominal, Unadjusted, Domestic Currency</td>
+<td>Gross Domestic Product, Nominal, Seasonally Adjusted, Domestic Currency</td>
 <td>Domestic Currency</td>
 <td>% Change</td>
 <td>GDP</td>
@@ -595,11 +590,12 @@ e_T^T
 <p><span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\]</span></p>
 <p><span class="math display">\[p(A,\Sigma) \propto |\Sigma|^{-\frac{K+\nu_0+N+1}{2}} \times exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\times exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^T(A-A_0)))\]</span></p>
 <p>where</p>
-<p><span class="math display">\[V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))\]</span></p>
 <ul>
-<li><span class="math display">\[\mathbf{p} = [1 \quad 2 \quad ... \quad p]\]</span> <span class="math display">\[I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N\]</span></li>
-<li><span class="math display">\[\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}\]</span></li>
-<li><span class="math display">\[\kappa_2 \text{ is the overall shrinkage lvel for the constant term }\]</span></li>
+<li><p><span class="math display">\[V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))\]</span></p></li>
+<li><p><span class="math display">\[\mathbf{p} = [1 \quad 2 \quad ... \quad p]\]</span></p></li>
+<li><p><span class="math display">\[I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N\]</span></p></li>
+<li><p><span class="math display">\[\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}\]</span></p></li>
+<li><p><span class="math display">\[\kappa_2 \text{ is the overall shrinkage lvel for the constant term }\]</span></p></li>
 </ul>
 <p>Additionally, we adopt commonly used values for the hyperparameters as established in the literature.</p>
 <p><span class="math display">\[A_0 = 0\]</span></p>
@@ -611,7 +607,7 @@ e_T^T
 <section id="posterior-distributions" class="level3">
 <h3 class="anchored" data-anchor-id="posterior-distributions">3.1.3 Posterior Distributions</h3>
 <p>The posterior distribution specified above has the form</p>
-<p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{Tn}{2}}|\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))\]</span></p>
+<p><span class="math display">\[p(Y|A, \Sigma) = (2\pi)^{-\frac{TN}{2}}|\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))\]</span></p>
 <p>and the joint posterior distribution</p>
 <p><span class="math display">\[p(A, \Sigma \mid Y)  = \frac{p(A,\Sigma,Y)}{p(Y)}\propto p(A, \Sigma, Y) \propto p(Y|A,\Sigma)\times p(A,\Sigma) =  p(Y|A,\Sigma) p(A \mid \Sigma) p(\Sigma)\]</span></p>
 <p><span class="math display">\[\propto |\Sigma|^{-\frac{T}{2}}exp(-\frac{1}{2}tr(\Sigma^{-1}(Y-XA)^T(Y-XA))) \times\]</span></p>
@@ -643,7 +639,7 @@ e_T^T
 <li>Initialize <span class="math inline">\(\Sigma\)</span> at <span class="math inline">\(\Sigma^0\)</span></li>
 <li>For <span class="math inline">\(s = 1,...,S_1+S_2\)</span>
 <ol type="1">
-<li>Draw a sample <span class="math inline">\(A^{(s)}\)</span> from <span class="math inline">\(p(A \mid Y, X, \Sigma^{(s-1)}) \sim \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\)</span></li>
+<li>Draw a sample <span class="math inline">\(A^{(s)}\)</span> from <span class="math inline">\(p(A \mid Y, X, \Sigma^{(s-1)}) \sim \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})\)</span></li>
 <li>Draw a sample <span class="math inline">\(\Sigma^{(s)}\)</span> from <span class="math inline">\(p(\Sigma \mid Y, X, A^{(s)}) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\)</span></li>
 </ol></li>
 </ul>
@@ -652,7 +648,7 @@ e_T^T
 <p>The draws from joint predictive density can then be obtained using the following algorithm:</p>
 <ol type="1">
 <li>Sample S draws <span class="math inline">\(\left\{ A^{(s)}, \Sigma^{(s)} \right\}_{s=1}^{S}\)</span> from <span class="math inline">\(p(A,\Sigma|Y, X)\)</span></li>
-<li>Sample S draws <span class="math inline">\(\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S\)</span> from <span class="math inline">\(Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}]|A^{(s)}, \Sigma^{(s)}]\)</span></li>
+<li>Sample S draws <span class="math inline">\(\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S\)</span> from <span class="math inline">\(Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}|A^{(s)}, \Sigma^{(s)}])\)</span></li>
 </ol>
 </section>
 </section>
@@ -734,7 +730,7 @@ H_{\psi} = \left(
 0 &amp; \cdots &amp; \psi &amp; 1
 \end{array}
 \right) \qquad
-O_{\psi} = diag(1+s\psi^2, 1, ..., 1)
+O_{\psi} = diag(1+\psi^2, 1, ..., 1)
 \]</span></p>
 <p>Hence, we have</p>
 <p><span class="math display">\[u_1 \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T\]</span> Note that the covariance matrix <span class="math inline">\(\Omega\)</span> depends on <span class="math inline">\(\psi\)</span> only.</p>
@@ -766,7 +762,7 @@ O_{\psi} = diag(1+s\psi^2, 1, ..., 1)
 <p><span class="math display">\[\propto |\Sigma|^{-\frac{T+N+K+\nu_0+1}{2}} \times \exp (-\frac{1}{2}tr(\Sigma^{-1}S_0)) \times \]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A_0^TV_a^{-1}A_0+Y^T\Omega^{-1}Y-\bar{A}^T\bar{V}^{-1}\bar{A})\times\]</span> <span class="math display">\[exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))\]</span></p>
 <p>Hence,</p>
 <p><span class="math display">\[p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)\]</span></p>
-<p><span class="math display">\[p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{k \times N}(\bar{A}, \Sigma, \bar{V})\]</span></p>
+<p><span class="math display">\[p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})\]</span></p>
 <p><span class="math display">\[p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\]</span></p>
 <p>where</p>
 <p><span class="math display">\[\bar{V} = (X^T\Omega^{-1}X + V_A^{-1})^{-1}\]</span></p>
@@ -1052,76 +1048,95 @@ e_T^T
 <h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations">4.2 Large BVAR model with MA(1) Gaussian Innovations</h2>
 <section id="model-building-code-and-validation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</h3>
-</section>
-</section>
-<section id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
-<h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</h2>
-<section id="model-building-code-and-validation-2" class="level3">
-<h3 class="anchored" data-anchor-id="model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</h3>
 <div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
+[1] 0.1125</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.003 0.025
-[2,] 0.999 0.000
-[3,] 0.000 0.999</code></pre>
+<pre><code>       [,1]  [,2]
+[1,]  0.059 0.182
+[2,]  0.999 0.002
+[3,] -0.003 0.995</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.031 0.031
-[2,] 0.001 0.001
-[3,] 0.001 0.001</code></pre>
+[1,] 0.078 0.080
+[2,] 0.003 0.002
+[3,] 0.003 0.003</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.101 0.000
-[2,] 0.000 0.101</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
+<pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.004 0.003
-[2,] 0.003 0.005</code></pre>
+[1,] 1.150 0.065
+[2,] 0.065 1.050</code></pre>
 </div>
-</div>
-<div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]
-[1,]  0.335 0.041
-[2,] -0.225 0.225
-[3,]  0.007 0.038</code></pre>
+<pre><code>[1] "Posterior standard deviation of row specific covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 1.110 0.884
-[2,] 1.041 0.993
-[3,] 0.942 0.791</code></pre>
+[1,] 0.049 0.029
+[2,] 0.029 0.047</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.101 0.001
-[2,] 0.001 0.100</code></pre>
+<pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.005 0.003
-[2,] 0.003 0.005</code></pre>
+<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
+ [1,]  1.001 -0.034  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [2,] -0.034  1.001 -0.034  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [3,]  0.000 -0.034  1.001 -0.034  0.000  0.000  0.000  0.000  0.000  0.000
+ [4,]  0.000  0.000 -0.034  1.001 -0.034  0.000  0.000  0.000  0.000  0.000
+ [5,]  0.000  0.000  0.000 -0.034  1.001 -0.034  0.000  0.000  0.000  0.000
+ [6,]  0.000  0.000  0.000  0.000 -0.034  1.001 -0.034  0.000  0.000  0.000
+ [7,]  0.000  0.000  0.000  0.000  0.000 -0.034  1.001 -0.034  0.000  0.000
+ [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.034  1.001 -0.034  0.000
+ [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.034  1.001 -0.034
+[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.034  1.001</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
+ [1,] 0.000 0.008 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [2,] 0.008 0.000 0.008 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [3,] 0.000 0.008 0.000 0.008 0.000 0.000 0.000 0.000 0.000 0.000
+ [4,] 0.000 0.000 0.008 0.000 0.008 0.000 0.000 0.000 0.000 0.000
+ [5,] 0.000 0.000 0.000 0.008 0.000 0.008 0.000 0.000 0.000 0.000
+ [6,] 0.000 0.000 0.000 0.000 0.008 0.000 0.008 0.000 0.000 0.000
+ [7,] 0.000 0.000 0.000 0.000 0.000 0.008 0.000 0.008 0.000 0.000
+ [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.008 0.000 0.008 0.000
+ [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.008 0.000 0.008
+[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.008 0.000</code></pre>
 </div>
 </div>
-</section>
-<section id="empirical-result-1" class="level3">
-<h3 class="anchored" data-anchor-id="empirical-result-1">4.4.2 Empirical Result</h3>
-<p>```</p>
+<pre><code>
+## 4.4  Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility
+### 4.4.1 Model Building Code and Validation 
+
+
+::: {.cell}
+
+:::
+
+
+
+::: {.cell}
+
+:::
+
+### 4.4.2 Empirical Result
+</code></pre>
 <!-- Furthermore, a non-Gaussian framework allows the modeling of asymmetries in how economies react to positive versus negative shocks. Traditional BVAR models with Gaussian assumptions is often unable to capture such nuances, while flexible error structures can incorporate the differing impacts of shocks of different magnitudes or directions. 
 economic variables are often characterized by distributions that are far from Gaussian, often featuring fat tails and skewness. Secondly, -->
 

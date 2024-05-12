@@ -38,17 +38,18 @@ future economic indicators, offering insights into the evolving global economic 
 
 **Proposed Dataset:**
 This research project will utilize data from the International Monetary Fund’s (IMF) extensive database, which offers a comprehensive collection of global economic information. The IMF’s collection includes several key databases such as the World Economic Outlook Databases, International Financial Statistics (IFS), Government Finance Statistics. The analysis will predominantly focus on the IFS database, which encompasses an sizeable collection of financial and economic data from across the global, featuring 1,681 distinct indicators such as consumer price index, interest rates, exchange rates, national accounts, government finance statistics. The data is available in various frequencies – annual, semi-annual, quarterly, monthly, daily, and weekly. As this research is primarily
-focused on analyzing macroeconomic data that are published on a monthly or quarterly basis, quarterly data from Q1 2011 to Q3 2023 will be used. The analysis will examine key macroeconomic variables including consumer price indexes, foreign direct investments, exchange rates, balance of payments, and the national gross domestic product of the United States, Australia, Japan, and China.
+focused on analyzing macroeconomic data that are published on a monthly or quarterly basis, quarterly data from Q1 2011 to Q3 2023 will be used. The analysis will examine key macroeconomic variables including consumer price indexes, foreign direct investments, exchange rates, balance of payments, interest rates and the national gross domestic product of the United States, Australia, Japan, and China.
 
 **Variables and Motivation:**
 
 | Variables                                              | Original Unit          | Final Unit | Mnemonic | Code           |
 |--------------------------------------------------------|------------------------|------------|----------|----------------|
 | Prices, Consumer Price Index, All items, Previous period | % Change               | % Change   | CPI      | PCPI_PC_PP_PT  |
-| International Investment Positions, assets, Direct Investment | US dollar, millions           | % Change   | FDI      | IAD_BP6_USD    |
-| Exchange Rates, Domestic Currency per U.S. Dollar, Period Average | US dollar, millions           | % Change   | XCH      | ENDA_XDC_USD_R |
-| Balance of Payments, Current Account, Goods and Services, Net | US dollar, millions          | % Change   | BOP      | BGS_BP6_USD    |
-| Gross Domestic Product, Nominal, Seasonally Adjusted, Domestic Currency | Domestic Currency    | % Change   | GDP      | NGDP_NSA_XDC   |
+| International Investment Positions, assets, Direct Investment | US dollar, millions           | US dollar, millions   | FDI      | IAD_BP6_USD    |
+| Exchange Rates, Domestic Currency per U.S. Dollar, Period Average | US dollar, millions           | US dollar, millions  | XCH      | ENDA_XDC_USD_R |
+| Balance of Payments, Current Account, Goods and Services, Net | US dollar, millions          | US dollar, millions   | BOP      | BGS_BP6_USD    |
+| Gross Domestic Product, Nominal, Seasonally Adjusted | Domestic Currency    |  US dollar  | GDP      | NGDP_NSA_XDC   |
+| Interest rate, Financial, Interest Rates, Monetary Policy-Related Interest Rate | % per annum  | IR      | FPOLM_PA   |
 
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends.
 Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
@@ -69,6 +70,9 @@ library(progress)
 library(psych)
 library(truncnorm)
 library(extraDistr)
+library(forecast)
+library(HDInterval)
+library(purrr)
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
@@ -93,85 +97,133 @@ IFS.available.codes <- DataStructureMethod("IFS")
 IFS.data.category <-  IFS.available.codes[[3]]
 #Search possible code to use in each dimension. 
 #Here, we want to search code related to GDP in CL_INDICATOR_IFS dimension
-CodeSearch(IFS.available.codes, "CL_INDICATOR_IFS", "CPI")
+#CodeSearch(IFS.available.codes, "CL_INDICATOR_IFS", "CPI")
 
 #Make API call to get data
 databaseID <- "IFS"
-startdate = "2011-01-01"
-enddate = "2023-09-01"
+startdate = "1950-01-01"
+enddate = "2024-05-01"
 checkquery = FALSE
+
+##################################################################
+##################################################################
+#Interest rate data 
+##################################################################
+##################################################################
+#China
+##################################################################
+queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'FIDR_PA') #Financial, Interest Rates, Deposit, Percent per annum
+CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+                                  checkquery)
+##################################################################
+#US
+##################################################################
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FICPR_PA') #
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FID_PA') #
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIGBY_SM_PA') #
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIGB_PA') #
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FITB_3M_PA') #
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FITB_PA') 
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIH_HH_L_CC_1Y_PA') 
+#queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FILR_PA') 
+Sys.sleep(0.5)
+queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+US.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+                                 checkquery)
+
+##################################################################
+#AU
+##################################################################
+Sys.sleep(0.5)
+queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+AU.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+                                 checkquery)
+##################################################################
+#J{} #starts 2006 Q2
+##################################################################
+Sys.sleep(0.5)
+queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+JP.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+                                 checkquery)
 
 #International Investment Positions Data
 #China
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'IAD_BP6_USD')
 CN.FDI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #CN.FDI.query$Obs[[1]]
 #Japan
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'IAD_BP6_USD')
 JP.FDI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #JP.FDI.query$Obs[[1]]
 #United States
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'IAD_BP6_USD')
 US.FDI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #US.FDI.query$Obs[[1]]
 
 #Australia
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'IAD_BP6_USD')
 AU.FDI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
-#AU.FDI.query$Obs[[1]]
-
-
 
 #Exchange Rate
 #China
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'ENDA_XDC_USD_RATE')
 CN.XCH.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #CN.XCH.query$Obs[[1]]
 #Japan
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'ENDA_XDC_USD_RATE')
 JP.XCH.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #JP.XCH.query$Obs[[1]]
 #United States
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'ENDA_XDC_USD_RATE')
 US.XCH.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
-#US.XCH.query$Obs[[1]]
 
 #Australia
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'ENDA_XDC_USD_RATE')
 AU.XCH.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
-#AU.XCH.query$Obs[[1]]
+
 
 ########################################################################
 #Pause for 5 seconds before continue execution 
 ########################################################################
-Sys.sleep(5)
 
 #Balance of Payments 
 #China
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'BGS_BP6_USD')
 CN.BOP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #CN.BOP.query$Obs[[1]]
 #Japan
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'BGS_BP6_USD')
 JP.BOP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #JP.BOP.query$Obs[[1]]
 #United States
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'BGS_BP6_USD')
 US.BOP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #US.BOP.query$Obs[[1]]
 
 #Australia
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'BGS_BP6_USD')
 AU.BOP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
@@ -179,49 +231,50 @@ AU.BOP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 
 #Bond Yield
 #China
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'FITBBE_PA')
-CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                 checkquery)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'FITBBE_PA')
+# CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                  checkquery)
 #CN.IR.query$Obs[[1]]
 #Japan
 ########################################################################
 #Pause for 5 seconds before continue execution 
 ########################################################################
-Sys.sleep(5)
-
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'FIGB_PA')
-JP.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                 checkquery)
+# Sys.sleep(5)
+# 
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'FIGB_PA')
+# JP.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                  checkquery)
 #JP.IR.query$Obs[[1]]
 #United States
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIGB_PA')
-US.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                 checkquery)
-#US.IR.query$Obs[[1]]
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIGB_PA')
+# US.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                  checkquery)
+# #US.IR.query$Obs[[1]]
 
 #Australia
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'FIGB_PA')
-AU.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                 checkquery)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'FIGB_PA')
+# AU.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                  checkquery)
 #AU.IR.query$Obs[[1]]
 
-#Government Expenditure
+#GDP
 #China
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'NGDP_NSA_XDC')
-CN.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+CN.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
                                   checkquery)
-#CN.GDP.query$Obs[[1]]
+CN.GDP.query$Obs[[1]]
 #Japan
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'NGDP_NSA_XDC')
-JP.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+JP.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
                                   checkquery)
 #JP.GDP.query$Obs[[1]]
 
 ########################################################################
 #Pause for five seconds before continue execution 
 ########################################################################
-Sys.sleep(5)
-
+Sys.sleep(0.5)
 #United States
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'NGDP_NSA_XDC')
 US.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
@@ -229,6 +282,7 @@ US.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 #US.GDP.query$Obs[[1]]
 
 #Australia
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'NGDP_NSA_XDC')
 AU.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
@@ -237,288 +291,605 @@ AU.GDP.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 
 #CPI
 #China
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'PCPI_PC_PP_PT')
 CN.CPI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #CN.CPI.query$Obs[[1]]
 #Japan
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'PCPI_PC_PP_PT')
 JP.CPI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #JP.CPI.query$Obs[[1]]
 #United States
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'PCPI_PC_PP_PT')
 US.CPI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #US.CPI.query$Obs[[1]]
 
 #Australia
+Sys.sleep(0.5)
 queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'PCPI_PC_PP_PT')
 AU.CPI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
                                   checkquery)
 #AU.CPI.query$Obs[[1]]
 
 
-#Unemployment Rate
-#China
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'LUR_PT')
-CN.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                  checkquery)
-#CN.UMR.query$Obs[[1]]
-#Japan
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'LUR_PT')
-JP.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                  checkquery)
-#JP.UMR.query$Obs[[1]]
-#United States
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'LUR_PT')
-US.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                  checkquery)
-#US.UMR.query$Obs[[1]]
+# #Unemployment Rate
+# #China
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'LUR_PT')
+# CN.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                   checkquery)
+# #CN.UMR.query$Obs[[1]]
+# #Japan
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'LUR_PT')
+# JP.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                   checkquery)
+# #JP.UMR.query$Obs[[1]]
+# #United States
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'LUR_PT')
+# US.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                   checkquery)
+# #US.UMR.query$Obs[[1]]
+# 
+# #Australia
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'LUR_PT')
+# AU.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                   checkquery)
+# #AU.UMR.query$Obs[[1]]
 
-#Australia
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'LUR_PT')
-AU.UMR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                  checkquery)
-#AU.UMR.query$Obs[[1]]
+```
 
-
-
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 #################################################################################
 #################################################################################
 #Plot Data
 #################################################################################
 #################################################################################
 
+print('earliest available interest rate data fo China: ')
+print(min(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available interest rate data fo Australia: ')
+print(min(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available interest rate data fo Japan: ')
+print(min(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available interest rate data fo US: ')
+print(min(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
 
+print('newest available interest rate data fo China: ')
+print(max(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available interest rate data fo Australia: ')
+print(max(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available interest rate data fo Japan: ')
+print(max(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available interest rate data fo US: ')
+print(max(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
 
-CPI_data <- data.frame(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`, CN.CPI.query$Obs[[1]]$`@OBS_VALUE`, JP.CPI.query$Obs[[1]]$`@OBS_VALUE`, 
-                       US.CPI.query$Obs[[1]]$`@OBS_VALUE`, AU.CPI.query$Obs[[1]]$`@OBS_VALUE`)
-names(CPI_data) = c('Time', 'China', 'Japan', 'United_States', 'Australia')
+years <- 2006:2023
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "2006-Q2" & quarters <= "2023-Q4"])
+
+IR_data = data.frame(JP.IR.query$Obs[[1]])
+IR_data = IR_data[,1:2]
+colnames(IR_data) = c('Time', 'JP_IR')
+#IR_data$Time <- as.character(as.yearqtr(IR_data$Time))
+IR_data = left_join(all_quarters,  IR_data, by = "Time")
+IR_data <- IR_data %>%
+  fill(JP_IR, .direction = "down")
+
+tmp = data.frame(CN.IR.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_IR')
+IR_data = left_join(IR_data,  tmp, by = "Time")
+
+tmp = data.frame(US.IR.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'US_IR')
+IR_data = left_join(IR_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.IR.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_IR')
+IR_data = left_join(IR_data,  tmp, by = "Time")
+
+IR_data$Time = as.yearqtr(IR_data$Time, format = "%Y-Q%q")
+
+IR_data <- IR_data %>%
+  mutate(
+    JP_IR = as.numeric(JP_IR),
+    CN_IR = as.numeric(CN_IR),
+    US_IR = as.numeric(US_IR),
+    AU_IR = as.numeric(AU_IR)
+  )
+IR_data_long <- pivot_longer(IR_data,
+                              cols = colnames(IR_data)[2:5],
+                              names_to = "Country",
+                              values_to = "IR")
+
+IR_plot <- ggplot(data = IR_data_long, aes(x = Time, y = IR, color = Country)) +
+  geom_line() +
+  scale_color_manual(values = c(
+    "CN_IR" = "#3498db",  # Blue
+    "JP_IR" = "#e74c3c",  # Red
+    "US_IR" = "#2ecc71",  # Green
+    "AU_IR" = "#f39c12"   # Orange
+  )) +
+  theme_minimal() +
+  labs(x = "Time", y = "IR (%)", title = "IR Trends", color = "Country") +
+  theme(
+    legend.title = element_blank(),  # Removes the legend title for a cleaner look
+    legend.position = "bottom"       # Moves the legend to the bottom
+  )
+
+#################################################################################
+###################################CPI##########################################
+#################################################################################
+print('earliest available consumer price index data fo China: ')
+print(min(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available consumer price index data fo Australia: ')
+print(min(AU.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available consumer price index data fo Japan: ')
+print(min(JP.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available consumer price index data fo US: ')
+print(min(US.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+
+print('newest available consumer price index data fo China: ')
+print(max(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available consumer price index data fo Australia: ')
+print(max(AU.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available consumer price index data fo Japan: ')
+print(max(JP.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available consumer price index data fo US: ')
+print(max(US.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+
+years <- 1986:2024
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "1986-Q2" & quarters <= "2024-Q1"])
+
+CPI_data = data.frame(JP.CPI.query$Obs[[1]])
+CPI_data = CPI_data[,1:2]
+colnames(CPI_data) = c('Time', 'JP_CPI')
+#CPI_data$Time <- as.character(as.yearqtr(CPI_data$Time))
+CPI_data = left_join(all_quarters,  CPI_data, by = "Time")
+
+tmp = data.frame(CN.CPI.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_CPI')
+CPI_data = left_join(CPI_data,  tmp, by = "Time")
+
+tmp = data.frame(US.CPI.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'US_CPI')
+CPI_data = left_join(CPI_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.CPI.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_CPI')
+CPI_data = left_join(CPI_data,  tmp, by = "Time")
+
 CPI_data$Time = as.yearqtr(CPI_data$Time, format = "%Y-Q%q")
 
-CPI_data$Time = as.Date(CPI_data$Time)
-CPI_data$China = as.numeric(CPI_data$China)
-CPI_data$United_States = as.numeric(CPI_data$United_States)
-CPI_data$Japan = as.numeric(CPI_data$Japan)
-CPI_data$Australia = as.numeric(CPI_data$Australia)
-CPI_data_long <- pivot_longer(CPI_data, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
+CPI_data <- CPI_data %>%
+  mutate(
+    JP_CPI = as.numeric(JP_CPI),
+    CN_CPI = as.numeric(CN_CPI),
+    US_CPI = as.numeric(US_CPI),
+    AU_CPI = as.numeric(AU_CPI)
+  )
+CPI_data_long <- pivot_longer(CPI_data,
+                              cols = colnames(CPI_data)[2:5],
+                              names_to = "Country",
                               values_to = "CPI")
 
-CPI_plot = ggplot(data = CPI_data_long, aes(x = Time, y = CPI, color = Country)) +
+CPI_plot <- ggplot(data = CPI_data_long, aes(x = Time, y = CPI, color = Country)) +
   geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
+  scale_color_manual(values = c(
+    "CN_CPI" = "#3498db",  # Blue
+    "JP_CPI" = "#e74c3c",  # Red
+    "US_CPI" = "#2ecc71",  # Green
+    "AU_CPI" = "#f39c12"   # Orange
+  )) +
   theme_minimal() +
-  labs(x = "Time", y = "CPI (%)", title = "CPI Trends", color = "Country")
+  labs(x = "Time", y = "CPI (%)", title = "CPI Trends", color = "Country") +
+  theme(
+    legend.title = element_blank(),  # Removes the legend title for a cleaner look
+    legend.position = "bottom"       # Moves the legend to the bottom
+  )
+#################################################################################
+###############################################FDI###############################
+#################################################################################
+print('earliest available foreign direct investment data fo China: ')
+print(min(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available foreign direct investment data fo Australia: ')
+print(min(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available foreign direct investment data fo Japan: ')
+print(min(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available foreign direct investment data fo US: ')
+print(min(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
 
-#ggsave("CPI.png", plot = CPI_plot, path = paste0(getwd(), "/plots", sep = ""), width = 10, height = 7)
+print('newest available foreign direct investment data fo China: ')
+print(max(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available foreign direct investment data fo Australia: ')
+print(max(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available foreign direct investment data fo Japan: ')
+print(max(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available foreign direct investment data fo US: ')
+print(max(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
 
-FDI_data <- data.frame(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`, CN.FDI.query$Obs[[1]]$`@OBS_VALUE`, JP.FDI.query$Obs[[1]]$`@OBS_VALUE`, 
-                       US.FDI.query$Obs[[1]]$`@OBS_VALUE`, AU.FDI.query$Obs[[1]]$`@OBS_VALUE`)
-names(FDI_data) = c('Time', 'China', 'Japan', 'United_States', 'Australia')
+years <- 2010:2023
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "2010-Q4" & quarters <= "2023-Q3"])
+
+FDI_data = data.frame(JP.FDI.query$Obs[[1]])
+FDI_data = FDI_data[,1:2]
+colnames(FDI_data) = c('Time', 'JP_FDI')
+#FDI_data$Time <- as.character(as.yearqtr(FDI_data$Time))
+FDI_data = left_join(all_quarters,  FDI_data, by = "Time")
+
+tmp = data.frame(CN.FDI.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_FDI')
+FDI_data = left_join(FDI_data,  tmp, by = "Time")
+
+tmp = data.frame(US.FDI.query$Obs[[1]])
+tmp = tmp[,c(1, 3)]
+colnames(tmp) = c('Time', 'US_FDI')
+FDI_data = left_join(FDI_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.FDI.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_FDI')
+FDI_data = left_join(FDI_data,  tmp, by = "Time")
+
 FDI_data$Time = as.yearqtr(FDI_data$Time, format = "%Y-Q%q")
 
-FDI_data$Time = as.Date(FDI_data$Time)
-FDI_data$China = as.numeric(FDI_data$China)
-FDI_data$United_States = as.numeric(FDI_data$United_States)
-FDI_data$Japan = as.numeric(FDI_data$Japan)
-FDI_data$Australia = as.numeric(FDI_data$Australia)
-FDI_original = FDI_data
 FDI_data <- FDI_data %>%
-  mutate(across(c(China, Japan, United_States, Australia), 
-                ~ (./lag(.) - 1) * 100, 
-                .names = "{.col}"))
-FDI_original_long <- pivot_longer(FDI_original, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
+  mutate(
+    JP_FDI = as.numeric(JP_FDI),
+    CN_FDI = as.numeric(CN_FDI),
+    US_FDI = as.numeric(US_FDI),
+    AU_FDI = as.numeric(AU_FDI)
+  )
+FDI_data_long <- pivot_longer(FDI_data,
+                              cols = colnames(FDI_data)[2:5],
+                              names_to = "Country",
                               values_to = "FDI")
 
-FDI_data_long <- pivot_longer(FDI_data, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
-                              values_to = "FDI")
-
-FDI_original_plot = ggplot(data = FDI_data_long, aes(x = Time, y = FDI, color = Country)) +
+FDI_plot <- ggplot(data = FDI_data_long, aes(x = Time, y = FDI, color = Country)) +
   geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
+  scale_color_manual(values = c(
+    "CN_FDI" = "#3498db",  # Blue
+    "JP_FDI" = "#e74c3c",  # Red
+    "US_FDI" = "#2ecc71",  # Green
+    "AU_FDI" = "#f39c12"   # Orange
+  )) +
   theme_minimal() +
-  labs(x = "Time", y = "FDI (US dollar, millions)", title = "Foreign Direct Investments", color = "Country")
+  labs(x = "Time", y = "FDI (%)", title = "FDI Trends", color = "Country") +
+  theme(
+    legend.title = element_blank(),  # Removes the legend title for a cleaner look
+    legend.position = "bottom"       # Moves the legend to the bottom
+  )
 
-FDI_plot = ggplot(data = FDI_data_long, aes(x = Time, y = FDI, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
-  theme_minimal() +
-  labs(x = "Time", y = "FDI (%change)", title = "Percentage change in Foreign Direct Investments", color = "Country")
+#################################################################################
+###########################################XCH###################################
+#################################################################################
 
-#ggsave("FDI.png", plot = FDI_plot, path = paste0(getwd(), "/plots", sep = ""), width = 10, height = 7)
+print('earliest available exchange rate data fo China: ')
+print(min(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available exchange rate data fo Australia: ')
+print(min(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available exchange rate data fo Japan: ')
+print(min(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available exchange rate data fo US: ')
+print(min(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
 
-XCH_data <- data.frame(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`, CN.XCH.query$Obs[[1]]$`@OBS_VALUE`, JP.XCH.query$Obs[[1]]$`@OBS_VALUE`, 
-                       US.XCH.query$Obs[[1]]$`@OBS_VALUE`, AU.XCH.query$Obs[[1]]$`@OBS_VALUE`)
-names(XCH_data) = c('Time', 'China', 'Japan', 'United_States', 'Australia')
+print('newest available exchange rate data fo China: ')
+print(max(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available exchange rate data fo Australia: ')
+print(max(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available exchange rate data fo Japan: ')
+print(max(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available exchange rate data fo US: ')
+print(max(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+
+years <- 1980:2024
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "1980-Q1" & quarters <= "2024-Q1"])
+
+XCH_data = data.frame(JP.XCH.query$Obs[[1]])
+XCH_data = XCH_data[,1:2]
+colnames(XCH_data) = c('Time', 'JP_XCH')
+#XCH_data$Time <- as.character(as.yearqtr(XCH_data$Time))
+XCH_data = left_join(all_quarters,  XCH_data, by = "Time")
+
+tmp = data.frame(CN.XCH.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_XCH')
+XCH_data = left_join(XCH_data,  tmp, by = "Time")
+
+tmp = data.frame(US.XCH.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'US_XCH')
+XCH_data = left_join(XCH_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.XCH.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_XCH')
+XCH_data = left_join(XCH_data,  tmp, by = "Time")
+
 XCH_data$Time = as.yearqtr(XCH_data$Time, format = "%Y-Q%q")
 
-XCH_data$Time = as.Date(XCH_data$Time)
-XCH_data$China = as.numeric(XCH_data$China)
-XCH_data$United_States = as.numeric(XCH_data$United_States)
-XCH_data$Japan = as.numeric(XCH_data$Japan)
-XCH_data$Australia = as.numeric(XCH_data$Australia)
-XCH_data = subset(XCH_data, select = -United_States)
-XCH_original = XCH_data
 XCH_data <- XCH_data %>%
-  mutate(across(c(China, Japan, Australia), 
-                ~ (./lag(.) - 1) * 100, 
+  mutate(
+    JP_XCH = as.numeric(JP_XCH),
+    CN_XCH = as.numeric(CN_XCH),
+    US_XCH = as.numeric(US_XCH),
+    AU_XCH = as.numeric(AU_XCH)
+  )
+
+XCH_data_percent <- XCH_data %>%
+  mutate(across(c(JP_XCH, CN_XCH, AU_XCH),
+                ~ (./lag(.) - 1) * 100,
                 .names = "{.col}"))
 
-XCH_original$Japan = XCH_original$Japan/100
-XCH_original$China= XCH_original$China/10
-
-XCH_original_long <- pivot_longer(XCH_original, 
-                              cols = c(China, Japan, Australia), 
-                              names_to = "Country", 
+XCH_data_long <- pivot_longer(XCH_data,
+                              cols = colnames(XCH_data)[2:5],
+                              names_to = "Country",
                               values_to = "XCH")
-
-XCH_original_long$Country_Label <- with(XCH_original_long, ifelse(Country == "China", "China (Yuan '0s)",
-                                               ifelse(Country == "Japan", "Japan (Yen '00s)",
-                                               ifelse(Country == "Australia", "Australia (AUD)", Country))))
-XCH_data_long <- pivot_longer(XCH_data, 
-                              cols = c(China, Japan, Australia), 
-                              names_to = "Country", 
+XCH_data_percent_long <- pivot_longer(XCH_data_percent,
+                              cols = colnames(XCH_data)[2:5],
+                              names_to = "Country",
                               values_to = "XCH")
-
-#XCH_original_long <- XCH_original_long %>% 
-#  filter(Country != "United_States")
-
-XCH_original_plot <- ggplot(data = XCH_original_long, aes(x = Time, y = XCH, color = Country_Label)) +
-  geom_line() +
-  scale_color_manual(values = c("China (Yuan '0s)" = "blue", "Japan (Yen '00s)" = "red", "Australia (AUD)" = "orange")) +
+XCH_data_long <- XCH_data_long %>%
+ filter(Country != "US_XCH")
+XCH_data_long <- XCH_data_long %>%
+  mutate(JP_Scaled_XCH = ifelse(Country == "JP_XCH", XCH * 0.1, XCH))
+# XCH_data_percent_long <- XCH_data_percent_long %>%
+#  filter(Country != "US_XCH")
+XCH_plot <- ggplot(data = XCH_data_long, aes(x = Time, color = Country)) +
+  geom_line(aes(y =  JP_Scaled_XCH))+  # Plot AU and CN on the primary axis Plot JP on the secondary axis
+  scale_y_continuous(
+    name = "Exchange rate against the dollar per AUD and CNY",
+    sec.axis = sec_axis(~ . * 10, name = "Exchange rate against the dollar per 10 JPY")  # Adjust the transformation to match the scale factor used above
+  ) +
+  scale_color_manual(values = c(
+    "CN_XCH" = "#3498db",  # Blue
+    "JP_XCH" = "#e74c3c",  # Red
+    "AU_XCH" = "#f39c12"   # Orange
+  )) +
   theme_minimal() +
-  labs(x = "Time", y = "Exchange Rate (Currency per US dollar)", title = "Exchange Rates Against the Dollar", color = "Country")
+  labs(
+    x = "Time",
+    title = "Exchange Rate Against the Dollar",
+    color = "Country"
+  ) +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "bottom"
+  )
 
-#XCH_data_long <- XCH_data_long %>% 
-#  filter(Country != "United_States")
+#################################################################################
+###########################################BOP###################################
+#################################################################################
+print('earliest available balance of payments data fo China: ')
+print(min(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available balance of payments data fo Australia: ')
+print(min(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available balance of payments data fo Japan: ')
+print(min(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available balance of payments data fo US: ')
+print(min(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
 
-XCH_plot = ggplot(data = XCH_data_long, aes(x = Time, y = XCH, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "Australia" = "orange")) +
-  theme_minimal() +
-  labs(x = "Time", y = "Exchange Rate (%change)", title = "Percentage change in Exchange Rates Against the Dollar", color = "Country")
+print('newest available balance of payments data fo China: ')
+print(max(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available balance of payments data fo Australia: ')
+print(max(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available balance of payments data fo Japan: ')
+print(max(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available balance of payments data fo US: ')
+print(max(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
 
-#ggsave("XCH.png", plot = XCH_plot, path = paste0(getwd(), "/plots", sep = ""), width = 10, height = 7)
+years <- 2005:2024
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "2005-Q1" & quarters <= "2023-Q4"])
 
-BOP_data <- data.frame(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`, CN.BOP.query$Obs[[1]]$`@OBS_VALUE`, JP.BOP.query$Obs[[1]]$`@OBS_VALUE`, 
-                       US.BOP.query$Obs[[1]]$`@OBS_VALUE`, AU.BOP.query$Obs[[1]]$`@OBS_VALUE`)
-names(BOP_data) = c('Time', 'China', 'Japan', 'United_States', 'Australia')
+BOP_data = data.frame(JP.BOP.query$Obs[[1]])
+BOP_data = BOP_data[,1:2]
+colnames(BOP_data) = c('Time', 'JP_BOP')
+#BOP_data$Time <- as.character(as.yearqtr(BOP_data$Time))
+BOP_data = left_join(all_quarters,  BOP_data, by = "Time")
+
+tmp = data.frame(CN.BOP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_BOP')
+BOP_data = left_join(BOP_data,  tmp, by = "Time")
+
+tmp = data.frame(US.BOP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'US_BOP')
+BOP_data = left_join(BOP_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.BOP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_BOP')
+BOP_data = left_join(BOP_data,  tmp, by = "Time")
+
 BOP_data$Time = as.yearqtr(BOP_data$Time, format = "%Y-Q%q")
 
-BOP_data$Time = as.Date(BOP_data$Time)
-BOP_data$China = as.numeric(BOP_data$China)
-BOP_data$United_States = as.numeric(BOP_data$United_States)
-BOP_data$Japan = as.numeric(BOP_data$Japan)
-BOP_data$Australia = as.numeric(BOP_data$Australia)
-BOP_original = BOP_data
 BOP_data <- BOP_data %>%
-  mutate(across(c(China, Japan, United_States, Australia), 
-                ~ (./lag(.) - 1) * 100, 
-                .names = "{.col}"))
-
-BOP_original_long <- pivot_longer(BOP_original, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
+  mutate(
+    JP_BOP = as.numeric(JP_BOP),
+    CN_BOP = as.numeric(CN_BOP),
+    US_BOP = as.numeric(US_BOP),
+    AU_BOP = as.numeric(AU_BOP)
+  )
+BOP_data_long <- pivot_longer(BOP_data,
+                              cols = colnames(BOP_data)[2:5],
+                              names_to = "Country",
                               values_to = "BOP")
 
-BOP_data_long <- pivot_longer(BOP_data, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
-                              values_to = "BOP")
-
-BOP_original_plot = ggplot(data = BOP_original_long, aes(x = Time, y = BOP, color = Country)) +
+BOP_plot <- ggplot(data = BOP_data_long, aes(x = Time, y = BOP, color = Country)) +
   geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
+  scale_color_manual(values = c(
+    "CN_BOP" = "#3498db",  # Blue
+    "JP_BOP" = "#e74c3c",  # Red
+    "US_BOP" = "#2ecc71",  # Green
+    "AU_BOP" = "#f39c12"   # Orange
+  )) +
   theme_minimal() +
-  labs(x = "Time", y = "BOP  (US dollar, millions)", title = "Balance of Payments", color = "Country")
+  labs(x = "Time", y = "BOP (%)", title = "BOP Trends", color = "Country") +
+  theme(
+    legend.title = element_blank(),  # Removes the legend title for a cleaner look
+    legend.position = "bottom"       # Moves the legend to the bottom
+  )
 
+#################################################################################
+###########################################GDP###################################
+#################################################################################
+print('earliest available gross domestic product data fo China: ')
+print(min(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available gross domestic product data fo Australia: ')
+print(min(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available gross domestic product data fo Japan: ')
+print(min(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('earliest available gross domestic product data fo US: ')
+print(min(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
 
-BOP_plot = ggplot(data = BOP_data_long, aes(x = Time, y = BOP, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
-  theme_minimal() +
-  labs(x = "Time", y = "BOP (%change)", title = "Percentage change in Balance of Payments", color = "Country")
-#ggsave("BOP.png", plot = BOP_plot, path = paste0(getwd(), "/plots", sep = ""), width = 10, height = 7)
+print('newest available gross domestic product data fo China: ')
+print(max(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available gross domestic product data fo Australia: ')
+print(max(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available gross domestic product data fo Japan: ')
+print(max(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+print('newest available gross domestic product data fo US: ')
+print(max(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
 
-GDP_data <- data.frame(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`, CN.GDP.query$Obs[[1]]$`@OBS_VALUE`, JP.GDP.query$Obs[[1]]$`@OBS_VALUE`, 
-                       US.GDP.query$Obs[[1]]$`@OBS_VALUE`, AU.GDP.query$Obs[[1]]$`@OBS_VALUE`)
-names(GDP_data) = c('Time', 'China', 'Japan', 'United_States', 'Australia')
+years <- 1994:2024
+quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+all_quarters <- data.frame(Time = quarters[quarters >= "1994-Q1" & quarters <= "2023-Q3"])
+
+GDP_data = data.frame(JP.GDP.query$Obs[[1]])
+GDP_data = GDP_data[,1:2]
+colnames(GDP_data) = c('Time', 'JP_GDP')
+#GDP_data$Time <- as.character(as.yearqtr(GDP_data$Time))
+GDP_data = left_join(all_quarters,  GDP_data, by = "Time")
+
+tmp = data.frame(CN.GDP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'CN_GDP')
+GDP_data = left_join(GDP_data,  tmp, by = "Time")
+
+tmp = data.frame(US.GDP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'US_GDP')
+GDP_data = left_join(GDP_data,  tmp, by = "Time")
+
+tmp = data.frame(AU.GDP.query$Obs[[1]])
+tmp = tmp[,1:2]
+colnames(tmp) = c('Time', 'AU_GDP')
+GDP_data = left_join(GDP_data,  tmp, by = "Time")
 GDP_data$Time = as.yearqtr(GDP_data$Time, format = "%Y-Q%q")
+GDP_data <- GDP_data %>%
+  mutate(
+    JP_GDP = as.numeric(JP_GDP),
+    CN_GDP = as.numeric(CN_GDP),
+    US_GDP = as.numeric(US_GDP),
+    AU_GDP = as.numeric(AU_GDP)
+  )
 
-GDP_data$Time = as.Date(GDP_data$Time)
-GDP_data$China = as.numeric(GDP_data$China)
-GDP_data$United_States = as.numeric(GDP_data$United_States)
-GDP_data$Japan = as.numeric(GDP_data$Japan)
-GDP_data$Australia = as.numeric(GDP_data$Australia)
+tmp = left_join(GDP_data, XCH_data, by = 'Time')
+tmp$JP_GDP = tmp$JP_GDP/tmp$JP_XCH
+tmp$CN_GDP = tmp$CN_GDP/tmp$CN_XCH
+tmp$AU_GDP = tmp$AU_GDP/tmp$AU_XCH
+tmp$US_GDP = tmp$US_GDP/tmp$US_XCH
+GDP_data = tmp[colnames(GDP_data)[2:5]]
 
-#Convert to US dollars and in billion dollars
-GDP_original = GDP_data
-GDP_original$China = (GDP_original$China / XCH_original$China)/10000
-GDP_original$Japan = (GDP_original$Japan / XCH_original$Japan)/100000
-GDP_original$Australia = (GDP_original$Australia / XCH_original$Australia)/1000
-GDP_original$United_States = (GDP_original$United_States)/1000
+JP_GDP_ts <- ts(GDP_data$JP_GDP, start=c(1994, 1), frequency=4)
+CN_GDP_ts <- ts(GDP_data$CN_GDP, start=c(1994, 1), frequency=4)
+US_GDP_ts <- ts(GDP_data$US_GDP, start=c(1994, 1), frequency=4)
+AU_GDP_ts <- ts(GDP_data$AU_GDP, start=c(1994, 1), frequency=4)
 
-GDP_data_percent <- GDP_data %>%
-  mutate(across(c(China, Japan, United_States, Australia), 
-                ~ (./lag(.) - 1) * 100, 
+adjust_series <- function(series) {
+  decomposed <- stl(series, s.window="periodic")
+  seasadj(decomposed)  # Return the seasonally adjusted series
+}
+
+JP_GDP_adj <- adjust_series(JP_GDP_ts)
+CN_GDP_adj <- adjust_series(CN_GDP_ts)
+US_GDP_adj <- adjust_series(US_GDP_ts)
+AU_GDP_adj <- adjust_series(AU_GDP_ts)
+
+adjusted_GDP_data <- data.frame(
+  Time = as.Date(time(JP_GDP_adj), origin = "1970-01-01"),
+  JP_GDP = JP_GDP_adj,
+  CN_GDP = CN_GDP_adj,
+  US_GDP = US_GDP_adj,
+  AU_GDP = AU_GDP_adj
+)
+adjusted_GDP_data$Time = as.yearqtr(adjusted_GDP_data$Time, format = "%Y-Q%q")
+
+adjusted_GDP_data_long <- pivot_longer(adjusted_GDP_data,
+                              cols = colnames(adjusted_GDP_data)[2:5],
+                              names_to = "Country",
+                              values_to = "GDP")
+
+GDP_plot <- ggplot(data = adjusted_GDP_data_long, aes(x = Time, y = GDP, color = Country)) +
+  geom_line() +
+  scale_color_manual(values = c(
+    "CN_GDP" = "#3498db",  # Blue
+    "JP_GDP" = "#e74c3c",  # Red
+    "US_GDP" = "#2ecc71",  # Green
+    "AU_GDP" = "#f39c12"   # Orange
+  )) +
+  theme_minimal() +
+  labs(x = "Time", y = "GDP (%)", title = "Seasonally Adjustd GDP Trends", color = "Country") +
+  theme(
+    legend.title = element_blank(),  # Removes the legend title for a cleaner look
+    legend.position = "bottom"       # Moves the legend to the bottom
+  )
+```
+
+```{r}
+final_df = inner_join(CPI_data, IR_data, by = 'Time')
+#final_df = inner_join(final_df, FDI_data, by = 'Time')
+FDI_data_pct <- FDI_data %>%
+  mutate(across(c(JP_FDI, CN_FDI, US_FDI, AU_FDI),
+                ~ c(NA, 100 * (diff(.) / .[-length(.)])),
+                .names = "{.col}"))
+FDI_data_pct <- na.omit(FDI_data_pct)
+
+final_df = inner_join(final_df, FDI_data_pct, by = 'Time')
+
+final_df = inner_join(final_df, BOP_data, by = 'Time')
+#final_df = inner_join(final_df, adjusted_GDP_data, by = 'Time')
+adjusted_GDP_data_pct <- adjusted_GDP_data %>%
+  mutate(across(c(JP_GDP, CN_GDP, US_GDP, AU_GDP),
+                ~ c(NA, 100 * (diff(.) / .[-length(.)])),
                 .names = "{.col}"))
 
-GDP_original_long <- pivot_longer(GDP_original, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
-                              values_to = "GDP")
+adjusted_GDP_data_pct <- na.omit(adjusted_GDP_data_pct)
+final_df = inner_join(final_df, adjusted_GDP_data_pct, by = 'Time')
 
-GDP_data_long <- pivot_longer(GDP_data_percent, 
-                              cols = c(China, Japan, United_States, Australia), 
-                              names_to = "Country", 
-                              values_to = "GDP")
-
-GDP_original_plot = ggplot(data = GDP_original_long, aes(x = Time, y = GDP, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
-  theme_minimal() +
-  labs(x = "Time", y = "GDP (US dollar, billions)", title = "GDP", color = "Country")
+final_df = inner_join(final_df, XCH_data, by = 'Time')
+final_df = final_df %>% dplyr::select(-c('US_XCH'))
 
 
-GDP_plot = ggplot(data = GDP_data_long, aes(x = Time, y = GDP, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c("China" = "blue", "Japan" = "red", "United_States" = "green", "Australia" = "orange")) +
-  theme_minimal() +
-  labs(x = "Time", y = "GDP (%change)", title = "Percentage change in GDP", color = "Country")
-#ggsave("GDP.png", plot = GDP_plot, path = paste0(getwd(), "/plots", sep = ""), width = 10, height = 7)
-
-blank_plot <- ggplot() + 
-  theme_void() + 
-  theme(plot.background = element_blank(), panel.grid = element_blank(), panel.border = element_blank())
+print('Start time of analysis: ')
+print(min(final_df$Time))
+print('End time of analysis: ')
+print(max(final_df$Time))
 ```
 
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-colnames(CPI_data) = c('Time', 'CPI_CN', 'CPI_JP', 'CPI_US', 'CPI_AU')
-colnames(FDI_original) = c('Time', 'FDI_CN', 'FDI_JP', 'FDI_US', 'FDI_AU')
-data <- inner_join(CPI_data, FDI_original, by = "Time")
-
-
-```
 ## Data Plots 
 **Original Variables** 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-layout <- (FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
+layout <- (IR_plot| CPI_plot) / (BOP_plot | XCH_plot) / (GDP_plot | FDI_plot)
+#FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
-**Transformed Variables**
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-layout <- (CPI_plot | FDI_plot) / (XCH_plot | BOP_plot) / (GDP_plot | blank_plot)
-layout 
-```
-
 ## Stationarity Check 
 **Stationary Tests** 
 
@@ -544,7 +915,7 @@ results_df$Country <- rownames(results_df)
 rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for CPI Data by Country")
 ```
-The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level. 
+The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level, except for China. 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 results <- sapply(FDI_data[2:nrow(FDI_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -553,14 +924,11 @@ results_df$Country <- rownames(results_df)
 rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for Foreign Direct Investment (% change) Data by Country")
 ```
-The ADF results shows that we have enough evidence to reject the null hypothesis that the foreign direct investment (% change) data is not unit-root stationary for Australia, the United States and Japan at 1% significance level and we do have enough evidence to reject the null hypothesis for China at 1% significance level. 
-
-
-
+The ADF results shows that we do not have enough evidence to reject the null hypothesis that the foreign direct investment data is not unit-root stationary for Australia, the United States and Japan at 1% significance level and we do have enough evidence to reject the null hypothesis for China at 1% significance level. 
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-results <- sapply(XCH_data[2:nrow(XCH_data),2:4], perform_adf_test)
+results <- sapply(XCH_data[2:nrow(XCH_data),c(2,3,5)], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
 results_df$Country <- rownames(results_df)
@@ -568,10 +936,9 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for Exchange Rate (% change) Data by Country")
 ```
 
-The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate (%change) against the dollar series is unit root non-stationary at 1% significance level. 
+The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate against the dollar series is unit root non-stationary at 1% significance level. 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-
 results <- sapply(BOP_data[2:nrow(BOP_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
@@ -579,11 +946,11 @@ results_df$Country <- rownames(results_df)
 rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for Balance of Payments (% change) Data by Country")
 ```
-The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments (%change) series is unit root non-stationary at 5% significance level for all countries except for China. 
+The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments series is unit root non-stationary at 1% significance level for all countries. 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 
-results <- sapply(GDP_data_percent[2:nrow(GDP_data_percent),2:5], perform_adf_test)
+results <- sapply(adjusted_GDP_data_pct[2:nrow(adjusted_GDP_data_pct),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
 results_df$Country <- rownames(results_df)
@@ -591,14 +958,9 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for GDP (% change) Data by Country")
 ```
 
-The result of the ADF test on the GDP data shows that we do not have enough evidence to reject the null hypothesis that the GDP (%change) series is unit root non-stationary at 5% significance level.
-
-
-The results from the ADF tests indicates that further transformations are needed to achieve stationarity for most of the variables included in this research. 
-
+The result of the ADF test on the GDP data shows that we do not have enough evidence to reject the null hypothesis that the GDP series is unit root non-stationary at 5% significance level.
 
 # 3. The Model and Hypothesis
-
 We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in @wozniakBsvarsBayesianEstimation2022. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by @Chan_2015. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combined a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling. 
 
 ## 3.1 Model 1: Standard BVAR(p) Model
@@ -655,7 +1017,7 @@ where
 - $\Sigma$ is a $N \times N$ matrix representing the row-specific covariance matrix
 - $I_T$ is a $T \times T$ identity matrix representing the column specific covariance matrix
 - $E|X$ follows a matrix-variate normal distribution with mean $0_{T \times N}$, row specific covariance matrix $\Sigma_{N \times N}$ and column specific covariance matrix $I_T$
-
+- $x_{t}^T = \left( \begin{array}{cccc}1  & y_{t-1} & y_{t-2} & \cdots & y_{t-p} \end{array} \right)$
 
 
 
@@ -748,6 +1110,7 @@ $$\bar{S} = S_0 + Y^TY + A_0^TV_A^{-1}A_0 - \bar{A}^T\bar{V}^{-1}\bar{A}$$
 
 
 ### 3.1.4 Estimation Procedure 
+
 
 In this setting, we have 
 
@@ -991,7 +1354,6 @@ We monitor the acceptance rate and adjust $\tau^2$ as necessary to achieve an op
 We note that since $\Omega$ is a band matrix, we do not need compute $\Omega^{-1}$, instead, we obtain the Cholesky decomposition $C_{\Omega}$ of $\Omega$, which has a time complexity of $O(T)$. Terms involving $\Omega^{-1}$ such as $X^T\Omega^{-1}X$ can be obtained by: $$X^T\Omega^{-1}X = X^T(C_{\Omega}^{-1})^{T}C_{\Omega}^{-1}X=(C_{\Omega}^{-1}X)^T(C_{\Omega}^{-1}X) = \tilde{X}^T\tilde{X}$$
 
 ## 3.3 Model 3: Large BVAR model with ommon Stochastic Volatility
-
 ## 3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility
 
 
@@ -1224,7 +1586,6 @@ Sampling from the joint predictive density is the same as before.
 # 4. Model Estimation
 ## 4.1 Standard Bayesian VAR
 ### 4.1.1 Model Building Code and Validation 
-
 We verify that our model can replicate the true parameter of the data generate process by: 
 1. Generate artificial data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. That is, 
 
@@ -1278,15 +1639,20 @@ ggplot(mat_plot, aes(x = Index, y = value, color = variable)) +
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}
 BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){
+  Y = (data[(p+1):nrow(data),])
   N = ncol(Y)
   Ty = nrow(Y)
   S = S1 + S2
-  Y = (data[(p+1):nrow(data),c(1,2)])
+  Y = (data[(p+1):nrow(data),])
   X = matrix(1,nrow(Y),1) 
   for (i in 1:p){
-    X     = cbind(X, (data[(p+1):nrow(data)-i,c(1,2)]))
+    X     = cbind(X, (data[(p+1):nrow(data)-i,]))
   }
-  V_bar = solve(t(X)%*%X + solve(V_prior))
+  X = as.matrix(X)
+  Y = as.matrix(Y)
+  lambda <- 1e-5
+  V_bar = solve(t(X)%*%X + solve(V_prior) + diag(lambda, nrow = ncol(X)))
+  #V_bar = round(V_bar, 5)
   A_bar = V_bar%*%(t(X)%*%Y + solve(V_prior)%*%A_prior)
   nu_bar = Ty + nu_prior
   #S_bar  = S_prior + t(Y)%*%Y + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
@@ -1322,7 +1688,6 @@ S_prior     = diag(1, N)
 nu_prior    = ncol(random_walk_sample)+1
 S1 = 1000 
 S2 = 2000
-Y = (random_walk_sample[(p+1):nrow(random_walk_sample),c(1,2)])
 
 posterior_samples = BVAR_fit(data = random_walk_sample, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
 
@@ -1339,14 +1704,138 @@ round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
 ### 4.1.2 Empirical Result
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+p = 5
+kappa1 = 0.01^2
+kappa2 = 20^2
+data = final_df[,2:ncol(final_df)]
+#data = final_df[,2:19]
+N = ncol(data)
+A_prior             = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(data)+1
+S1 = 1000 
+S2 = 2000
+
+posterior_samples = BVAR_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
+
+posterior_samples_A = posterior_samples[[1]]
+posterior_samples_Sigma = posterior_samples[[2]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A,1:2,sd),3)
+print('Posterior mean of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,mean),3)
+print('Posterior standard deviation of covariance matrix:')
+round(apply(posterior_samples_Sigma,1:2,sd),3)
+```
+
+```{r}
+S = dim(posterior_samples_A)[3]
+N =dim(posterior_samples_A)[2]
+p = (dim(posterior_samples_A)[1] -1) / N
+Y = (data[(p+1):nrow(data),])
+x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
+x.Ti               = x.Ti[p:1,]
+h = 10
+Y.h   = array(NA,c(h,N,S))
+for (s in 1:S){
+  A     = posterior_samples_A[,,s]
+  Sigma = posterior_samples_Sigma[,,s]
+  N = ncol(A)
+  p = (nrow(A) -1) / N
+  Y = (data[(p+1):nrow(data),])
+  x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
+  x.Ti               = x.Ti[p:1,]
+  
+  for (i in 1:h){
+    x.T               = c(1,as.vector(t(x.Ti)))
+    Y.f               = mvtnorm::rmvnorm(1, mean = x.T%*%A, sigma=Sigma)
+    colnames(Y.f) = colnames(x.Ti)
+    x.Ti            = rbind(Y.f,x.Ti[1:(p-1),])
+    Y.h[i,,s]   = Y.f[1:N]
+    }
+  }
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+
+BVAR_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
+  S = dim(posterior_samples_A)[3]
+  N =dim(posterior_samples_A)[2]
+  p = (dim(posterior_samples_A)[1] -1) / N
+  Y = (data[(p+1):nrow(data),])
+  x               = Y[(nrow(Y)-p+1):nrow(Y),]
+  x               = x[p:1,]
+  Y_h   = array(NA,c(h,N,S))
+  for (s in 1:S){
+    A     = posterior_samples_A[,,s]
+    Sigma = posterior_samples_Sigma[,,s]
+    N = ncol(A)
+    p = (nrow(A) -1) / N
+    Y = (data[(p+1):nrow(data),])
+    x  = Y[(nrow(Y)-p+1):nrow(Y),]
+    x = x[p:1,]
+    
+    for (i in 1:h){
+      x_T               = c(1,purrr::as_vector(t(x)))
+      Period_Y               = mvtnorm::rmvnorm(1, mean = x_T%*%A, sigma=Sigma)
+      colnames(Period_Y) = colnames(x)
+      x            = rbind(Period_Y,x[1:(p-1),])
+      Y_h[i,,s]   = Period_Y[1:N]
+      }
+  }
+  return(Y_h)
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+data = final_df[,2:ncol(final_df)]
+h = 10
+BVAR_prediction = BVAR_predict(posterior_samples_A = posterior_samples_A, posterior_samples_Sigma = posterior_samples_Sigma, data = data, h = h)
+JP_CPI_forecast_mean  = apply(BVAR_prediction[,1,],1,mean) 
+JP_CPI_forecast_interval = apply(BVAR_prediction[,1,],1,hdi,credMass=0.90)
+JP_CPI_forecast_range = range(data[,1],JP_CPI_forecast_interval)
+```
+
+```{r}
+# plots of forecasts
+
+mcxs1  = "#05386B"
+mcxs2  = "#379683"
+mcxs3  = "#5CDB95"
+mcxs4  = "#8EE4AF"
+mcxs5  = "#EDF5E1"
+mcxs1.rgb   = col2rgb(mcxs1)
+mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
+mcxs2.rgb   = col2rgb(mcxs2)
+mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
+  
+# par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1)
+# plot(1:(length(data[,1])+h),c(data[,1],JP_CPI_forecast_mean), type="l", ylim=JP_CPI_forecast_range, axes=FALSE, xlab="", ylab="", lwd=2)
+# specifying x axis
+#axis(1,c(3,43,83,123,163,203,243,nrow(y),nrow(y)+h),c("1960","1970","1980","1990","2000","2010","2020","",""), col=mcxs1)
+# specifying y axis
+#axis(2,c(rgdp.range[1],mean(rgdp.range),rgdp.range[2]),c("","rgdp",""), col=mcxs1)
+#vline for begin forecast period
+#text(x=nrow(data), y=9.65, srt=90, "2023-Q4")
+#abline(v=246, col=mcxs1)
+#Confidence interval for forecasts
+#text(x=nrow(data)+h, y=9.65, srt=90, "2026-12")
+#polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
+        # c(y[246,1],rgdp.interval.f[1,],rgdp.interval.f[2,20:1],y[246,1]),
+        # col=mcxs1.shade1, border=mcxs1.shade1)
+```
 
 ## 4.2 Large BVAR model with MA(1) Gaussian Innovations 
 ### 4.2.1 Model Building Code and Validation 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
-
-
 BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){
-  Y = (data[(p+1):nrow(data),c(1,2)])
+  Y = (data[(p+1):nrow(data),])
   N = ncol(Y)
   Ty = nrow(Y)
   S = S1 + S2
@@ -1354,8 +1843,10 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   K = 1+p*N
   tau = 0.15
   for (i in 1:p){
-    X     = cbind(X, (data[(p+1):nrow(data)-i,c(1,2)]))
+    X     = cbind(X, (data[(p+1):nrow(data)-i,]))
   }
+  X = as.matrix(X)
+  Y = as.matrix(Y)
   
   nu_bar = Ty + nu_prior
   psi = 0
@@ -1447,11 +1938,12 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
 }
 ```
 
-
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+
 p = 1
 kappa1 = 0.1^2
 kappa2 = 10^2
+
 N = ncol(random_walk_sample)
 A_prior     = matrix(0, 1+p*N, ncol = N)
 V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
@@ -1486,7 +1978,54 @@ round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 ```
 
 
+
+
+
+
+### 4.2.1 Empirical Results
+
+**1. Fitted Model Parameters**
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+
+p = 5
+kappa1 = 0.1^2
+kappa2 = 10^2
+data = final_df[,2:ncol(final_df)]
+#data = random_walk_sample
+N = ncol(data)
+A_prior     = matrix(0, 1+p*N, ncol = N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = ncol(random_walk_sample)+1
+S1 = 500
+S2 = 1000
+vh0_prior = 5
+sh0_prior = 0.04
+rho_prior = 0.9
+Vrho_prior = 0.04
+psi_prior = 0
+Vpsi_prior = 1
+posterior_samples_MA = BVAR_MA_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, N)
+
+posterior_samples_A_MA = posterior_samples_MA[[1]]
+posterior_samples_Sigma_MA = posterior_samples_MA[[2]]
+posterior_samples_Omega_MA = posterior_samples_MA[[3]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A_MA,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A_MA,1:2,sd),3)
+print('Posterior mean of row specific covariance matrix:')
+round(apply(posterior_samples_Sigma_MA,1:2,mean),3)
+print('Posterior standard deviation of row specific covariance matrix:')
+round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
+print('Posterior mean of column specific covariance matrix (first 10 rows and columns):')
+round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)
+print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')
+round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 ```
+```
+**2. Forecasts Model Parameters**
+
 
 ## 4.4  Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility
 ### 4.4.1 Model Building Code and Validation 
@@ -1494,7 +2033,6 @@ round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}
-
 # BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N, T, vho_prior, sh0_prior, rho_prior, Vrho_prior, psi_prior, Vpsi_prior){
 #   N = ncol(data)
 #   Ty = nrow(data)

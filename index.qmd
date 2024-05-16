@@ -4,7 +4,7 @@ author: "Rui Liu"
 
 execute:
   echo: false
-  
+#  eval: false
 bibliography: references.bib
 ---
 
@@ -45,11 +45,8 @@ focused on analyzing macroeconomic data that are published on a monthly or quart
 | Variables                                              | Original Unit          | Final Unit | Mnemonic | Code           |
 |--------------------------------------------------------|------------------------|------------|----------|----------------|
 | Prices, Consumer Price Index, All items, Previous period | % Change               | % Change   | CPI      | PCPI_PC_PP_PT  |
-| International Investment Positions, assets, Direct Investment | US dollar, millions           | US dollar, millions   | FDI      | IAD_BP6_USD    |
 | Exchange Rates, Domestic Currency per U.S. Dollar, Period Average | US dollar, millions           | US dollar, millions  | XCH      | ENDA_XDC_USD_R |
-| Balance of Payments, Current Account, Goods and Services, Net | US dollar, millions          | US dollar, millions   | BOP      | BGS_BP6_USD    |
-| Gross Domestic Product, Nominal, Seasonally Adjusted | Domestic Currency    |  US dollar  | GDP      | NGDP_NSA_XDC   |
-| Interest rate, Financial, Interest Rates, Monetary Policy-Related Interest Rate | % per annum  | IR      | FPOLM_PA   |
+| Gross Domestic Product, Nominal, Seasonally Adjusted | Domestic Currency    |  log(US dollar)  | GDP      | NGDP_NSA_XDC   |
 
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends.
 Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
@@ -73,6 +70,9 @@ library(extraDistr)
 library(forecast)
 library(HDInterval)
 library(purrr)
+library(MCMCpack)
+library(Rmpfr)
+library(igraph)
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
@@ -81,7 +81,6 @@ library(purrr)
 #Download Data 
 #################################################################################
 #################################################################################
-
 #devtools::install_github('mingjerli/IMFData')
 # https://github.com/mingjerli/IMFData
 #find out available dataset in IMF data
@@ -112,9 +111,9 @@ checkquery = FALSE
 ##################################################################
 #China
 ##################################################################
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'FIDR_PA') #Financial, Interest Rates, Deposit, Percent per annum
-CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
-                                  checkquery)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "CN", CL_INDICATOR_IFS = 'FIDR_PA') #Financial, Interest Rates, Deposit, Percent per annum
+# CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate, 
+#                                   checkquery)
 ##################################################################
 #US
 ##################################################################
@@ -126,25 +125,25 @@ CN.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 #queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FITB_PA') 
 #queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FIH_HH_L_CC_1Y_PA') 
 #queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FILR_PA') 
-Sys.sleep(0.5)
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
-US.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
-                                 checkquery)
+# Sys.sleep(0.5)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "US", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+# US.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+#                                  checkquery)
 
 ##################################################################
 #AU
 ##################################################################
-Sys.sleep(0.5)
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
-AU.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
-                                 checkquery)
+# Sys.sleep(0.5)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "AU", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+# AU.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+#                                  checkquery)
 ##################################################################
 #J{} #starts 2006 Q2
 ##################################################################
-Sys.sleep(0.5)
-queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
-JP.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
-                                 checkquery)
+# Sys.sleep(0.5)
+# queryfilter <- list(CL_FREA = "Q", CL_AREA_IFS = "JP", CL_INDICATOR_IFS = 'FPOLM_PA') #Financial, Interest Rates, Monetary Policy-Related Interest Rate, Percent per annum
+# JP.IR.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,  
+#                                  checkquery)
 
 #International Investment Positions Data
 #China
@@ -349,91 +348,91 @@ AU.CPI.query <- CompactDataMethod(databaseID, queryfilter, startdate, enddate,
 #################################################################################
 #################################################################################
 
-print('earliest available interest rate data fo China: ')
-print(min(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available interest rate data fo Australia: ')
-print(min(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available interest rate data fo Japan: ')
-print(min(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available interest rate data fo US: ')
-print(min(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available interest rate data fo China: ')
+# print(min(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available interest rate data fo Australia: ')
+# print(min(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available interest rate data fo Japan: ')
+# print(min(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available interest rate data fo US: ')
+# print(min(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# 
+# print('newest available interest rate data fo China: ')
+# print(max(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available interest rate data fo Australia: ')
+# print(max(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available interest rate data fo Japan: ')
+# print(max(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available interest rate data fo US: ')
+# print(max(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
 
-print('newest available interest rate data fo China: ')
-print(max(CN.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available interest rate data fo Australia: ')
-print(max(AU.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available interest rate data fo Japan: ')
-print(max(JP.IR.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available interest rate data fo US: ')
-print(max(US.IR.query$Obs[[1]]$`@TIME_PERIOD`))
+# years <- 2006:2023
+# quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
+# all_quarters <- data.frame(Time = quarters[quarters >= "2006-Q2" & quarters <= "2023-Q4"])
+# 
+# IR_data = data.frame(JP.IR.query$Obs[[1]])
+# IR_data = IR_data[,1:2]
+# colnames(IR_data) = c('Time', 'JP_IR')
+# #IR_data$Time <- as.character(as.yearqtr(IR_data$Time))
+# IR_data = left_join(all_quarters,  IR_data, by = "Time")
+# IR_data <- IR_data %>%
+#   fill(JP_IR, .direction = "down")
+# 
+# tmp = data.frame(CN.IR.query$Obs[[1]])
+# tmp = tmp[,1:2]
+# colnames(tmp) = c('Time', 'CN_IR')
+# IR_data = left_join(IR_data,  tmp, by = "Time")
 
-years <- 2006:2023
-quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
-all_quarters <- data.frame(Time = quarters[quarters >= "2006-Q2" & quarters <= "2023-Q4"])
+# tmp = data.frame(US.IR.query$Obs[[1]])
+# tmp = tmp[,1:2]
+# colnames(tmp) = c('Time', 'US_IR')
+# IR_data = left_join(IR_data,  tmp, by = "Time")
+# 
+# tmp = data.frame(AU.IR.query$Obs[[1]])
+# tmp = tmp[,1:2]
+# colnames(tmp) = c('Time', 'AU_IR')
+# IR_data = left_join(IR_data,  tmp, by = "Time")
+# 
+# IR_data$Time = as.yearqtr(IR_data$Time, format = "%Y-Q%q")
+# 
+# IR_data <- IR_data %>%
+#   mutate(
+#     JP_IR = as.numeric(JP_IR),
+#     CN_IR = as.numeric(CN_IR),
+#     US_IR = as.numeric(US_IR),
+#     AU_IR = as.numeric(AU_IR)
+#   )
+# IR_data_long <- pivot_longer(IR_data,
+#                               cols = colnames(IR_data)[2:5],
+#                               names_to = "Country",
+#                               values_to = "IR")
 
-IR_data = data.frame(JP.IR.query$Obs[[1]])
-IR_data = IR_data[,1:2]
-colnames(IR_data) = c('Time', 'JP_IR')
-#IR_data$Time <- as.character(as.yearqtr(IR_data$Time))
-IR_data = left_join(all_quarters,  IR_data, by = "Time")
-IR_data <- IR_data %>%
-  fill(JP_IR, .direction = "down")
-
-tmp = data.frame(CN.IR.query$Obs[[1]])
-tmp = tmp[,1:2]
-colnames(tmp) = c('Time', 'CN_IR')
-IR_data = left_join(IR_data,  tmp, by = "Time")
-
-tmp = data.frame(US.IR.query$Obs[[1]])
-tmp = tmp[,1:2]
-colnames(tmp) = c('Time', 'US_IR')
-IR_data = left_join(IR_data,  tmp, by = "Time")
-
-tmp = data.frame(AU.IR.query$Obs[[1]])
-tmp = tmp[,1:2]
-colnames(tmp) = c('Time', 'AU_IR')
-IR_data = left_join(IR_data,  tmp, by = "Time")
-
-IR_data$Time = as.yearqtr(IR_data$Time, format = "%Y-Q%q")
-
-IR_data <- IR_data %>%
-  mutate(
-    JP_IR = as.numeric(JP_IR),
-    CN_IR = as.numeric(CN_IR),
-    US_IR = as.numeric(US_IR),
-    AU_IR = as.numeric(AU_IR)
-  )
-IR_data_long <- pivot_longer(IR_data,
-                              cols = colnames(IR_data)[2:5],
-                              names_to = "Country",
-                              values_to = "IR")
-
-IR_plot <- ggplot(data = IR_data_long, aes(x = Time, y = IR, color = Country)) +
-  geom_line() +
-  scale_color_manual(values = c(
-    "CN_IR" = "#3498db",  # Blue
-    "JP_IR" = "#e74c3c",  # Red
-    "US_IR" = "#2ecc71",  # Green
-    "AU_IR" = "#f39c12"   # Orange
-  )) +
-  theme_minimal() +
-  labs(x = "Time", y = "IR (%)", title = "IR Trends", color = "Country") +
-  theme(
-    legend.title = element_blank(),  # Removes the legend title for a cleaner look
-    legend.position = "bottom"       # Moves the legend to the bottom
-  )
+# IR_plot <- ggplot(data = IR_data_long, aes(x = Time, y = IR, color = Country)) +
+#   geom_line() +
+#   scale_color_manual(values = c(
+#     "CN_IR" = "#3498db",  # Blue
+#     "JP_IR" = "#e74c3c",  # Red
+#     "US_IR" = "#2ecc71",  # Green
+#     "AU_IR" = "#f39c12"   # Orange
+#   )) +
+#   theme_minimal() +
+#   labs(x = "Time", y = "IR (%)", title = "IR Trends", color = "Country") +
+#   theme(
+#     legend.title = element_blank(),  # Removes the legend title for a cleaner look
+#     legend.position = "bottom"       # Moves the legend to the bottom
+#   )
 
 #################################################################################
 ###################################CPI##########################################
 #################################################################################
-print('earliest available consumer price index data fo China: ')
-print(min(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available consumer price index data fo Australia: ')
-print(min(AU.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available consumer price index data fo Japan: ')
-print(min(JP.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available consumer price index data fo US: ')
-print(min(US.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available consumer price index data fo China: ')
+# print(min(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available consumer price index data fo Australia: ')
+# print(min(AU.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available consumer price index data fo Japan: ')
+# print(min(JP.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available consumer price index data fo US: ')
+# print(min(US.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
 
 print('newest available consumer price index data fo China: ')
 print(max(CN.CPI.query$Obs[[1]]$`@TIME_PERIOD`))
@@ -500,23 +499,23 @@ CPI_plot <- ggplot(data = CPI_data_long, aes(x = Time, y = CPI, color = Country)
 #################################################################################
 ###############################################FDI###############################
 #################################################################################
-print('earliest available foreign direct investment data fo China: ')
-print(min(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available foreign direct investment data fo Australia: ')
-print(min(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available foreign direct investment data fo Japan: ')
-print(min(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available foreign direct investment data fo US: ')
-print(min(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-
-print('newest available foreign direct investment data fo China: ')
-print(max(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available foreign direct investment data fo Australia: ')
-print(max(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available foreign direct investment data fo Japan: ')
-print(max(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available foreign direct investment data fo US: ')
-print(max(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available foreign direct investment data fo China: ')
+# print(min(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available foreign direct investment data fo Australia: ')
+# print(min(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available foreign direct investment data fo Japan: ')
+# print(min(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available foreign direct investment data fo US: ')
+# print(min(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# 
+# print('newest available foreign direct investment data fo China: ')
+# print(max(CN.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available foreign direct investment data fo Australia: ')
+# print(max(AU.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available foreign direct investment data fo Japan: ')
+# print(max(JP.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available foreign direct investment data fo US: ')
+# print(max(US.FDI.query$Obs[[1]]$`@TIME_PERIOD`))
 
 years <- 2010:2023
 quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
@@ -576,23 +575,23 @@ FDI_plot <- ggplot(data = FDI_data_long, aes(x = Time, y = FDI, color = Country)
 ###########################################XCH###################################
 #################################################################################
 
-print('earliest available exchange rate data fo China: ')
-print(min(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available exchange rate data fo Australia: ')
-print(min(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available exchange rate data fo Japan: ')
-print(min(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available exchange rate data fo US: ')
-print(min(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-
-print('newest available exchange rate data fo China: ')
-print(max(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available exchange rate data fo Australia: ')
-print(max(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available exchange rate data fo Japan: ')
-print(max(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available exchange rate data fo US: ')
-print(max(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available exchange rate data fo China: ')
+# print(min(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available exchange rate data fo Australia: ')
+# print(min(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available exchange rate data fo Japan: ')
+# print(min(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available exchange rate data fo US: ')
+# print(min(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# 
+# print('newest available exchange rate data fo China: ')
+# print(max(CN.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available exchange rate data fo Australia: ')
+# print(max(AU.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available exchange rate data fo Japan: ')
+# print(max(JP.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available exchange rate data fo US: ')
+# print(max(US.XCH.query$Obs[[1]]$`@TIME_PERIOD`))
 
 years <- 1980:2024
 quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
@@ -673,23 +672,23 @@ XCH_plot <- ggplot(data = XCH_data_long, aes(x = Time, color = Country)) +
 #################################################################################
 ###########################################BOP###################################
 #################################################################################
-print('earliest available balance of payments data fo China: ')
-print(min(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available balance of payments data fo Australia: ')
-print(min(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available balance of payments data fo Japan: ')
-print(min(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available balance of payments data fo US: ')
-print(min(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-
-print('newest available balance of payments data fo China: ')
-print(max(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available balance of payments data fo Australia: ')
-print(max(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available balance of payments data fo Japan: ')
-print(max(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available balance of payments data fo US: ')
-print(max(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available balance of payments data fo China: ')
+# print(min(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available balance of payments data fo Australia: ')
+# print(min(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available balance of payments data fo Japan: ')
+# print(min(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available balance of payments data fo US: ')
+# print(min(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# 
+# print('newest available balance of payments data fo China: ')
+# print(max(CN.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available balance of payments data fo Australia: ')
+# print(max(AU.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available balance of payments data fo Japan: ')
+# print(max(JP.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available balance of payments data fo US: ')
+# print(max(US.BOP.query$Obs[[1]]$`@TIME_PERIOD`))
 
 years <- 2005:2024
 quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
@@ -748,23 +747,23 @@ BOP_plot <- ggplot(data = BOP_data_long, aes(x = Time, y = BOP, color = Country)
 #################################################################################
 ###########################################GDP###################################
 #################################################################################
-print('earliest available gross domestic product data fo China: ')
-print(min(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available gross domestic product data fo Australia: ')
-print(min(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available gross domestic product data fo Japan: ')
-print(min(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('earliest available gross domestic product data fo US: ')
-print(min(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-
-print('newest available gross domestic product data fo China: ')
-print(max(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available gross domestic product data fo Australia: ')
-print(max(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available gross domestic product data fo Japan: ')
-print(max(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
-print('newest available gross domestic product data fo US: ')
-print(max(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available gross domestic product data fo China: ')
+# print(min(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available gross domestic product data fo Australia: ')
+# print(min(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available gross domestic product data fo Japan: ')
+# print(min(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('earliest available gross domestic product data fo US: ')
+# print(min(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# 
+# print('newest available gross domestic product data fo China: ')
+# print(max(CN.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available gross domestic product data fo Australia: ')
+# print(max(AU.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available gross domestic product data fo Japan: ')
+# print(max(JP.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
+# print('newest available gross domestic product data fo US: ')
+# print(max(US.GDP.query$Obs[[1]]$`@TIME_PERIOD`))
 
 years <- 1994:2024
 quarters <- paste(rep(years, each = 4), rep(c("-Q1", "-Q2", "-Q3", "-Q4"), times = length(years)), sep = "")
@@ -844,38 +843,20 @@ GDP_plot <- ggplot(data = adjusted_GDP_data_long, aes(x = Time, y = GDP, color =
     "AU_GDP" = "#f39c12"   # Orange
   )) +
   theme_minimal() +
-  labs(x = "Time", y = "GDP (%)", title = "Seasonally Adjustd GDP Trends", color = "Country") +
+  labs(x = "Time", y = "GDP", title = "Seasonally Adjustd GDP Trends", color = "Country") +
   theme(
     legend.title = element_blank(),  # Removes the legend title for a cleaner look
     legend.position = "bottom"       # Moves the legend to the bottom
   )
 ```
 
-```{r}
-final_df = inner_join(CPI_data, IR_data, by = 'Time')
-#final_df = inner_join(final_df, FDI_data, by = 'Time')
-FDI_data_pct <- FDI_data %>%
-  mutate(across(c(JP_FDI, CN_FDI, US_FDI, AU_FDI),
-                ~ c(NA, 100 * (diff(.) / .[-length(.)])),
-                .names = "{.col}"))
-FDI_data_pct <- na.omit(FDI_data_pct)
-
-final_df = inner_join(final_df, FDI_data_pct, by = 'Time')
-
-final_df = inner_join(final_df, BOP_data, by = 'Time')
-#final_df = inner_join(final_df, adjusted_GDP_data, by = 'Time')
-adjusted_GDP_data_pct <- adjusted_GDP_data %>%
-  mutate(across(c(JP_GDP, CN_GDP, US_GDP, AU_GDP),
-                ~ c(NA, 100 * (diff(.) / .[-length(.)])),
-                .names = "{.col}"))
-
-adjusted_GDP_data_pct <- na.omit(adjusted_GDP_data_pct)
-final_df = inner_join(final_df, adjusted_GDP_data_pct, by = 'Time')
-
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
+final_df = inner_join(CPI_data, adjusted_GDP_data, by = 'Time')
 final_df = inner_join(final_df, XCH_data, by = 'Time')
 final_df = final_df %>% dplyr::select(-c('US_XCH'))
-
-
+final_df[c('JP_GDP', 'CN_GDP', 'US_GDP', 'AU_GDP')] = log(final_df[c('JP_GDP', 'CN_GDP', 'US_GDP', 'AU_GDP')])
+#final_df[,2:ncol(final_df)] = scale(final_df[,2:ncol(final_df)])
+##############################################scaling data###############################
 print('Start time of analysis: ')
 print(min(final_df$Time))
 print('End time of analysis: ')
@@ -886,7 +867,8 @@ print(max(final_df$Time))
 ## Data Plots 
 **Original Variables** 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
-layout <- (IR_plot| CPI_plot) / (BOP_plot | XCH_plot) / (GDP_plot | FDI_plot)
+layout <-   (XCH_plot) / (GDP_plot)/ ( CPI_plot)
+#layout <-   (BOP_plot | XCH_plot) / (GDP_plot | FDI_plot) / (CPI_plot)
 #FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
@@ -950,7 +932,7 @@ The result of the ADF test on the balance of payments data shows that we do not 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 
-results <- sapply(adjusted_GDP_data_pct[2:nrow(adjusted_GDP_data_pct),2:5], perform_adf_test)
+results <- sapply(adjusted_GDP_data[2:nrow(adjusted_GDP_data),2:5], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
 names(results_df) <- c("Dickey-Fuller Statistic", "Lag Order", "P-value")
 results_df$Country <- rownames(results_df)
@@ -1138,11 +1120,83 @@ The draws from joint predictive density can then be obtained using the following
 1. Sample S draws $\left\{ A^{(s)}, \Sigma^{(s)} \right\}_{s=1}^{S}$ from $p(A,\Sigma|Y, X)$ 
 2. Sample S draws $\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S$ from $Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}|A^{(s)}, \Sigma^{(s)}])$
 
+where 
+$$Y_{t+h} = \begin{pmatrix}
+    Y_{t+1} \\
+    Y_{t+2} \\
+    \vdots    \\
+    Y_{t+h} 
+\end{pmatrix}
+$$
+
+To derive the posterior predictive density for $Y_{t+h}$, we first note that: 
+
+$$p(Y_{t+h}|Y_{t}) = \int \int p(Y_{t+h}|Y_{t},A, \Sigma)\times p(A,\Sigma|Y,X)dAd\Sigma$$
+where 
+
+$$p(y_{t+h}|Y, X, A, \Sigma, 1) \sim \mathcal{N}_{hN} (Y_{t+h|t}(A), Var(Y_{t+h}|A, \Sigma))$$
+
+$$Y_{t+h|t}(A) =\begin{pmatrix}
+    Y_{t+1|t} \\
+    Y_{t+2|t} \\
+    \vdots    \\
+    Y_{t+h|t} 
+\end{pmatrix} = \begin{pmatrix}  
+\mu_0 + A_1 Y_t + \cdots + A_pY_{t-p+1|t} \\ 
+\mu_0 + A_1 Y_{t+1|t} + \cdots + A_p Y_{t-p+2|t}\\ 
+\vdots \\ 
+\mu_0 + A_1 Y_{t+1|t} + \cdots + A_p Y_{t-p+h|t}
+\end{pmatrix}$$
+
+
+$$\mathbb{V}ar(Y_{t+h|t}|A, \Sigma) = \begin{pmatrix}
+    \Sigma & \Sigma \phi_1^T & \cdots & \Sigma \phi_{h-1}^T \\
+    \phi_1\Sigma &\Sigma + \phi_1 \Sigma \phi_1^T  & \cdots & \Sigma \phi_1^T + \phi_1 \Sigma \phi_2^T+ \cdots + \phi_{h-2}\Sigma \phi_{h-1}^T + \phi_{h-1} \Sigma \phi_{h}^T \\
+    \vdots & \vdots & \ddots & \vdots \\
+    \phi_{h-1}\Sigma\ & \phi_1\Sigma  + \phi_2 \Sigma \Phi_1^T + \cdots + \phi_{h} \Sigma \phi_{h-1}^T & \cdots & \Sigma + \phi_1 \Sigma \phi_1^T + \cdots+\phi_{h-1}\Sigma\phi_{h-1}^T+\phi_h\Sigma\phi_h^T
+\end{pmatrix}
+$$
+where $\phi_i = J A^i J'$ are the parameters of the VMA($\infty$) representation of VAR($p$) and $A$ is the parameter matrix of VAR(1) representation of VAR($p$).
+
+$$p(A|Y, X, \Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})$$
+In this approach, we are incorporating into our prediction the uncertainties in the estimates of the parameters by integrating over A and $\Sigma$, the is solved using numerical integration. 
+
+
+
+### 3.1.5 Test for Granger Causality 
+Granger causality testing, introduced in @Granger_1969, is a way to measure whether the past and current values of one time series contains useful information for predicting future values of another. The idea behind granger causality testing is that if a time series does contain predictive information about another, incorporating it into the model should reduce the error variance and improve the precision of the forecasts. The classical approach for testing causality is the Wald test, but it fails to quantify the degree of evidence in the data in favour of or against the causality hypothesis. The Bayesian approach to testing Granger causality based on Baye's factor, on the other hand, has the ability to quantify the evidence for and against the hypothesis with a single number. The Baye's factor is defined as:
+
+$$B_H = \frac{p[H_0|Y]}{p[H_1|Y]}$$ 
+In the context of testing for VAR(p) models, we have the marginal likelihood under the assumption of no Granger causality is:
+
+$$p_0(Y) = \int p_1(Y| A_{ij} = 0, A_{-(ij)})dA_{-(ij)} = p_1(Y|A_{ij}=0)$$ 
+using Baye's rule, we have: 
+$$p_0(Y) = \frac{p_1(A_{ij} = 0|Y) \times p_1(Y)}{p_1(A_{ij} = 0)}$$
+We divide the above equation by $p(y_t|H_1)$ to get Baye's factor: 
+
+$$B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij=0}|Y, \Sigma)d \Sigma}{\int p(A_{ij}=0, \Sigma)d\Sigma}$$
+
+and the integration is performed using numerical integration methods. The second part is also known as the Savage-Dickey density ratio estimator, which is the ratio of the posterior over the prior density evaluated at $A_{ij} = 0$. Indicative values for interpreting Bayes factors is provided below: 
+
+To test for Granger causality, we use the equation:
+$$B_H = \frac{p_1(A_{ij=0}|Y)}{p(A_{ij}=0)} $$
+and the integral is evaluated using numerical integration. 
+
+**Descriptive labels for certain Bayes factors.**
+
+| Label                          | $B_H$ | $p(H_1 \mid X)$ |
+|--------------------------------|-----------|-----------------|
+| Data strongly support $H_1$    | 10        | 91%             |
+| Data weakly support $H_1$      | 3         | 75%             |
+| Data provide ambiguous information | 1     | 50%             |
+| Data weakly support $H_0$      | 1/3       | 25%             |
+| Data strongly support $H_0$    | 1/10      | 9%              |
+
 
 ## 3.2 Model 2: Large BVAR model with MA(1) Gaussian Innovations 
 Incorporating MA(1) Gaussian innovations in a large BVARs model lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables for several reasons. Firstly, the variances of economic shocks is rarely constant over time. For example, volatility tends to cluster during periods of economic crisis and is more tranquil during stable times. Incorporating stochastic volatility allows the model to adapt to changing volatility in the data, improving forecasting performance especially in the presence of financial market instability or economic policy shifts. In addition, by allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model's ability to predict future values by considering the path-dependent nature of the economy. Our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below: 
 
-3.2.1 Model Specification 
+### 3.2.1 Model Specification 
 
 $$ Y = XA+E$$
 $$E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})$$
@@ -1196,21 +1250,21 @@ where
 - $I_T$ is a $T \times T$ identity matrix representing the column specific covariance matrix
 - $E|X$ follows a matrix-variate normal distribution with mean $0_{T \times N}$, row specific covariance matrix $\Sigma_{N \times N}$ and column specific covariance matrix $I_T$
 
-with MA(1) innovations, we have, for i = 1,....,N and t = 1,...,T, $$u_{it} = \eta_{it} + \psi \eta_{i,t-1}$$ where $|\psi|<1$ and $\eta_{it} \sim \mathcal{N}(0,1)$
+with MA(1) innovations, we have, for i = 1,....,N and t = 1,...,T, $$e_{it} = \eta_{it} + \psi \eta_{i,t-1}$$ where $|\psi|<1$ and $\eta_{it} \sim \mathcal{N}(0,1)$
 
 In matrix notation, we have: 
 
-$$u_i = H_{\psi} \eta_i$$ 
+$$e_i = H_{\psi} \eta_i$$ 
 
 where 
 
 
 $$
-u_i = \begin{bmatrix}
-u_{i1} \\
-u_{i2} \\
+e_i = \begin{bmatrix}
+e_{i1} \\
+e_{i2} \\
 \vdots \\
-u_{iT}
+e_{iT}
 \end{bmatrix} \qquad 
 \eta_i = \begin{bmatrix}
 \eta_{i1} \\
@@ -1232,7 +1286,7 @@ $$
  
 Hence, we have 
 
-$$u_1 \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T$$
+$$e \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T$$
 Note that the covariance matrix $\Omega$ depends on $\psi$ only. 
 
 ### 3.2.2 Prior Specification 
@@ -1245,7 +1299,7 @@ We apply a truncated normal prior on $\psi$, $$\psi \sim \mathcal{N}(\psi_0, V_{
 
 For estimation purposes, we initialize with the following setting: 
 
-- $u_{i1} \sim \mathcal{N}(0, 1+\psi^2)$
+- $e_{i1} \sim \mathcal{N}(0, 1+\psi^2)$
 - $\psi_0 = 0$ and $V_{\psi} = 1$ so that the prior centers around 0 with a relatively large variance and has support within (-1, 1)
 
 ### 3.2.3 Posterior Distributions 
@@ -1594,24 +1648,7 @@ $$\mathbf{y_t} = \begin{pmatrix} y_t,1 \\ y_t,2\end{pmatrix} = \mathbf{y_{t-1}} 
 $$\mathbf{\epsilon} \sim iid \mathcal{N}(\mathbf{0}, \mathbf{I_2} )$$
 
 
-
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
-library(IMFData)
-library(patchwork)
-library(zoo)
-library(ggplot2)
-library(tidyr)
-library(dplyr)
-library(tseries)
-library(knitr)
-library(MASS)
-library(ggplot2)
-library(reshape2)
-library(progress)
-library(psych)
-library(truncnorm)
-library(extraDistr)
-
 set.seed(123)
 
 n = 1000  
@@ -1658,7 +1695,6 @@ BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior,
   #S_bar  = S_prior + t(Y)%*%Y + t(A_prior)%*%diag(1/diag(V_prior))%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
   S_bar = S_prior +  t(Y)%*%Y + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar
   S_bar_inv = solve(S_bar)
-
   #Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   Sigma_posterior = rWishart(S, df=nu_bar, Sigma=S_bar_inv)
   Sigma_posterior = apply(Sigma_posterior,3,solve)
@@ -1674,8 +1710,6 @@ BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior,
 }
 ```
 Then we estimate a model with a constant term and 1 lag using the simulated data, show that the posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the posterior mean of the constant term is close to a vector of zeros.
-
-
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 p = 1
 kappa1 = 0.02^2
@@ -1704,73 +1738,48 @@ round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
 ### 4.1.2 Empirical Result
+
+**1. Fitted Model Parameters **
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 p = 5
-kappa1 = 0.01^2
-kappa2 = 20^2
+kappa1 = 0.2^2
+kappa2 = 10^2
+data = final_df[, 2:ncol(final_df)]
+N = ncol(data)
+A_prior = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior = diag(1, N)
+nu_prior  = ncol(data)+1
 data = final_df[,2:ncol(final_df)]
 #data = final_df[,2:19]
-N = ncol(data)
-A_prior             = matrix(0,1+p*N,N)
-A_prior[2:(N + 1),] = diag(N)
-V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
-S_prior     = diag(1, N)
-nu_prior    = ncol(data)+1
-S1 = 1000 
-S2 = 2000
+S1 = 100
+S2 = 200
 
 posterior_samples = BVAR_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior)
 
 posterior_samples_A = posterior_samples[[1]]
 posterior_samples_Sigma = posterior_samples[[2]]
-print('Posterior mean of autoregressive parameter:')
-round(apply(posterior_samples_A,1:2,mean),3)
-print('Posterior standard deviation of autoregressive parameter:')
-round(apply(posterior_samples_A,1:2,sd),3)
-print('Posterior mean of covariance matrix:')
-round(apply(posterior_samples_Sigma,1:2,mean),3)
-print('Posterior standard deviation of covariance matrix:')
-round(apply(posterior_samples_Sigma,1:2,sd),3)
+# print('Posterior mean of autoregressive parameter:')
+# round(apply(posterior_samples_A,1:2,mean),3)
+# print('Posterior standard deviation of autoregressive parameter:')
+# round(apply(posterior_samples_A,1:2,sd),3)
+# print('Posterior mean of covariance matrix:')
+# round(apply(posterior_samples_Sigma,1:2,mean),3)
+# print('Posterior standard deviation of covariance matrix:')
+# round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
-
-```{r}
-S = dim(posterior_samples_A)[3]
-N =dim(posterior_samples_A)[2]
-p = (dim(posterior_samples_A)[1] -1) / N
-Y = (data[(p+1):nrow(data),])
-x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
-x.Ti               = x.Ti[p:1,]
-h = 10
-Y.h   = array(NA,c(h,N,S))
-for (s in 1:S){
-  A     = posterior_samples_A[,,s]
-  Sigma = posterior_samples_Sigma[,,s]
-  N = ncol(A)
-  p = (nrow(A) -1) / N
-  Y = (data[(p+1):nrow(data),])
-  x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
-  x.Ti               = x.Ti[p:1,]
-  
-  for (i in 1:h){
-    x.T               = c(1,as.vector(t(x.Ti)))
-    Y.f               = mvtnorm::rmvnorm(1, mean = x.T%*%A, sigma=Sigma)
-    colnames(Y.f) = colnames(x.Ti)
-    x.Ti            = rbind(Y.f,x.Ti[1:(p-1),])
-    Y.h[i,,s]   = Y.f[1:N]
-    }
-  }
-```
-
-
+**2. Prediction Plots**
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
-
 BVAR_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
   S = dim(posterior_samples_A)[3]
   N =dim(posterior_samples_A)[2]
   p = (dim(posterior_samples_A)[1] -1) / N
   Y = (data[(p+1):nrow(data),])
-  x               = Y[(nrow(Y)-p+1):nrow(Y),]
-  x               = x[p:1,]
+  #last p observations 
+  x = Y[(nrow(Y)-p+1):nrow(Y),]
+  # reverse the order t-p t-(p-1)...
+  x = x[p:1,]
   Y_h   = array(NA,c(h,N,S))
   for (s in 1:S){
     A     = posterior_samples_A[,,s]
@@ -1782,7 +1791,9 @@ BVAR_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
     x = x[p:1,]
     
     for (i in 1:h){
+      #x_{{t+1}= (1 y_t y_{t-1},... y_{t-p+1})
       x_T               = c(1,purrr::as_vector(t(x)))
+      #y_t+h = mvnnorm(1, x_t%*%A)
       Period_Y               = mvtnorm::rmvnorm(1, mean = x_T%*%A, sigma=Sigma)
       colnames(Period_Y) = colnames(x)
       x            = rbind(Period_Y,x[1:(p-1),])
@@ -1795,41 +1806,237 @@ BVAR_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 data = final_df[,2:ncol(final_df)]
-h = 10
+h = 8
 BVAR_prediction = BVAR_predict(posterior_samples_A = posterior_samples_A, posterior_samples_Sigma = posterior_samples_Sigma, data = data, h = h)
-JP_CPI_forecast_mean  = apply(BVAR_prediction[,1,],1,mean) 
-JP_CPI_forecast_interval = apply(BVAR_prediction[,1,],1,hdi,credMass=0.90)
-JP_CPI_forecast_range = range(data[,1],JP_CPI_forecast_interval)
 ```
 
 ```{r}
 # plots of forecasts
+plot_CI = function(prediction, data, final_df, var_index){
+  forecast_mean  = apply(prediction,1,mean) 
+  forecast_interval = apply(prediction,1,hdi,credMass=0.90)
+  forecast_range = range(data[,i],forecast_interval)
+  mcxs1  = "#05386B"
+  mcxs2  = "#379683"
+  mcxs3  = "#5CDB95"
+  mcxs4  = "#8EE4AF"
+  mcxs5  = "#EDF5E1"
+  mcxs1.rgb   = col2rgb(mcxs1)
+  mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
+  mcxs2.rgb   = col2rgb(mcxs2)
+  mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
+    
+  par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1)
+  plot(1:(length(data[,i])+h),c(data[,i],forecast_mean), type="l", ylim=forecast_range, axes=FALSE, xlab="", ylab="", lwd=2)
+  # specifying x axis
+  x_axis_position = c(1,11,21,31,41,51,61,71, 81, 91, 101, 111, nrow(final_df),nrow(final_df)+h)
+  x_axis_tick = final_df$Time[x_axis_position[1:(length(x_axis_position)-1)]]
+  #x_axis_tick[length(x_axis_tick) + 1] = max(final_df$Time)+1/4
+  x_axis_tick[length(x_axis_tick) + 1] = max(final_df$Time)+1/4*h
+  #x_axis_tick[length(x_axis_position)] =""
+  axis(1, x_axis_position, x_axis_tick, col=mcxs1)
+  # specifying y axis
+  axis(2,c(forecast_range[1],mean(forecast_range),forecast_range[2]),c("",colnames(data)[var_index],""), cex.axis = 1.5, col=mcxs1)
+  #vline for begin forecast period
+  text(x=nrow(final_df)+2, y=0.8*forecast_range[2], srt=90, final_df$Time[dim(final_df)[1]]+1/4)
+  abline(v=nrow(final_df)+1, col=mcxs1)
+  #Confidence interval for forecasts
+  lower_bound <- forecast_interval[1,]
+  upper_bound <- forecast_interval[2,]
+  polygon_x = ( dim(data)[1]+1):( dim(data)[1] + h)
+  polygon(x = c(polygon_x, rev(polygon_x)), 
+          y = c(lower_bound, rev(upper_bound)),
+          col=mcxs1.shade1, border=mcxs1.shade1)
+}
 
-mcxs1  = "#05386B"
-mcxs2  = "#379683"
-mcxs3  = "#5CDB95"
-mcxs4  = "#8EE4AF"
-mcxs5  = "#EDF5E1"
-mcxs1.rgb   = col2rgb(mcxs1)
-mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
-mcxs2.rgb   = col2rgb(mcxs2)
-mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
-  
-# par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1)
-# plot(1:(length(data[,1])+h),c(data[,1],JP_CPI_forecast_mean), type="l", ylim=JP_CPI_forecast_range, axes=FALSE, xlab="", ylab="", lwd=2)
-# specifying x axis
-#axis(1,c(3,43,83,123,163,203,243,nrow(y),nrow(y)+h),c("1960","1970","1980","1990","2000","2010","2020","",""), col=mcxs1)
-# specifying y axis
-#axis(2,c(rgdp.range[1],mean(rgdp.range),rgdp.range[2]),c("","rgdp",""), col=mcxs1)
-#vline for begin forecast period
-#text(x=nrow(data), y=9.65, srt=90, "2023-Q4")
-#abline(v=246, col=mcxs1)
-#Confidence interval for forecasts
-#text(x=nrow(data)+h, y=9.65, srt=90, "2026-12")
-#polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
-        # c(y[246,1],rgdp.interval.f[1,],rgdp.interval.f[2,20:1],y[246,1]),
-        # col=mcxs1.shade1, border=mcxs1.shade1)
+nrow_plot = ceiling(ncol(data)/2)
+par(mfrow=c(nrow_plot,2), mar=rep(3,4),cex.axis=1.5)
+for (i in 1:ncol(data)){
+  plot_CI(prediction = BVAR_prediction[,i,], data = data, final_df = final_df, var_index = i)
+}
 ```
+
+**3. Test for Granger Causality**
+We first perform Granger Causality test for each country, we test whether the macroeconomic factor of one country has some predictive power on the macroeconomic factors of another. Specifically, we test the following hypothesis: 
+
+1. $H_0: $ The consumer price index, interest rate, foreign direct investment, balance of payments, gross domestic product, exchange rate against the dollar of country A has no impact on these variables in the country B$
+
+The Baye's factor in this case is defined as: 
+
+$$B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij} = 0|Y, X,\Sigma)d \Sigma}{\int p_1(A_{ij}=0, \Sigma)d\Sigma}$$
+$$p_1(A_{ij} = 0|Y, X,\Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A_{ij}}, \Sigma_{ij}, \bar{V}_{ij})$$
+$$p_1(A_{ij} = 0, \Sigma) \sim \mathcal{NIW}_{K \times N}(A_{0, ij}, V_{A, ij}, S_{0, ij}, \nu_{0, ij})$$
+$$p_1(A_{ij} = 0, \Sigma) = p(A_{ij}|\Sigma)\times p(\Sigma)$$
+$$A_{ij}|\Sigma \sim \mathcal{MN}_{K \times N} (A_{0,ij}, \Sigma, V_{A, ij}) $$
+$$\Sigma \sim \mathcal{IW}(S_0, \nu_0)$$
+and we test the bi-lateral relationship between each of these countries. 
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+Y = (data[(p+1):nrow(data),])
+X = matrix(1,nrow(Y),1) 
+for (i in 1:p){
+  X     = cbind(X, (data[(p+1):nrow(data)-i,]))
+}
+X = as.matrix(X)
+N = ncol(data)
+K = 1+p*N
+kappa1 = 0.2^2
+kappa2 = 10^2
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+lambda = 1e-4
+posterior_V = solve(t(X)%*%X + solve(V_prior) + diag(lambda, nrow = ncol(X)))
+
+calc_bayes_factor = function(country1, country2){
+  ratio_list = list(dim = S2)
+  A_0_mat = apply(posterior_samples_A,1:2,mean)
+  dimnames(A_0_mat) = list(c("constant", rep(colnames(data),p)), colnames(data))
+  var_list = c('_GDP', '_CPI',  '_XCH')
+  
+  A_0_df <- as.data.frame(A_0_mat)
+  A_0_df$row_names <- rownames(A_0_mat)
+  
+  if (country1 != 'US'){
+    country1 = paste0(country1, var_list)
+  }else{country1 = paste0(country1, var_list[1:(length(var_list)-1)])}
+  
+  if (country2 != 'US'){
+    country2 = paste0(country2, var_list)
+  }else{country2 = paste0(country2, var_list[1:(length(var_list)-1)])}
+  
+  
+  for (c1 in country1){
+    for (c2 in country2){
+      A_0_df[A_0_df$row_names == c2, c1] = 0
+    }
+  }
+  
+  row_names <- A_0_df$row_names
+  A_0_mat <- as.matrix(A_0_df[, 1:ncol(A_0_df)-1])
+  rownames(A_0_mat) <- row_names
+  
+  for (s in 1:S2){
+    prior_Sigma = MCMCpack::riwish(v = nu_prior, S = S_prior)
+    A_0 = c(A_0_mat)
+    M = c(A_prior)
+    Q = kronecker(prior_Sigma, V_prior)
+    prior_prob =  mvtnorm::dmvnorm(x = A_0, mean = M, sigma = Q, log = TRUE)
+    M = c(posterior_samples_A[,,s])
+    Q = kronecker(posterior_samples_Sigma[,,s], posterior_V)
+    posterior_prob = mvtnorm::dmvnorm(x = A_0, mean = M, sigma = Q, log = TRUE)
+    ratio_list[s] = posterior_prob - prior_prob
+  }
+  return(ratio_list)
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+#aa = calc_bayes_factor('CN', "US")
+countries_list = c('CN', 'US', "JP", "AU")
+pb <- progress_bar$new(
+  format = "[:bar] :percent :etas",
+  total = 100, clear = FALSE, width = 60
+)
+
+
+bayesfactor = matrix(data = NA, nrow = length(countries_list), ncol = length(countries_list), dimnames = list(countries_list, countries_list))
+for (country_a in countries_list){
+  for (country_b in countries_list){
+    pb$tick()
+    bayesfactor[country_a, country_b] = mean(unlist(calc_bayes_factor(country_a, country_b)))
+    gc()
+  }
+}
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+# 
+# countries = rownames(bayesfactor)
+# 
+# # Define starting and ending pairs for edges in both directions
+# starting <- c(rep(countries, each = length(countries) - 1), rep(countries, each = length(countries) - 1))
+# ending <- c(
+#   unlist(sapply(countries, function(x) setdiff(countries, x))),
+#   unlist(sapply(countries, function(x) setdiff(countries, x)))
+# )
+# nodes <- data.frame(name = countries)
+# 
+# # Create labels and colors for the edges
+# edge_labels <- c(
+#   paste(starting[1:(length(starting)/2)], "to", ending[1:(length(ending)/2)]),
+#   paste(starting[(length(starting)/2 + 1):length(starting)], "to", ending[(length(ending)/2 + 1):length(ending)])
+# )
+# #edge_colors <- rep(c("red", "blue", "green", "purple", "orange"), length.out = length(starting))
+# edge_colors = c()
+# i = 1
+# for (s in starting){
+#   for (e in ending){
+#     if (bayesfactor[s,e] > 0){
+#       edge_colors[i] = 'salmon'
+#     }
+#     else{edge_colors[i] = 'gray'}
+#   }
+#   i = i+1
+# }
+# # Create the edges data frame
+# edges <- data.frame(
+#   from = starting,
+#   to = ending,
+#   #label = edge_labels,
+#   color = edge_colors
+# )
+# 
+# library(igraph)
+# 
+# # Create the graph object
+# g <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
+# 
+# # Set the layout for the graph
+# layout <- layout_with_fr(g)
+# 
+# # Scale the layout coordinates
+# scale_factor <- 10  # Adjust this factor to make edges longer or shorter
+# layout_scaled <- layout * scale_factor
+# i = 1
+# vertex_color = c()
+# for (c in countries){
+#   if (bayesfactor[c, c] < 0){
+#     vertex_color[i] = 'salmon'
+#   }
+#   else{vertex_color[i] = 'gray'}
+#   i = i+1
+# }
+# # Plot the graph with the scaled layout and different labels for each direction
+# plot(g, layout = layout_scaled,
+#      vertex.label = V(g)$name,
+#      #edge.label = E(g)$label,
+#      edge.color = E(g)$color,
+#      edge.arrow.size = 0.5,
+#      vertex.size = 30,
+#      vertex.label.cex = 1,
+#      vertex.label.dist = 1.5,
+#      vertex.color = 'salmon')
+
+```
+
+|              | China | United States | Japan           | Australia     |
+|--------------|---------------|---------------|-----------------|---------------|
+| **China**    | -     | Inf           | 5.466142e+215   | Inf           |
+| **US**       | Inf   | -             | Inf             | Inf           |
+| **Japan**    | Inf   | Inf           | -    | Inf           |
+| **Australia**| Inf   | 1.697063e-58  | Inf             | 0             |
+
+
+
+|              | China | United States | Japan           | Australia     |
+|--------------|---------------|---------------|-----------------|----------------|
+| **China**    |       -         | Strong Evidence for Granger Causality| SStrong Evidence for Granger Causality| Strong Evidence for Granger Causality
+| **US**       | Strong Evidence for Granger Causality |   -  | Strong Evidence for Granger Causality | Strong Evidence for Granger Causality |
+| **Japan**    | Strong Evidence for Granger Causality   | Strong Evidence for Granger Causality           | -    | Strong Evidence for Granger Causality           |
+| **Australia**| Strong Evidence for Granger Causality   | Strong Evidence for Granger Causality  | Strong Evidence **against** Granger Causality             |  -            |
+
+
 
 ## 4.2 Large BVAR model with MA(1) Gaussian Innovations 
 ### 4.2.1 Model Building Code and Validation 
@@ -1931,7 +2138,7 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   }
   A_posterior = A_posterior[,,(S1+1):(S1+S2)]
   Sigma_posterior = Sigma_posterior[,,(S1+1):(S1+S2)]
-  Omega_posterior = Omega_posterior[,,(S1+2):(S1+S2)]
+  Omega_posterior = Omega_posterior[,,(S1+2):(S1+S2+1)]
   print("acceptance rate of the Metropolis Hasting Step: ")
   print(accept/S)
   return(list(A_posterior, Sigma_posterior, Omega_posterior))
@@ -1979,26 +2186,24 @@ round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 
 
 
-
-
-
 ### 4.2.1 Empirical Results
-
 **1. Fitted Model Parameters**
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
-
 p = 5
-kappa1 = 0.1^2
+kappa1 = 0.02^2
 kappa2 = 10^2
 data = final_df[,2:ncol(final_df)]
-#data = random_walk_sample
 N = ncol(data)
-A_prior     = matrix(0, 1+p*N, ncol = N)
-V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
-S_prior     = diag(1, N)
-nu_prior    = ncol(random_walk_sample)+1
-S1 = 500
-S2 = 1000
+A_prior = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior = diag(1, N)
+nu_prior  = ncol(data)+1
+data = final_df[,2:ncol(final_df)]
+#data = final_df[,2:19]
+S1 = 100
+S2 = 200
+
 vh0_prior = 5
 sh0_prior = 0.04
 rho_prior = 0.9
@@ -2023,13 +2228,237 @@ round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)
 print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')
 round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 ```
+
+**2. Prediction Plots ** 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+# BVAR_MA_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
+#   S = dim(posterior_samples_A)[3]
+#   N =dim(posterior_samples_A)[2]
+#   p = (dim(posterior_samples_A)[1] -1) / N
+#   Y = (data[(p+1):nrow(data),])
+#   x               = Y[(nrow(Y)-p+1):nrow(Y),]
+#   x               = x[p:1,]
+#   Y_h   = array(NA,c(h,N,S))
+#   for (s in 1:S){
+#     A     = posterior_samples_A[,,s]
+#     Sigma = posterior_samples_Sigma[,,s]
+#     N = ncol(A)
+#     p = (nrow(A) -1) / N
+#     Y = (data[(p+1):nrow(data),])
+#     x  = Y[(nrow(Y)-p+1):nrow(Y),]
+#     x = x[p:1,]
+#     
+#     for (i in 1:h){
+#       x_T  = c(1,purrr::as_vector(t(x)))
+#       Period_Y   = mvtnorm::rmvnorm(1, mean = x_T%*%A, sigma=Sigma)
+#       colnames(Period_Y) = colnames(x)
+#       x            = rbind(Period_Y,x[1:(p-1),])
+#       Y_h[i,,s]   = Period_Y[1:N]
+#       }
+#   }
+#   return(Y_h)
+# }
 ```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+# nrow_plot = ceiling(ncol(data)/2)
+# par(mfrow=c(nrow_plot,2), mar=rep(3,4),cex.axis=1.5)
+# for (i in 1:ncol(data)){
+#   plot_CI(prediction = BVAR_prediction[,i,], data = data, final_df = final_df, var_index = i)
+# }
+```
+
 **2. Forecasts Model Parameters**
 
+**3. Test for Granger Causality**
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+Y = (data[(p+1):nrow(data),])
+X = matrix(1,nrow(Y),1) 
+for (i in 1:p){
+  X     = cbind(X, (data[(p+1):nrow(data)-i,]))
+}
+X = as.matrix(X)
+N = ncol(data)
+K = 1+p*N
+kappa1 = 0.2^2
+kappa2 = 10^2
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+lambda = 1e-4
+
+calc_bayes_factor_MA = function(country1, country2){
+  ratio_list = list(dim = S2)
+  A_0_mat = apply(posterior_samples_A_MA,1:2,mean)
+  dimnames(A_0_mat) = list(c("constant", rep(colnames(data),p)), colnames(data))
+  var_list = c('_GDP', '_CPI',  '_XCH')
+  
+  A_0_df <- as.data.frame(A_0_mat)
+  A_0_df$row_names <- rownames(A_0_mat)
+  
+  if (country1 != 'US'){
+    country1 = paste0(country1, var_list)
+  }else{country1 = paste0(country1, var_list[1:(length(var_list)-1)])}
+  
+  if (country2 != 'US'){
+    country2 = paste0(country2, var_list)
+  }else{country2 = paste0(country2, var_list[1:(length(var_list)-1)])}
+
+
+for (c1 in country1){
+  for (c2 in country2){
+    A_0_df[A_0_df$row_names == c2, c1] = 0
+  }
+}
+
+row_names <- A_0_df$row_names
+A_0_mat <- as.matrix(A_0_df[, 1:ncol(A_0_df)-1])
+rownames(A_0_mat) <- row_names
+  
+  for (s in 1:S2){
+    posterior_V = solve(t(X)%*%posterior_samples_Omega_MA[,,s]%*%X + solve(V_prior) + diag(lambda, nrow = ncol(X)))
+    prior_Sigma = MCMCpack::riwish(v = nu_prior, S = S_prior)
+    M = c(A_prior)
+    Q = kronecker(prior_Sigma, V_prior)
+    A_0 = c(A_0_mat)
+    prior_prob =  mvtnorm::dmvnorm(x = A_0, mean = M, sigma = Q, log = TRUE)
+    
+    M = c(posterior_samples_A_MA[,,s])
+    Q = kronecker(posterior_samples_Sigma_MA[,,s], posterior_V)
+    posterior_prob = mvtnorm::dmvnorm(x = A_0, mean = M, sigma = Q, log = TRUE)
+    ratio_list[s] = posterior_prob - prior_prob
+  }
+  return(ratio_list)
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+#aa = calc_bayes_factor_MA('CN', 'US')
+bf_ma = list()
+i = 1
+bayesfactor_MA = matrix(data = NA, nrow = length(countries_list), ncol = length(countries_list), dimnames = list(countries_list, countries_list))
+for (country_a in countries_list){
+  for (country_b in countries_list){
+    pb$tick()
+    #bf_ma[i] = calc_bayes_factor_MA(country_a, country_b)
+    i = i+1
+    bayesfactor_MA[country_a, country_b] = mean(unlist(calc_bayes_factor_MA(country_a, country_b)))
+    gc()
+  }
+}
+```
+
+**4. Test Time Change ** 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+p = 5
+kappa1 = 0.02^2
+kappa2 = 10^2
+data = final_df[final_df$Time >= '2010 Q1', 2:ncol(final_df)]
+N = ncol(data)
+A_prior = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior = diag(1, N)
+nu_prior  = ncol(data)+1
+data = final_df[,2:ncol(final_df)]
+#data = final_df[,2:19]
+S1 = 100
+S2 = 200
+
+vh0_prior = 5
+sh0_prior = 0.04
+rho_prior = 0.9
+Vrho_prior = 0.04
+psi_prior = 0
+Vpsi_prior = 1
+posterior_samples_MA = BVAR_MA_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, N)
+
+# posterior_samples_A_MA = posterior_samples_MA[[1]]
+# posterior_samples_Sigma_MA = posterior_samples_MA[[2]]
+# posterior_samples_Omega_MA = posterior_samples_MA[[3]]
+# print('Posterior mean of autoregressive parameter:')
+# round(apply(posterior_samples_A_MA,1:2,mean),3)
+# print('Posterior standard deviation of autoregressive parameter:')
+# round(apply(posterior_samples_A_MA,1:2,sd),3)
+# print('Posterior mean of row specific covariance matrix:')
+# round(apply(posterior_samples_Sigma_MA,1:2,mean),3)
+# print('Posterior standard deviation of row specific covariance matrix:')
+# round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
+# print('Posterior mean of column specific covariance matrix (first 10 rows and columns):')
+# round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)
+# print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')
+# round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 
 ## 4.4  Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility
 ### 4.4.1 Model Building Code and Validation 
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+bf_ma = list()
+i = 1
+bayesfactor_MA_new = matrix(data = NA, nrow = length(countries_list), ncol = length(countries_list), dimnames = list(countries_list, countries_list))
+for (country_a in countries_list){
+  for (country_b in countries_list){
+    pb$tick()
+    #bf_ma[i] = calc_bayes_factor_MA(country_a, country_b)
+    i = i+1
+    bayesfactor_MA_new[country_a, country_b] = mean(unlist(calc_bayes_factor_MA(country_a, country_b)))
+    gc()
+  }
+}
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+p = 5
+kappa1 = 0.02^2
+kappa2 = 10^2
+data = final_df[final_df$Time >= '2010 Q1', 2:ncol(final_df)]
+N = ncol(data)
+A_prior = matrix(0,1+p*N,N)
+A_prior[2:(N + 1),] = diag(N)
+V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior = diag(1, N)
+nu_prior  = ncol(data)+1
+data = final_df[,2:ncol(final_df)]
+#data = final_df[,2:19]
+S1 = 100
+S2 = 200
 
+vh0_prior = 5
+sh0_prior = 0.04
+rho_prior = 0.9
+Vrho_prior = 0.04
+psi_prior = 0
+Vpsi_prior = 1
+posterior_samples_MA = BVAR_MA_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, N)
+
+posterior_samples_A_MA = posterior_samples_MA[[1]]
+posterior_samples_Sigma_MA = posterior_samples_MA[[2]]
+posterior_samples_Omega_MA = posterior_samples_MA[[3]]
+print('Posterior mean of autoregressive parameter:')
+round(apply(posterior_samples_A_MA,1:2,mean),3)
+print('Posterior standard deviation of autoregressive parameter:')
+round(apply(posterior_samples_A_MA,1:2,sd),3)
+print('Posterior mean of row specific covariance matrix:')
+round(apply(posterior_samples_Sigma_MA,1:2,mean),3)
+print('Posterior standard deviation of row specific covariance matrix:')
+round(apply(posterior_samples_Sigma_MA,1:2,sd),3)
+print('Posterior mean of column specific covariance matrix (first 10 rows and columns):')
+round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)
+print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')
+round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
+
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
+bf_ma = list()
+i = 1
+bayesfactor_MA_new1 = matrix(data = NA, nrow = length(countries_list), ncol = length(countries_list), dimnames = list(countries_list, countries_list))
+for (country_a in countries_list){
+  for (country_b in countries_list){
+    pb$tick()
+    #bf_ma[i] = calc_bayes_factor_MA(country_a, country_b)
+    i = i+1
+    bayesfactor_MA_new1[country_a, country_b] = mean(unlist(calc_bayes_factor_MA(country_a, country_b)))
+    gc()
+  }
+}
+```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #if (!require(matrixNormal)) {install_packages('matrixNormal')}

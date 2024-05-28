@@ -170,7 +170,7 @@ window.Quarto = {
   <li><a href="#posterior-distributions-1" id="toc-posterior-distributions-1" class="nav-link" data-scroll-target="#posterior-distributions-1">3.2.3 Posterior Distributions</a></li>
   <li><a href="#estimation-procedure-1" id="toc-estimation-procedure-1" class="nav-link" data-scroll-target="#estimation-procedure-1">3.2.4 Estimation Procedure</a></li>
   </ul></li>
-  <li><a href="#model-3-large-bvar-model-with-ommon-stochastic-volatility" id="toc-model-3-large-bvar-model-with-ommon-stochastic-volatility" class="nav-link" data-scroll-target="#model-3-large-bvar-model-with-ommon-stochastic-volatility">3.3 Model 3: Large BVAR model with ommon Stochastic Volatility</a></li>
+  <li><a href="#model-3-large-bvar-model-with-common-stochastic-volatility" id="toc-model-3-large-bvar-model-with-common-stochastic-volatility" class="nav-link" data-scroll-target="#model-3-large-bvar-model-with-common-stochastic-volatility">3.3 Model 3: Large BVAR model with common Stochastic Volatility</a></li>
   <li><a href="#model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility</a>
   <ul class="collapse">
   <li><a href="#model-specification-2" id="toc-model-specification-2" class="nav-link" data-scroll-target="#model-specification-2">3.4.1 Model Specification</a></li>
@@ -190,6 +190,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation-1" id="toc-model-building-code-and-validation-1" class="nav-link" data-scroll-target="#model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</a></li>
   <li><a href="#empirical-results" id="toc-empirical-results" class="nav-link" data-scroll-target="#empirical-results">4.2.1 Empirical Results</a></li>
+  </ul></li>
+  <li><a href="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</a>
+  <ul class="collapse">
+  <li><a href="#model-building-code-and-validation-2" id="toc-model-building-code-and-validation-2" class="nav-link" data-scroll-target="#model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</a></li>
   <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.4.2 Empirical Result</a></li>
   </ul></li>
   </ul></li>
@@ -228,19 +232,18 @@ window.Quarto = {
 <h1>1. The Question Objective, and Motivation</h1>
 <p><strong>Objective:</strong> Construct a Bayesian Vector Autoregression model to forecast major macroeconomic indicators for the United States, Australia, Japan, and China to facilitate an investigation into the prospective interdependencies between the economies of these nations.</p>
 <p><strong>Question:</strong> This research project will examine how trade relationships, investment flows, monetary policy environments, and economic performances within the United States, Australia, Japan and China mutually influence each other, and assess the implications of these interactions for predicting future values of these economic indicators.</p>
-<p><strong>Motivation:</strong> Since the onset of the COVID-19 pandemic, the global economic landscape has witnessed a series of unprecedented shifts in key macroeconomic indicators, spurred by governments’ adoption of varied expansionary monetary policies. Initially, to buffer their economies, many nations implemented expansive monetary strategies, later swiftly transitioning to interest rate hikes in a bid to manage surging inflation rates—a scenario not seen in decades. The pandemic’s disruption to trade further exacerbated inflationary pressures for some economies, highlighting the intricate interdependencies among major economies with significant trade and financial ties. This period recorded stark contrast in inflation levels, with unprecedented highs in the US and Australia and notably low inflation in China and Japan. Amidst this turmoil, a divergence in economic paths also became apparent, the United States and Australia have witness robust economic rebounds, whereas China and Japan saw more tepid recoveries. This research aims to dissect the nuanced web of economic interdependencies between the United States, Australia, Japan, and China, analyzing how their trade relationships, investment flows, and monetary policy environments have mutually influenced their economic performances. Additionally, it seeks to understand the ramifications of these dynamics for the predictive accuracy of future economic indicators, offering insights into the evolving global economic order.</p>
+<p><strong>Motivation:</strong> Since the onset of the COVID-19 pandemic, the global economic landscape has witnessed a series of unprecedented shifts in key macroeconomic indicators, spurred by governments’ adoption of varied expansionary monetary policies. Initially, to buffer their economies, many nations implemented expansive monetary strategies, later swiftly transitioning to interest rate hikes in a bid to manage surging inflation rates—a scenario not seen in decades. The pandemic’s disruption to trade further exacerbated inflationary pressures for some economies, highlighting the intricate interdependencies among major economies with significant trade and financial ties. This period recorded stark contrast in inflation levels, with unprecedented highs in the US and Australia and notably low inflation in China and Japan. Amidst this turmoil, a divergence in economic paths also became apparent, thei9 United States and Australia have witness robust economic rebounds, whereas China and Japan saw more tepid recoveries. This research aims to dissect the nuanced web of economic interdependencies between the United States, Australia, Japan, and China, analyzing how their trade relationships, investment flows, and monetary policy environments have mutually influenced their economic performances. Additionally, it seeks to understand the ramifications of these dynamics for the predictive accuracy of future economic indicators, offering insights into the evolving global economic order.</p>
 </section>
 <section id="data-and-their-properties" class="level1">
 <h1>2. Data and their properties</h1>
-<p><strong>Proposed Dataset:</strong> This research project will utilize data from the International Monetary Fund’s (IMF) extensive database, which offers a comprehensive collection of global economic information. The IMF’s collection includes several key databases such as the World Economic Outlook Databases, International Financial Statistics (IFS), Government Finance Statistics. The analysis will predominantly focus on the IFS database, which encompasses an sizeable collection of financial and economic data from across the global, featuring 1,681 distinct indicators such as consumer price index, interest rates, exchange rates, national accounts, government finance statistics. The data is available in various frequencies – annual, semi-annual, quarterly, monthly, daily, and weekly. As this research is primarily focused on analyzing macroeconomic data that are published on a monthly or quarterly basis, quarterly data from Q1 2011 to Q3 2023 will be used. The analysis will examine key macroeconomic variables including consumer price indexes, foreign direct investments, exchange rates, balance of payments, interest rates and the national gross domestic product of the United States, Australia, Japan, and China.</p>
-<p><strong>Variables and Motivation:</strong></p>
+<p><strong>Proposed Dataset:</strong> This study is uses data from the International Monetary Fund’s (IMF) database. The IMF data offers a comprehensive collection of global economic information; including several key databases such as the World Economic Outlook Databases, International Financial Statistics (IFS), Government Finance Statistics. This analysis will predominantly focus on the IFS database, which is composed of a sizeable collection of financial and economic data from across the global, featuring 1,681 distinct indicators such as consumer price index, interest rates, exchange rates, national accounts, government finance statistics. The data is available in various frequencies – annual, semi-annual, quarterly, monthly, daily, and weekly. As this research is primarily focused on analyzing macroeconomic data that are published on a monthly or quarterly basis, quarterly data from Q1 1994 to Q3 2023 will be used. The analysis will examine key macroeconomic variables including consumer price indexes, foreign direct investments, exchange rates, balance of payments, interest rates and the national gross domestic product of the United States, Australia, Japan, and China. sf <strong>Variables and Motivation:</strong></p>
 <table class="table">
 <colgroup>
-<col style="width: 47%">
-<col style="width: 20%">
+<col style="width: 45%">
+<col style="width: 19%">
+<col style="width: 18%">
+<col style="width: 6%">
 <col style="width: 10%">
-<col style="width: 8%">
-<col style="width: 13%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -256,29 +259,28 @@ window.Quarto = {
 <td>Prices, Consumer Price Index, All items, Previous period</td>
 <td>% Change</td>
 <td>% Change</td>
+<td>% Change</td>
 <td>CPI</td>
-<td>PCPI_PC_PP_PT</td>
 </tr>
 <tr class="even">
 <td>Exchange Rates, Domestic Currency per U.S. Dollar, Period Average</td>
-<td>US dollar, millions</td>
-<td>US dollar, millions</td>
+<td>per US dollar</td>
+<td>per US dollar</td>
 <td>XCH</td>
 <td>ENDA_XDC_USD_R</td>
 </tr>
 <tr class="odd">
 <td>Gross Domestic Product, Nominal, Seasonally Adjusted</td>
-<td>Domestic Currency</td>
+<td>Domestic Currency (millions)</td>
 <td>log(US dollar)</td>
 <td>GDP</td>
 <td>NGDP_NSA_XDC</td>
 </tr>
 </tbody>
 </table>
-<p>The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also having experienced significant fluctuations over the past decade. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Foreign direct investment (FDI) is a direct indicator of cross- border investment flows and serves as a proxy for economic confidence and integration between nations. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. Balance of payments is a comprehensive measure that captures the transactions between a country and the rest of the world, offering a holistic view of its economic interactions. For example, some view changes in balance of payments as largely a result of imports and exports, which can cause one country to import the inflation of another country and vice versa. GDP growth is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP in the form of percentage change allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends. Foreign direct investment, exchange rates, balance of payments and gross domestic products were transformed into percentage change from the previous period, aiming to standardize the data, facilitate temporal comparisons and enhancing the interpretability of trends over time. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.</p>
+<p>The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also ensuring relatively consistent measures exist for all four nations. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. GDP is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends. CPI was included because it is a crucial indicator of inflation, reflecting changes in the cost of living and purchasing power, and thus, is helpful in quantifying economic stability and monetary policy effectiveness in each nation. The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.</p>
 <section id="data-plots" class="level2">
 <h2 class="anchored" data-anchor-id="data-plots">Data Plots</h2>
-<p><strong>Original Variables</strong></p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -487,9 +489,9 @@ window.Quarto = {
 <td style="text-align: left;">US_GDP</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">-2.030622</td>
+<td style="text-align: left;">-2.030497</td>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">0.5638687</td>
+<td style="text-align: left;">0.5639204</td>
 <td style="text-align: left;">AU_GDP</td>
 </tr>
 </tbody>
@@ -501,7 +503,7 @@ window.Quarto = {
 </section>
 <section id="the-model-and-hypothesis" class="level1">
 <h1>3. The Model and Hypothesis</h1>
-<p>We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in <span class="citation" data-cites="wozniakBsvarsBayesianEstimation2022">Woźniak (<a href="#ref-wozniakBsvarsBayesianEstimation2022" role="doc-biblioref">2022</a>)</span>. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by <span class="citation" data-cites="Chan_2015">Chan (<a href="#ref-Chan_2015" role="doc-biblioref">2015</a>)</span>. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combined a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling.</p>
+<p>We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in <span class="citation" data-cites="wozniakBsvarsBayesianEstimation2022">Woźniak (<a href="#ref-wozniakBsvarsBayesianEstimation2022" role="doc-biblioref">2022</a>)</span>. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by <span class="citation" data-cites="Chan_2015">Chan (<a href="#ref-Chan_2015" role="doc-biblioref">2015</a>)</span>. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combine a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling.</p>
 <section id="model-1-standard-bvarp-model" class="level2">
 <h2 class="anchored" data-anchor-id="model-1-standard-bvarp-model">3.1 Model 1: Standard BVAR(p) Model</h2>
 <section id="model-specification" class="level3">
@@ -556,7 +558,16 @@ e_T^T
 <li><span class="math inline">\(E|X\)</span> follows a matrix-variate normal distribution with mean <span class="math inline">\(0_{T \times N}\)</span>, row specific covariance matrix <span class="math inline">\(\Sigma_{N \times N}\)</span> and column specific covariance matrix <span class="math inline">\(I_T\)</span></li>
 <li><span class="math inline">\(x_{t}^T = \left( \begin{array}{cccc}1  &amp; y_{t-1} &amp; y_{t-2} &amp; \cdots &amp; y_{t-p} \end{array} \right)\)</span></li>
 </ul>
-<p>The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s inflation rate, may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.</p>
+<p>In our specific application, the Y matrix is formulated as follows:</p>
+<p><span class="math display">\[
+Y = \begin{pmatrix}
+    \text{CPI}_{\text{CN}, p+1} &amp; \text{XCH}_{\text{CN}, p+1} &amp; \log(\text{GDP})_{\text{CN}, p+1} &amp; \text{CPI}_{\text{US}, p+1} &amp; \log(\text{GDP})_{\text{US}, p+1} &amp; \text{CPI}_{\text{JP}, p+1} &amp; \text{XCH}_{\text{JP}, p+1} &amp; \log(\text{GDP})_{\text{JP}, p+1} &amp; \text{CPI}_{\text{AU}, p+1} &amp; \text{XCH}_{\text{AU}, p+1} &amp; \log(\text{GDP})_{\text{AU}, p+1} \\
+    \text{CPI}_{\text{CN}, p+2} &amp; \text{XCH}_{\text{CN}, p+2} &amp; \log(\text{GDP})_{\text{CN}, p+2} &amp; \text{CPI}_{\text{US}, p+2} &amp; \log(\text{GDP})_{\text{US}, p+2} &amp; \text{CPI}_{\text{JP}, p+2} &amp; \text{XCH}_{\text{JP}, p+2} &amp; \log(\text{GDP})_{\text{JP}, p+2} &amp; \text{CPI}_{\text{AU}, p+2} &amp; \text{XCH}_{\text{AU}, p+2} &amp; \log(\text{GDP})_{\text{AU}, p+2} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+    \text{CPI}_{\text{CN}, T} &amp; \text{XCH}_{\text{CN}, T} &amp; \log(\text{GDP})_{\text{CN}, T} &amp; \text{CPI}_{\text{US}, T} &amp; \log(\text{GDP})_{\text{US}, T} &amp; \text{CPI}_{\text{JP}, T} &amp; \text{XCH}_{\text{JP}, T} &amp; \log(\text{GDP})_{\text{JP}, T} &amp; \text{CPI}_{\text{AU}, T} &amp; \text{XCH}_{\text{AU}, T} &amp; \log(\text{GDP})_{\text{AU}, T}
+\end{pmatrix}
+\]</span></p>
+<p>The Bayesian Vector Autoregression model as formulated above provides a robust framework for investigating the relationships among selected economic indicators across different nations. By employing this model, this research aims to quantitatively measure the influence of one country’s economic indicators on another, such as how lagged changes in China’s i consumer price index may influence the GDP growth rate of the United States and vice versa. The BVAR model, with its estimation of coefficients across various lags, offers a deep understanding of both immediate and more delayed economic interactions, which is crucial to analyzing the cyclical nature of trade relationships, investment flows, monetary policy environments, and economic performances and the transmission of these metrics across borders.</p>
 <p>The strength of this BVAR model lies in its ability to incorporate prior economic knowledge and beliefs into the estimation process. By setting prior distributions for the matrix of coefficients A and the covariance matrix <span class="math inline">\(\Sigma\)</span>, the model can be tailors to reflect established economic theories regarding international economic linkages and the time it takes for policy changes in one country to affect another. By calibrating the prior variances, particularly for the autoregressive coefficients, we can integrate prior knowledge or hypotheses, such as the presence of unit roots or the diminishing influence of distant lags on current values, into the analysis. When interpreting the estimation output, attention will be given to the posterior means and variances of the coefficients, which represent the model’s “learnt” understanding of the underlying economic structure. The analysis will be supplemented by forecast error variance decompositions to better understand the proportion of the movements in economic indicators that can be accounted for by their own shocks versus shocks to other variables.</p>
 <p>The economic context underscoring this analysis is the increased globalization over the past decade, marking an era where economies are more intertwined than ever through trade, capital flows, and policy decisions. This period has witnessed not only the strengthening of global economic ties but also recent calls from political leaders advocating for a reduction in globalization. These contrasting dynamics highlight the complexity of the current global economic landscape, where the push for deeper integration coexists with growing sentiments for retrenchment. This dual trend sets the stage for our investigation, providing a rich context to explore how economic variables across nations influence each other amidst fluctuating levels of global interconnectedness. In this environment, understanding the cross-country spillover effects is vital for policymakers and businesses alike, as decisions made in one country can have far-reaching implications. By addressing these aspects, this research will contribute to the discourse on economic policy formulation, risk assessment, and strategic planning.</p>
 </section>
@@ -570,19 +581,14 @@ e_T^T
 <p><span class="math display">\[(A,\Sigma) \sim \mathcal{NIW}_{K \times N} (A_0, V_A, S_0, \nu_0)\]</span></p>
 <p><span class="math display">\[p(A,\Sigma) \propto |\Sigma|^{-\frac{K+\nu_0+N+1}{2}} \times exp(-\frac{1}{2}tr(\Sigma^{-1}S_0))\times exp(-\frac{1}{2}tr(\Sigma^{-1}(A-A_0)^T(A-A_0)))\]</span></p>
 <p>where</p>
-<ul>
-<li><p><span class="math display">\[V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))\]</span></p></li>
-<li><p><span class="math display">\[\mathbf{p} = [1 \quad 2 \quad ... \quad p]\]</span></p></li>
-<li><p><span class="math display">\[I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N\]</span></p></li>
-<li><p><span class="math display">\[\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}\]</span></p></li>
-<li><p><span class="math display">\[\kappa_2 \text{ is the overall shrinkage lvel for the constant term }\]</span></p></li>
-</ul>
+<p><span class="math display">\[V_A = diag(\kappa_2 \quad \kappa_1(\mathbf{p} \otimes I_N^T))\]</span></p>
+<p><span class="math display">\[\mathbf{p} = [1 \quad 2 \quad ... \quad p]\]</span> <span class="math display">\[I_N = [1 \quad 1 \quad ... \quad 1] \in \mathbb{R}^N\]</span> <span class="math display">\[\kappa_1 \text{ is the overall shrinkage level for autoregressive slopes}\]</span> <span class="math display">\[\kappa_2 \text{ is the overall shrinkage lvel for the constant term }\]</span></p>
 <p>Additionally, we adopt commonly used values for the hyperparameters as established in the literature.</p>
 <p><span class="math display">\[A_0 = 0\]</span></p>
 <p><span class="math display">\[v_0 = N+3\]</span></p>
 <p><span class="math display">\[S_0 = I_N\]</span></p>
 <p><span class="math display">\[\kappa_1 = 0.2^2 \quad \kappa_2 = 10^2\]</span></p>
-<p>The hyperparameters <span class="math inline">\(\kappa_1\)</span> and <span class="math inline">\(\kappa_2\)</span> are specified in a way such that the coefficient associated with a lag l variable is shrunk more heavily to - as lag length increases whereas the intercepts are not shrunk to 0.</p>
+<p>The hyperparameters <span class="math inline">\(\kappa_1\)</span> and <span class="math inline">\(\kappa_2\)</span> are specified in a way such that the coefficient associated with a lag l variable is shrunk more heavily as lag length increases whereas the intercepts are not shrunk to 0.</p>
 </section>
 <section id="posterior-distributions" class="level3">
 <h3 class="anchored" data-anchor-id="posterior-distributions">3.1.3 Posterior Distributions</h3>
@@ -630,16 +636,16 @@ e_T^T
 <li>Sample S draws <span class="math inline">\(\left\{ A^{(s)}, \Sigma^{(s)} \right\}_{s=1}^{S}\)</span> from <span class="math inline">\(p(A,\Sigma|Y, X)\)</span></li>
 <li>Sample S draws <span class="math inline">\(\left\{ Y_{t+h}^{(s)} \right\}_{s=1}^S\)</span> from <span class="math inline">\(Y_{t+h}^{(s)} \sim \mathcal{N}_{hN}(Y_{t+h|t}(A^{(s)}), \mathbb{V}ar[Y_{t+h|t}|A^{(s)}, \Sigma^{(s)}])\)</span></li>
 </ol>
-<p>where <span class="math display">\[Y_{t+h} = \begin{pmatrix}
+<p>where</p>
+<p><span class="math display">\[\underset{\text{hN} \times1}{Y_{t+h}} = \begin{pmatrix}
     Y_{t+1} \\
     Y_{t+2} \\
     \vdots    \\
     Y_{t+h}
-\end{pmatrix}
-\]</span></p>
+\end{pmatrix}\]</span></p>
 <p>To derive the posterior predictive density for <span class="math inline">\(Y_{t+h}\)</span>, we first note that:</p>
 <p><span class="math display">\[p(Y_{t+h}|Y_{t}) = \int \int p(Y_{t+h}|Y_{t},A, \Sigma)\times p(A,\Sigma|Y,X)dAd\Sigma\]</span> where</p>
-<p><span class="math display">\[p(y_{t+h}|Y, X, A, \Sigma, 1) \sim \mathcal{N}_{hN} (Y_{t+h|t}(A), Var(Y_{t+h}|A, \Sigma))\]</span></p>
+<p><span class="math display">\[p(y_{t+h}|Y, X, A, \Sigma, I_T) \sim \mathcal{N}_{hN} (Y_{t+h|t}(A), Var(Y_{t+h}|A, \Sigma))\]</span></p>
 <p><span class="math display">\[Y_{t+h|t}(A) =\begin{pmatrix}
     Y_{t+1|t} \\
     Y_{t+2|t} \\
@@ -649,67 +655,38 @@ e_T^T
 \mu_0 + A_1 Y_t + \cdots + A_pY_{t-p+1|t} \\
 \mu_0 + A_1 Y_{t+1|t} + \cdots + A_p Y_{t-p+2|t}\\
 \vdots \\
-\mu_0 + A_1 Y_{t+1|t} + \cdots + A_p Y_{t-p+h|t}
+\mu_0 + A_1 Y_{t+h-1|t} + \cdots + A_p Y_{t+h-p|t}
 \end{pmatrix}\]</span></p>
-<p><span class="math display">\[\mathbb{V}ar(Y_{t+h|t}|A, \Sigma) = \begin{pmatrix}
+<p><span class="math display">\[\underset{\text{(hN-1)} \times \text{(hN-1)}}{\mathbb{V}ar(Y_{t+h|t}|A, \Sigma)} = \begin{pmatrix}
     \Sigma &amp; \Sigma \phi_1^T &amp; \cdots &amp; \Sigma \phi_{h-1}^T \\
     \phi_1\Sigma &amp;\Sigma + \phi_1 \Sigma \phi_1^T  &amp; \cdots &amp; \Sigma \phi_1^T + \phi_1 \Sigma \phi_2^T+ \cdots + \phi_{h-2}\Sigma \phi_{h-1}^T + \phi_{h-1} \Sigma \phi_{h}^T \\
     \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-    \phi_{h-1}\Sigma\ &amp; \phi_1\Sigma  + \phi_2 \Sigma \Phi_1^T + \cdots + \phi_{h} \Sigma \phi_{h-1}^T &amp; \cdots &amp; \Sigma + \phi_1 \Sigma \phi_1^T + \cdots+\phi_{h-1}\Sigma\phi_{h-1}^T+\phi_h\Sigma\phi_h^T
+    \phi_{h-1}\Sigma\ &amp; \phi_1\Sigma  + \phi_2 \Sigma \Phi_1^T + \cdots + \phi_{h} \Sigma \phi_{h-1}^T &amp; \cdots &amp; \Sigma + \phi_1 \Sigma \phi_1^T + \cdots+\phi_{h-2}\Sigma\phi_{h-2}^T+\phi_{h-1}\Sigma\phi_{h-1}^T
 \end{pmatrix}
-\]</span> where <span class="math inline">\(\phi_i = J A^i J'\)</span> are the parameters of the VMA(<span class="math inline">\(\infty\)</span>) representation of VAR(<span class="math inline">\(p\)</span>) and <span class="math inline">\(A\)</span> is the parameter matrix of VAR(1) representation of VAR(<span class="math inline">\(p\)</span>).</p>
-<p><span class="math display">\[p(A|Y, X, \Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})\]</span> In this approach, we are incorporating into our prediction the uncertainties in the estimates of the parameters by integrating over A and <span class="math inline">\(\Sigma\)</span>, the is solved using numerical integration.</p>
+\]</span></p>
+<p>where <span class="math inline">\(\phi_i = J A^i J'\)</span> are the parameters of the VMA(<span class="math inline">\(\infty\)</span>) representation of VAR(<span class="math inline">\(p\)</span>) and <span class="math inline">\(A\)</span> is the parameter matrix of <span class="math inline">\(VAR(1)\)</span> representation of VAR(<span class="math inline">\(p\)</span>). <span class="math inline">\(A^i\)</span> is the matrix <span class="math inline">\(A\)</span> raised to the power of <span class="math inline">\(i\)</span>. <span class="math display">\[
+\underset{Np \times Np}{A} =
+\begin{pmatrix} A_1 &amp; A_2 &amp; \cdots &amp; A_{p-1} &amp; A_p \\
+I_N &amp; 0_{N \times N} &amp; \cdots &amp; 0_{N \times N} &amp; 0_{N \times N}  \\
+0 &amp; I_N  &amp; \cdots &amp; 0 &amp; 0 \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; I_N &amp; 0 \end{pmatrix}
+\qquad
+\underset{\text{N} \times \text{Np}}{J} = [I_N \quad 0_{N \times N(p-1)}]
+\]</span> <span class="math display">\[p(A|Y, X, \Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})\]</span> <span class="math display">\[p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})\]</span> as before. In this approach, we are incorporating into our prediction the uncertainties in the estimates of the parameters by integrating over <span class="math inline">\(A\)</span> and <span class="math inline">\(\Sigma\)</span>.</p>
 </section>
 <section id="test-for-granger-causality" class="level3">
 <h3 class="anchored" data-anchor-id="test-for-granger-causality">3.1.5 Test for Granger Causality</h3>
-<p>Granger causality testing, introduced in <span class="citation" data-cites="Granger_1969">Chan (<a href="#ref-Granger_1969" role="doc-biblioref">1969</a>)</span>, is a way to measure whether the past and current values of one time series contains useful information for predicting future values of another. The idea behind granger causality testing is that if a time series does contain predictive information about another, incorporating it into the model should reduce the error variance and improve the precision of the forecasts. The classical approach for testing causality is the Wald test, but it fails to quantify the degree of evidence in the data in favour of or against the causality hypothesis. The Bayesian approach to testing Granger causality based on Baye’s factor, on the other hand, has the ability to quantify the evidence for and against the hypothesis with a single number. The Baye’s factor is defined as:</p>
+<p>Granger causality testing, introduced in <span class="citation" data-cites="Granger_1969">Granger (<a href="#ref-Granger_1969" role="doc-biblioref">1969</a>)</span>, is a way to measure whether the past and current values of one time series contains useful information for predicting future values of another. The idea behind granger causality testing is that if a time series does contain predictive information about another, incorporating it into the model should reduce the error variance and improve the precision of the forecasts. The classical approach for testing causality is the Wald test, but it fails to quantify the degree of evidence in the data in favour of or against the causality hypothesis. The Bayesian approach to testing Granger causality based on Baye’s factor, on the other hand, has the ability to quantify the evidence for and against the hypothesis with a single number. The Baye’s factor is defined as:</p>
 <p><span class="math display">\[B_H = \frac{p[H_0|Y]}{p[H_1|Y]}\]</span> In the context of testing for VAR(p) models, we have the marginal likelihood under the assumption of no Granger causality is:</p>
 <p><span class="math display">\[p_0(Y) = \int p_1(Y| A_{ij} = 0, A_{-(ij)})dA_{-(ij)} = p_1(Y|A_{ij}=0)\]</span> using Baye’s rule, we have: <span class="math display">\[p_0(Y) = \frac{p_1(A_{ij} = 0|Y) \times p_1(Y)}{p_1(A_{ij} = 0)}\]</span> We divide the above equation by <span class="math inline">\(p(y_t|H_1)\)</span> to get Baye’s factor:</p>
 <p><span class="math display">\[B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij=0}|Y, \Sigma)d \Sigma}{\int p(A_{ij}=0, \Sigma)d\Sigma}\]</span></p>
 <p>and the integration is performed using numerical integration methods. The second part is also known as the Savage-Dickey density ratio estimator, which is the ratio of the posterior over the prior density evaluated at <span class="math inline">\(A_{ij} = 0\)</span>. Indicative values for interpreting Bayes factors is provided below:</p>
-<p>To test for Granger causality, we use the equation: <span class="math display">\[B_H = \frac{p_1(A_{ij=0}|Y)}{p(A_{ij}=0)} \]</span> and the integral is evaluated using numerical integration.</p>
-<p><strong>Descriptive labels for certain Bayes factors.</strong></p>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Label</th>
-<th><span class="math inline">\(B_H\)</span></th>
-<th><span class="math inline">\(p(H_1 \mid X)\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Data strongly support <span class="math inline">\(H_1\)</span></td>
-<td>10</td>
-<td>91%</td>
-</tr>
-<tr class="even">
-<td>Data weakly support <span class="math inline">\(H_1\)</span></td>
-<td>3</td>
-<td>75%</td>
-</tr>
-<tr class="odd">
-<td>Data provide ambiguous information</td>
-<td>1</td>
-<td>50%</td>
-</tr>
-<tr class="even">
-<td>Data weakly support <span class="math inline">\(H_0\)</span></td>
-<td>1/3</td>
-<td>25%</td>
-</tr>
-<tr class="odd">
-<td>Data strongly support <span class="math inline">\(H_0\)</span></td>
-<td>1/10</td>
-<td>9%</td>
-</tr>
-</tbody>
-</table>
+<p>To test for Granger causality, we use the equation: <span class="math display">\[B_H = \frac{p_1(A_{ij} = 0|Y)}{p(A_{ij}=0)} \]</span> A value much greater than 1 would indicate that the posterior distribution has a higher probability density at <span class="math inline">\(A_{ij} = 0\)</span> than the prior, hence the data provides evidence for the null hypothesis that <span class="math inline">\(A_{ij} = 0\)</span>. Conversely, a value much smaller than 1 would suggest that the data provides evidence against the null hypothesis.</p>
 </section>
 </section>
 <section id="model-2-large-bvar-model-with-ma1-gaussian-innovations" class="level2">
 <h2 class="anchored" data-anchor-id="model-2-large-bvar-model-with-ma1-gaussian-innovations">3.2 Model 2: Large BVAR model with MA(1) Gaussian Innovations</h2>
-<p>Incorporating MA(1) Gaussian innovations in a large BVARs model lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables for several reasons. Firstly, the variances of economic shocks is rarely constant over time. For example, volatility tends to cluster during periods of economic crisis and is more tranquil during stable times. Incorporating stochastic volatility allows the model to adapt to changing volatility in the data, improving forecasting performance especially in the presence of financial market instability or economic policy shifts. In addition, by allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model’s ability to predict future values by considering the path-dependent nature of the economy. Our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below:</p>
+<p>Incorporating MA(1) Gaussian innovations in a large BVARs model can lead to a significant enhancement over traditional BVAR models, especially when forecasting macroeconomic variables, for several reasons. By allowing for serial correlation in the innovations term, we will be able to capture the momentum or persistence in economic variables that is often observed in real-world data. Recognizing that shocks may have a lasting impact over several periods can enhance the model’s ability to predict future values by considering the path-dependent nature of the economy. In addition, our BVAR model with common stochastic volatility is a natural extension to the standard BVAR model and formulated as below:</p>
 <section id="model-specification-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-specification-1">3.2.1 Model Specification</h3>
 <p><span class="math display">\[ Y = XA+E\]</span> <span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span> <span class="math display">\[
@@ -758,25 +735,25 @@ e_T^T
 <li><span class="math inline">\(E\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of the error terms</li>
 <li><span class="math inline">\(X\)</span> is a <span class="math inline">\(T \times (1+𝑝\times N)\)</span> matrix of covariates</li>
 <li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
-<li><span class="math inline">\(I_T\)</span> is a <span class="math inline">\(T \times T\)</span> identity matrix representing the column specific covariance matrix</li>
+<li><span class="math inline">\(\Omega\)</span> is a <span class="math inline">\(T \times T\)</span> identity matrix representing the column specific covariance matrix</li>
 <li><span class="math inline">\(E|X\)</span> follows a matrix-variate normal distribution with mean <span class="math inline">\(0_{T \times N}\)</span>, row specific covariance matrix <span class="math inline">\(\Sigma_{N \times N}\)</span> and column specific covariance matrix <span class="math inline">\(I_T\)</span></li>
 </ul>
-<p>with MA(1) innovations, we have, for i = 1,….,N and t = 1,…,T, <span class="math display">\[e_{it} = \eta_{it} + \psi \eta_{i,t-1}\]</span> where <span class="math inline">\(|\psi|&lt;1\)</span> and <span class="math inline">\(\eta_{it} \sim \mathcal{N}(0,1)\)</span></p>
+<p>with MA(1) innovations, we have, for i = 1,….,N and t = 1,…,T, <span class="math display">\[e_{t, i} = \eta_{t, i} + \psi \eta_{t-1, i}\]</span> where <span class="math inline">\(|\psi|&lt;1\)</span> and <span class="math inline">\(\eta_{t,i} \sim \mathcal{N}(0,1)\)</span></p>
 <p>In matrix notation, we have:</p>
 <p><span class="math display">\[e_i = H_{\psi} \eta_i\]</span></p>
 <p>where</p>
 <p><span class="math display">\[
 e_i = \begin{bmatrix}
-e_{i1} \\
-e_{i2} \\
+e_{1, i} \\
+e_{2, i} \\
 \vdots \\
-e_{iT}
+e_{T, i}
 \end{bmatrix} \qquad
 \eta_i = \begin{bmatrix}
-\eta_{i1} \\
-\eta_{i2} \\
+\eta_{1, i} \\
+\eta_{2, i} \\
 \vdots \\
-\eta_{iT}
+\eta_{T, i}
 \end{bmatrix} \qquad
 H_{\psi} = \left(
 \begin{array}{cccc}
@@ -789,7 +766,7 @@ H_{\psi} = \left(
 O_{\psi} = diag(1+\psi^2, 1, ..., 1)
 \]</span></p>
 <p>Hence, we have</p>
-<p><span class="math display">\[e \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T\]</span> Note that the covariance matrix <span class="math inline">\(\Omega\)</span> depends on <span class="math inline">\(\psi\)</span> only.</p>
+<p><span class="math display">\[E \sim \mathcal{N}(0, H_{\psi}O_{\psi}H_{\psi}^T) \qquad \qquad \Omega = H_{\psi}O_{\psi}H_{\psi}^T\]</span> Note that the covariance matrix <span class="math inline">\(\Omega\)</span> depends on <span class="math inline">\(\psi\)</span> only.</p>
 </section>
 <section id="prior-specification" class="level3">
 <h3 class="anchored" data-anchor-id="prior-specification">3.2.2 Prior Specification</h3>
@@ -867,12 +844,91 @@ O_{\psi} = diag(1+\psi^2, 1, ..., 1)
 <ul>
 <li>Randomly draw a <span class="math inline">\(\psi^*\)</span> from the <span class="math inline">\(T_2\)</span> draws and set <span class="math inline">\(\psi^{(s)} = \psi^*\)</span></li>
 </ul>
+<p>When combined with Gibbs sampling for the estimation of <span class="math inline">\(A\)</span> and <span class="math inline">\(\Sigma\)</span>, the Metropolis-Hastings step can be embedded into the Gibbs sampler, a method known as Metropolis-within-Gibbs sampling. In this approach, one sample from the Metropolis-Hastings step is generated per Gibbs iteration. Detailed proofs and explanations on the convergence properties and efficiency of the Metropolis-within-Gibbs sampling method are provided in <span class="citation" data-cites="Chib1995">Chib and Greenberg (<a href="#ref-Chib1995" role="doc-biblioref">1995</a>)</span>.</p>
 <p>We monitor the acceptance rate and adjust <span class="math inline">\(\tau^2\)</span> as necessary to achieve an optimal rate of about 20-40%.</p>
-<p>We note that since <span class="math inline">\(\Omega\)</span> is a band matrix, we do not need compute <span class="math inline">\(\Omega^{-1}\)</span>, instead, we obtain the Cholesky decomposition <span class="math inline">\(C_{\Omega}\)</span> of <span class="math inline">\(\Omega\)</span>, which has a time complexity of <span class="math inline">\(O(T)\)</span>. Terms involving <span class="math inline">\(\Omega^{-1}\)</span> such as <span class="math inline">\(X^T\Omega^{-1}X\)</span> can be obtained by: <span class="math display">\[X^T\Omega^{-1}X = X^T(C_{\Omega}^{-1})^{T}C_{\Omega}^{-1}X=(C_{\Omega}^{-1}X)^T(C_{\Omega}^{-1}X) = \tilde{X}^T\tilde{X}\]</span></p>
+<p>We note that since <span class="math inline">\(\Omega\)</span> is a band matrix, which means we do not need compute <span class="math inline">\(\Omega^{-1}\)</span>. Instead, we obtain the Cholesky decomposition <span class="math inline">\(C_{\Omega}\)</span> of <span class="math inline">\(\Omega\)</span>, which has a time complexity of <span class="math inline">\(O(T)\)</span> instead of <span class="math inline">\(O(T^3)\)</span>. Terms involving <span class="math inline">\(\Omega^{-1}\)</span> such as <span class="math inline">\(X^T\Omega^{-1}X\)</span> can be obtained by: <span class="math display">\[X^T\Omega^{-1}X = X^T(C_{\Omega}^{-1})^{T}C_{\Omega}^{-1}X=(C_{\Omega}^{-1}X)^T(C_{\Omega}^{-1}X) = \tilde{X}^T\tilde{X}\]</span></p>
+<p>To make forecasts of the <span class="math inline">\(Y\)</span>, we make the following observations: <em>One-period ahead forecast</em> <span class="math display">\[y_{t+1} = \mu_0 + A_1y_t + \cdots + A_py_{t-p+1} +  e_{t+1}\]</span> <span class="math display">\[E(y_{t+1}) = E(\mu_0 + A_1y_t + \cdots + A_py_{t-p+1} +  e_{t+1}) = \mu_0 + A_1y_t + \cdots + A_py_{t-p+1}\]</span> The one-period ahead forecast error is: <span class="math display">\[e_{t+1|t} = y_{t+1} - y_{t+1|t} = e_{t+1}\]</span> The one period ahead forecast variance is: <span class="math display">\[\mathbb{V}ar(e_{t+1}|t) = \mathbb{E}[\mathbb{E}_t(e_{t+1}e_{t+1}^T)] = \Sigma\]</span> <em>Two-period ahead forecast</em> <span class="math display">\[y_{t+2} = \mu_0 + A_1y_{t+1} + \cdots + A_py_{t-p+2} +  e_{t+2}\]</span> <span class="math display">\[E(y_{t+2}) = E(\mu_0 + A_1y_{t+1} + \cdots + A_py_{t-p+2} +  e_{t+2}) = \mu_0 + A_1y_{t+1|t} + \cdots + A_py_{t-p+2}\]</span> The two-period ahead forecast error is: <span class="math display">\[e_{t+2|t} = y_{t+2}-y_{t+2|t} = e_{t+2} + A_1(y_{t+1} - y_{t+1|t}) = e_{t+2} + A_1e_{t+1}\]</span> <span class="math display">\[Var(e_{t+2|t}) = E[e_{t+2|t}e_{t+2|t}^T] = E((e_{t+2} + A_1e_{t+1})(e_{t+2} + A_1e_{t+1})^T) = E((e_{t+2}e_{t+2}^T + A_1e_{t+1}e_{t+2}^T+e_{t+2}e_{t+1}^TA_1^T+A_1e_{t+1}e_{t+1}^TA_1^T)\]</span> <span class="math display">\[ = \Sigma + A_i\Psi+ \Psi A_1^T + A_1\Sigma A_1^T\]</span> since in the MA(1) innovations setup, we have:</p>
+<p><span class="math display">\[\mathbb{V}ar(e_{t+2} e_{t+1}^T) = E \left[
+\begin{pmatrix}
+e_{t+2, 1} \\
+e_{t+2, 2} \\
+\vdots \\
+e_{t+2, N}
+\end{pmatrix}
+\begin{pmatrix}
+e_{t+1, 1} &amp; e_{t+1, 2} &amp; \cdots &amp; e_{t+1, N}
+\end{pmatrix}
+\right] \]</span> <span class="math display">\[=
+E \left[
+\begin{pmatrix}
+e_{t+2, 1}e_{t+1, 1} &amp; e_{t+2, 1}e_{t+1, 2} &amp; \cdots &amp; e_{t+2, 1}e_{t+1, N}\\
+e_{t+2, 2}e_{t+1, 1} &amp; e_{t+2, 2}e_{t+1, 2} &amp; \cdots &amp; e_{t+2, 2}e_{t+1, N}\\
+\vdots               &amp;    \vdots            &amp; \vdots &amp;    \vdots          \\
+e_{t+2, N}e_{t+2, 1} &amp; e_{t+2, N}e_{t+2, 2} &amp; \vdots &amp;    e_{t+2,N}e_{t+1,N}
+\end{pmatrix}
+\right]\]</span> <span class="math display">\[ = E \left[
+\begin{pmatrix}
+(\eta_{t+2, 1} + \psi \eta_{t+1, 1})(\eta_{t+1, 1} + \psi \eta_{t, 1}) &amp; (\eta_{t+2, 1} + \psi \eta_{t+1, 1})(\eta_{t+1, 2}+\psi \eta_{t,2}) &amp; \cdots &amp; (\eta_{t+2, 1} + \psi \eta_{t+1, 1})(\eta_{t,N}+\psi\eta_{t,N})) \\
+(\eta_{t+2, 2} + \psi \eta_{t+1, 2})(\eta_{t+1, 1} + \psi \eta_{t, 1}) &amp; (\eta_{t+2, 2} + \psi \eta_{t+1, 2})(\eta_{t+1, 2}+\psi \eta_{t,2}) &amp; \cdots &amp; (\eta_{t+2, 2} + \psi \eta_{t+1, 2})(\eta_{t,N}+\psi\eta_{t,N})) \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+(\eta_{t+2, N} + \psi \eta_{t+1, N})(\eta_{t+1, 1} + \psi \eta_{t, 1}) &amp; (\eta_{t+2, N} + \psi \eta_{t+1, N})(\eta_{t+1, 2}+\psi \eta_{t,2}) &amp; \cdots &amp; (\eta_{t+2, N} + \psi \eta_{t+1, N})(\eta_{t,N}+\psi\eta_{t,N}))\
+\end{pmatrix}
+\right]
+\]</span> <span class="math display">\[= \begin{pmatrix}
+\psi\mathbb{E}[\eta_{t+1,1}^2] &amp; 0 &amp; \cdots &amp; 0\\
+0 &amp; \psi\mathbb{E}[\eta_{t+1,2}^2] &amp; \cdots &amp; 0 \\
+0 &amp; 0 &amp; \ddots &amp; 0 \\
+0 &amp; 0 &amp; \cdots &amp; \psi\mathbb{E}[\eta_{t+1,N}^2]
+\end{pmatrix} = \begin{pmatrix}
+\psi &amp; 0 &amp; \cdots &amp; 0\\
+0 &amp; \psi &amp; \cdots &amp; 0 \\
+0 &amp; 0 &amp; \ddots &amp; 0 \\
+0 &amp; 0 &amp; \cdots &amp; \psi
+\end{pmatrix} = \Psi\]</span></p>
+<p>since <span class="math inline">\(\eta_{t,i} \overset{iid}{\sim}\mathcal{N}(0,1)\)</span></p>
 </section>
 </section>
-<section id="model-3-large-bvar-model-with-ommon-stochastic-volatility" class="level2">
-<h2 class="anchored" data-anchor-id="model-3-large-bvar-model-with-ommon-stochastic-volatility">3.3 Model 3: Large BVAR model with ommon Stochastic Volatility</h2>
+<section id="model-3-large-bvar-model-with-common-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="model-3-large-bvar-model-with-common-stochastic-volatility">3.3 Model 3: Large BVAR model with common Stochastic Volatility</h2>
+<p>The variances of economic shocks are rarely constant over time. Volatility tends to cluster during periods of economic crisis and becomes more tranquil during stable times. Thus, treating the innovations as having constant variance is an unrealistic assumption in practice. To remedy the situation, we can incorporate stochastic volatility into the model, thereby allowing the model to adapt to changing volatility in the data. This typically lead to improvement in model performance, especially in the presence of financial market instability or shifts in economic policy. A BVAR model with common stochastic volatility is s specified as follows:</p>
+<p><span class="math display">\[ Y = XA+E\]</span> <span class="math display">\[
+A = \begin{bmatrix}
+\mu_0^T \\
+A_1^T \\
+\vdots \\
+A_p^T
+\end{bmatrix}
+, \quad
+Y = \begin{bmatrix}
+y_1^T \\
+y_2^T \\
+\vdots \\
+y_T^T
+\end{bmatrix}
+, \quad
+x_t = \begin{bmatrix}
+1 \\
+y_{t-1}^T \\
+\vdots \\
+y_{t-p}^T
+\end{bmatrix}
+, \quad
+X = \begin{bmatrix}
+x_1^T \\
+x_2^T \\
+\vdots \\
+x_T^T
+\end{bmatrix}
+, \quad
+E = \begin{bmatrix}
+e_1^T \\
+e_2^T \\
+\vdots \\
+e_T^T
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[E|X \sim \mathcal{MN}_{T \times N}(0_{T \times N},\Sigma_{N \times N}, \Omega_{T \times T})\]</span> where</p>
+<p><span class="math display">\[e_t \sim \mathcal{N}(0, e^{h_t}\Sigma)\]</span> and <span class="math inline">\(h_t\)</span> follows an AR(1) process. <span class="math display">\[h_t = \rho h_{t-1} + u_t^h\]</span> <span class="math display">\[u_t^h \sim N(0, \sigma^2_h)\]</span></p>
 </section>
 <section id="model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
 <h2 class="anchored" data-anchor-id="model-4-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">3.4 Model 4: Large BVAR model with MA(1) Gaussian innovations and Common Stochastic Volatility</h2>
@@ -915,17 +971,7 @@ e_2^T \\
 \vdots \\
 e_T^T
 \end{bmatrix}
-\]</span> where</p>
-<ul>
-<li><span class="math inline">\(T\)</span> is the number of time periods under consideration</li>
-<li><span class="math inline">\(N\)</span> is the number of variables, in our case, N = 20</li>
-<li><span class="math inline">\(P\)</span> is the number of lags</li>
-<li><span class="math inline">\(Y\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of variables of response variables we aim to model.</li>
-<li><span class="math inline">\(A\)</span> is a <span class="math inline">\(K \times N\)</span> matrix of coefficients, <span class="math inline">\(K = (1+𝑝\times N)\)</span></li>
-<li><span class="math inline">\(E\)</span> is a <span class="math inline">\(T \times N\)</span> matrix of the error terms</li>
-<li><span class="math inline">\(X\)</span> is a <span class="math inline">\(T \times (1+𝑝\times N)\)</span> matrix of covariates</li>
-<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N \times N\)</span> matrix representing the row-specific covariance matrix</li>
-</ul>
+\]</span></p>
 <p>the same as before. But, instead of the column specific matrix as the identity matrix, we specify the column specific matrix as a diagonal matrix <span class="math inline">\(\Omega\)</span>. Specifically, we have:</p>
 <p><span class="math display">\[\epsilon_t = u_t + \psi_1 u_{t-1}\]</span></p>
 <p><span class="math display">\[u_t \sim \mathcal{N}(0,e^{h_t} \Sigma)\]</span></p>
@@ -1100,82 +1146,246 @@ e_T^T
 <section id="empirical-result" class="level3">
 <h3 class="anchored" data-anchor-id="empirical-result">4.1.2 Empirical Result</h3>
 <p><strong>1. Fitted Model Parameters </strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
+ [1,] -0.899  0.116 -1.487 -0.685 -0.092  0.305 -0.003 -0.070  5.525  0.136
+ [2,]  0.421  0.049 -0.191 -0.034 -0.004  0.071  0.000 -0.002  0.275 -0.006
+ [3,]  0.098  0.315  0.157 -0.061 -0.001  0.066  0.000  0.004  0.251 -0.007
+ [4,]  0.067 -0.126  0.639  0.032 -0.007  0.016  0.002  0.004  0.510  0.016
+ [5,] -0.010  0.055 -0.145  0.518  0.002 -0.046 -0.004 -0.009  0.012 -0.002
+ [6,] -0.006 -0.002 -0.004 -0.007  0.998  0.005  0.000 -0.001  0.150  0.003
+ [7,]  0.116 -0.112  0.029  0.025  0.007  0.881 -0.003 -0.009 -0.307 -0.005
+ [8,] -0.016  0.033  0.022  0.022 -0.002  0.025  1.001  0.004  0.205  0.000
+ [9,]  0.002  0.081 -0.004  0.000  0.003  0.020  0.001  1.001 -0.230 -0.009
+[10,]  0.025 -0.003 -0.011 -0.003 -0.001 -0.008  0.000 -0.004  1.180  0.002
+[11,] -0.010  0.043  0.023  0.018  0.000 -0.022  0.001  0.006  0.182  0.982
+[12,] -0.013 -0.066  0.031  0.020 -0.004  0.005 -0.001  0.003  0.362  0.010
+[13,]  0.049 -0.026 -0.041 -0.047 -0.001 -0.032 -0.001 -0.009  0.131  0.003
+[14,]  0.021 -0.103  0.001  0.052  0.004 -0.055 -0.003 -0.007 -0.296  0.000
+[15,] -0.019  0.083 -0.074  0.002 -0.003 -0.003  0.000 -0.004  0.228  0.005
+[16,]  0.003  0.026  0.022  0.015 -0.003  0.010  0.000  0.002  0.347  0.005
+[17,] -0.001  0.005 -0.003 -0.001  0.000  0.000  0.000  0.000  0.028  0.001
+[18,] -0.050  0.020  0.019 -0.003 -0.004  0.028  0.001  0.006  0.302  0.000
+[19,] -0.006  0.008  0.007  0.005 -0.001  0.007  0.000  0.001  0.054  0.000
+[20,] -0.003  0.011  0.003  0.004  0.000  0.009  0.000  0.001  0.002 -0.001
+[21,] -0.022 -0.011  0.010  0.002  0.003  0.014  0.000  0.004 -0.448 -0.002
+[22,] -0.001  0.005  0.010  0.001  0.000 -0.006  0.000  0.001  0.042 -0.008
+[23,] -0.006 -0.009  0.006  0.003  0.000  0.001  0.000  0.002  0.052  0.002
+[24,] -0.021  0.007  0.017  0.013 -0.001  0.025  0.000  0.001  0.187  0.001
+[25,] -0.005  0.027 -0.076 -0.029  0.000 -0.023  0.000 -0.001 -0.155  0.000
+[26,] -0.009  0.017  0.046  0.014  0.000  0.004  0.000 -0.001  0.087 -0.002
+[27,] -0.010 -0.020  0.010  0.005 -0.001  0.001  0.000 -0.001  0.049  0.002
+[28,] -0.001 -0.001 -0.001  0.000  0.000  0.001  0.000  0.000  0.009  0.000
+[29,]  0.009  0.047  0.009 -0.002  0.000  0.005  0.000  0.001 -0.060  0.001
+[30,] -0.002  0.005  0.002  0.002  0.000  0.003  0.000  0.000  0.016  0.000
+[31,]  0.001  0.006  0.002  0.001  0.000  0.002  0.000  0.000 -0.013  0.000
+[32,]  0.006  0.016  0.012  0.001 -0.003 -0.014  0.000 -0.001  0.398  0.001
+[33,]  0.002  0.004  0.006  0.003  0.000 -0.002  0.000  0.000  0.019 -0.003
+[34,] -0.002  0.000  0.001  0.001  0.000  0.000  0.000  0.001  0.016  0.000
+[35,]  0.021 -0.037 -0.002 -0.005 -0.001 -0.013  0.000 -0.002  0.070  0.000
+[36,] -0.012  0.132 -0.004  0.002  0.000  0.007  0.000  0.000  0.000 -0.001
+[37,]  0.013 -0.039  0.020  0.007 -0.001  0.001  0.000 -0.001  0.090  0.000
+[38,]  0.008  0.000 -0.004  0.006  0.000  0.004  0.000  0.001 -0.026  0.000
+[39,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.009  0.000
+[40,] -0.011 -0.007 -0.001  0.006 -0.001  0.019  0.000  0.001  0.051  0.001
+[41,] -0.001  0.002  0.001  0.002  0.000  0.002  0.000  0.000  0.012  0.000
+[42,] -0.001  0.001  0.000  0.001  0.000  0.003  0.000  0.000  0.007  0.000
+[43,]  0.001 -0.021 -0.006  0.000  0.001  0.013  0.000  0.002 -0.147  0.001
+[44,]  0.000  0.002  0.002  0.002  0.000 -0.001  0.000  0.000  0.005 -0.002
+[45,] -0.001  0.002  0.001  0.001  0.000  0.000  0.000  0.000  0.003  0.000
+[46,] -0.014  0.009 -0.004 -0.001  0.000  0.006  0.000  0.001  0.039  0.000
+[47,]  0.004 -0.029  0.015 -0.005  0.000  0.003  0.000  0.000  0.069  0.001
+[48,]  0.002 -0.016  0.002  0.008 -0.001  0.001  0.000  0.001  0.064  0.001
+[49,] -0.003  0.003 -0.002  0.004  0.000 -0.002  0.000  0.001  0.027  0.000
+[50,]  0.000 -0.001  0.000  0.000  0.000  0.000  0.000  0.000  0.006  0.000
+[51,]  0.006 -0.010  0.000  0.001  0.000 -0.008  0.000 -0.001 -0.018  0.000
+[52,] -0.001  0.001  0.001  0.001  0.000  0.001  0.000  0.000  0.005  0.000
+[53,]  0.000  0.000  0.000  0.000  0.000  0.001  0.000  0.000  0.001  0.000
+[54,] -0.004  0.007 -0.002  0.001  0.001 -0.006  0.000 -0.001 -0.097 -0.001
+[55,]  0.000  0.001  0.002  0.001  0.000 -0.001  0.000  0.000 -0.003 -0.002
+[56,]  0.000  0.001  0.001  0.001  0.000  0.000  0.000  0.000  0.002  0.000
+       [,11]
+ [1,]  0.154
+ [2,]  0.016
+ [3,] -0.003
+ [4,]  0.004
+ [5,]  0.009
+ [6,]  0.002
+ [7,] -0.004
+ [8,] -0.002
+ [9,] -0.001
+[10,]  0.003
+[11,] -0.009
+[12,]  0.996
+[13,]  0.007
+[14,]  0.001
+[15,]  0.007
+[16,]  0.000
+[17,]  0.001
+[18,] -0.002
+[19,] -0.001
+[20,]  0.001
+[21,] -0.003
+[22,] -0.002
+[23,] -0.002
+[24,]  0.001
+[25,]  0.002
+[26,]  0.002
+[27,]  0.001
+[28,]  0.000
+[29,] -0.001
+[30,]  0.000
+[31,]  0.000
+[32,]  0.000
+[33,] -0.001
+[34,] -0.001
+[35,]  0.001
+[36,] -0.001
+[37,]  0.000
+[38,] -0.002
+[39,]  0.000
+[40,]  0.000
+[41,]  0.000
+[42,]  0.000
+[43,]  0.000
+[44,]  0.000
+[45,] -0.001
+[46,]  0.000
+[47,]  0.000
+[48,] -0.001
+[49,] -0.001
+[50,]  0.000
+[51,]  0.000
+[52,]  0.000
+[53,]  0.000
+[54,]  0.001
+[55,]  0.000
+[56,]  0.000</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]   [,9] [,10] [,11]
+ [1,] 2.914 4.910 3.068 3.203 0.507 1.487 0.467 0.541 22.079 0.668 0.548
+ [2,] 0.086 0.145 0.091 0.093 0.015 0.044 0.014 0.016  0.651 0.020 0.016
+ [3,] 0.052 0.087 0.054 0.057 0.009 0.026 0.008 0.010  0.393 0.012 0.010
+ [4,] 0.077 0.130 0.082 0.084 0.014 0.039 0.012 0.014  0.585 0.018 0.014
+ [5,] 0.079 0.133 0.083 0.085 0.014 0.040 0.013 0.015  0.601 0.018 0.015
+ [6,] 0.115 0.193 0.122 0.126 0.020 0.059 0.018 0.021  0.873 0.026 0.022
+ [7,] 0.089 0.149 0.093 0.096 0.015 0.045 0.014 0.016  0.673 0.020 0.017
+ [8,] 0.114 0.193 0.121 0.125 0.020 0.058 0.018 0.021  0.864 0.026 0.021
+ [9,] 0.111 0.186 0.116 0.121 0.019 0.056 0.018 0.020  0.842 0.025 0.021
+[10,] 0.012 0.020 0.013 0.013 0.002 0.006 0.002 0.002  0.091 0.003 0.002
+[11,] 0.099 0.167 0.103 0.108 0.017 0.050 0.016 0.018  0.751 0.023 0.018
+[12,] 0.115 0.192 0.120 0.124 0.020 0.058 0.018 0.021  0.871 0.026 0.021
+[13,] 0.053 0.090 0.056 0.058 0.009 0.027 0.008 0.010  0.407 0.012 0.010
+[14,] 0.040 0.068 0.042 0.044 0.007 0.020 0.006 0.007  0.306 0.009 0.007
+[15,] 0.051 0.086 0.054 0.055 0.009 0.026 0.008 0.009  0.387 0.012 0.009
+[16,] 0.051 0.086 0.054 0.056 0.009 0.026 0.008 0.009  0.392 0.012 0.010
+[17,] 0.059 0.100 0.062 0.064 0.010 0.030 0.009 0.011  0.448 0.014 0.011
+[18,] 0.054 0.092 0.057 0.059 0.009 0.027 0.009 0.010  0.413 0.012 0.010
+[19,] 0.059 0.099 0.062 0.064 0.010 0.030 0.009 0.011  0.449 0.014 0.011
+[20,] 0.059 0.099 0.061 0.064 0.010 0.030 0.009 0.011  0.444 0.013 0.011
+[21,] 0.018 0.030 0.018 0.019 0.003 0.009 0.003 0.003  0.133 0.004 0.003
+[22,] 0.057 0.096 0.060 0.062 0.010 0.029 0.009 0.010  0.435 0.013 0.011
+[23,] 0.059 0.099 0.062 0.064 0.010 0.030 0.009 0.011  0.448 0.014 0.011
+[24,] 0.038 0.064 0.040 0.041 0.007 0.019 0.006 0.007  0.287 0.009 0.007
+[25,] 0.031 0.053 0.033 0.034 0.006 0.016 0.005 0.006  0.238 0.007 0.006
+[26,] 0.037 0.062 0.039 0.040 0.006 0.019 0.006 0.007  0.278 0.008 0.007
+[27,] 0.037 0.062 0.039 0.040 0.006 0.019 0.006 0.007  0.280 0.008 0.007
+[28,] 0.040 0.067 0.042 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
+[29,] 0.038 0.064 0.040 0.042 0.007 0.019 0.006 0.007  0.289 0.009 0.007
+[30,] 0.040 0.067 0.042 0.043 0.007 0.020 0.006 0.007  0.301 0.009 0.007
+[31,] 0.040 0.067 0.041 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
+[32,] 0.016 0.028 0.017 0.018 0.003 0.008 0.003 0.003  0.124 0.004 0.003
+[33,] 0.039 0.065 0.041 0.042 0.007 0.020 0.006 0.007  0.295 0.009 0.007
+[34,] 0.039 0.066 0.041 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
+[35,] 0.029 0.049 0.030 0.031 0.005 0.015 0.005 0.005  0.218 0.007 0.005
+[36,] 0.026 0.043 0.027 0.028 0.004 0.013 0.004 0.005  0.194 0.006 0.005
+[37,] 0.028 0.048 0.030 0.031 0.005 0.014 0.004 0.005  0.214 0.006 0.005
+[38,] 0.029 0.049 0.030 0.031 0.005 0.014 0.005 0.005  0.217 0.007 0.005
+[39,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
+[40,] 0.029 0.049 0.031 0.032 0.005 0.015 0.005 0.005  0.220 0.007 0.005
+[41,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.227 0.007 0.006
+[42,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
+[43,] 0.015 0.026 0.016 0.017 0.003 0.008 0.002 0.003  0.116 0.004 0.003
+[44,] 0.029 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.223 0.007 0.005
+[45,] 0.030 0.051 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
+[46,] 0.023 0.039 0.025 0.025 0.004 0.012 0.004 0.004  0.178 0.005 0.004
+[47,] 0.022 0.037 0.023 0.024 0.004 0.011 0.003 0.004  0.166 0.005 0.004
+[48,] 0.023 0.039 0.024 0.025 0.004 0.012 0.004 0.004  0.176 0.005 0.004
+[49,] 0.023 0.039 0.024 0.025 0.004 0.012 0.004 0.004  0.176 0.005 0.004
+[50,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
+[51,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.178 0.005 0.004
+[52,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
+[53,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
+[54,] 0.011 0.018 0.011 0.012 0.002 0.005 0.002 0.002  0.081 0.002 0.002
+[55,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.179 0.005 0.004
+[56,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
+ [1,]  0.355 -0.051  0.086  0.038  0.001 -0.058 0.000  0.001 -0.039  0.005
+ [2,] -0.051  1.011  0.031  0.093  0.008  0.021 0.004  0.012 -0.647 -0.007
+ [3,]  0.086  0.031  0.393  0.169 -0.001 -0.002 0.003  0.012  0.433 -0.010
+ [4,]  0.038  0.093  0.169  0.421  0.000  0.016 0.003  0.012  0.178 -0.005
+ [5,]  0.001  0.008 -0.001  0.000  0.011 -0.003 0.000  0.000 -0.189 -0.002
+ [6,] -0.058  0.021 -0.002  0.016 -0.003  0.092 0.002  0.007  0.208  0.000
+ [7,]  0.000  0.004  0.003  0.003  0.000  0.002 0.009  0.000  0.012  0.000
+ [8,]  0.001  0.012  0.012  0.012  0.000  0.007 0.000  0.012  0.004 -0.001
+ [9,] -0.039 -0.647  0.433  0.178 -0.189  0.208 0.012  0.004 20.485  0.134
+[10,]  0.005 -0.007 -0.010 -0.005 -0.002  0.000 0.000 -0.001  0.134  0.019
+[11,] -0.008 -0.012 -0.014 -0.009  0.000  0.000 0.000 -0.003  0.045  0.001
+       [,11]
+ [1,] -0.008
+ [2,] -0.012
+ [3,] -0.014
+ [4,] -0.009
+ [5,]  0.000
+ [6,]  0.000
+ [7,]  0.000
+ [8,] -0.003
+ [9,]  0.045
+[10,]  0.001
+[11,]  0.012</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
+ [1,] 0.048 0.056 0.036 0.037 0.006 0.018 0.005 0.006 0.255 0.008 0.006
+ [2,] 0.056 0.134 0.060 0.062 0.010 0.029 0.009 0.010 0.433 0.013 0.011
+ [3,] 0.036 0.060 0.052 0.042 0.006 0.018 0.006 0.007 0.270 0.008 0.007
+ [4,] 0.037 0.062 0.042 0.056 0.006 0.018 0.006 0.007 0.277 0.008 0.007
+ [5,] 0.006 0.010 0.006 0.006 0.001 0.003 0.001 0.001 0.048 0.001 0.001
+ [6,] 0.018 0.029 0.018 0.018 0.003 0.012 0.003 0.003 0.130 0.004 0.003
+ [7,] 0.005 0.009 0.006 0.006 0.001 0.003 0.001 0.001 0.040 0.001 0.001
+ [8,] 0.006 0.010 0.007 0.007 0.001 0.003 0.001 0.002 0.047 0.001 0.001
+ [9,] 0.255 0.433 0.270 0.277 0.048 0.130 0.040 0.047 2.746 0.059 0.048
+[10,] 0.008 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.059 0.002 0.001
+[11,] 0.006 0.011 0.007 0.007 0.001 0.003 0.001 0.001 0.048 0.001 0.002</code></pre>
+</div>
+</div>
 <p><strong>2. Prediction Plots</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running prediction for 50000 iterations took: 131.527000 seconds"</code></pre>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-3.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-4.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-6.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-7.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-8.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-9.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-10.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-11.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -1186,61 +1396,25 @@ e_T^T
 </ol>
 <p>The Baye’s factor in this case is defined as:</p>
 <p><span class="math display">\[B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij} = 0|Y, X,\Sigma)d \Sigma}{\int p_1(A_{ij}=0, \Sigma)d\Sigma}\]</span> <span class="math display">\[p_1(A_{ij} = 0|Y, X,\Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A_{ij}}, \Sigma_{ij}, \bar{V}_{ij})\]</span> <span class="math display">\[p_1(A_{ij} = 0, \Sigma) \sim \mathcal{NIW}_{K \times N}(A_{0, ij}, V_{A, ij}, S_{0, ij}, \nu_{0, ij})\]</span> <span class="math display">\[p_1(A_{ij} = 0, \Sigma) = p(A_{ij}|\Sigma)\times p(\Sigma)\]</span> <span class="math display">\[A_{ij}|\Sigma \sim \mathcal{MN}_{K \times N} (A_{0,ij}, \Sigma, V_{A, ij}) \]</span> <span class="math display">\[\Sigma \sim \mathcal{IW}(S_0, \nu_0)\]</span> and we test the bi-lateral relationship between each of these countries.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 671.543000 seconds"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP          AU
+CN -318685.2027     1070.657     1051.494    1112.069
+US    1079.5498 -1618774.333     1348.506    1358.446
+JP     932.3779     1159.568 -1602272.595    1284.957
+AU    1150.6094     1301.027     1326.103 -945759.463</code></pre>
+</div>
+</div>
 <table class="table">
 <colgroup>
-<col style="width: 18%">
-<col style="width: 19%">
-<col style="width: 19%">
-<col style="width: 22%">
-<col style="width: 19%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>China</th>
-<th>United States</th>
-<th>Japan</th>
-<th>Australia</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>China</strong></td>
-<td>-</td>
-<td>Inf</td>
-<td>5.466142e+215</td>
-<td>Inf</td>
-</tr>
-<tr class="even">
-<td><strong>US</strong></td>
-<td>Inf</td>
-<td>-</td>
-<td>Inf</td>
-<td>Inf</td>
-</tr>
-<tr class="odd">
-<td><strong>Japan</strong></td>
-<td>Inf</td>
-<td>Inf</td>
-<td>-</td>
-<td>Inf</td>
-</tr>
-<tr class="even">
-<td><strong>Australia</strong></td>
-<td>Inf</td>
-<td>1.697063e-58</td>
-<td>Inf</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-<table class="table">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 19%">
-<col style="width: 19%">
-<col style="width: 22%">
+<col style="width: 13%">
+<col style="width: 16%">
 <col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1254,34 +1428,169 @@ e_T^T
 <tbody>
 <tr class="odd">
 <td><strong>China</strong></td>
-<td>-</td>
-<td>Strong Evidence for Granger Causality</td>
-<td>SStrong Evidence for Granger Causality</td>
-<td>Strong Evidence for Granger Causality</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
 </tr>
 <tr class="even">
 <td><strong>US</strong></td>
-<td>Strong Evidence for Granger Causality</td>
-<td>-</td>
-<td>Strong Evidence for Granger Causality</td>
-<td>Strong Evidence for Granger Causality</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
 </tr>
 <tr class="odd">
 <td><strong>Japan</strong></td>
-<td>Strong Evidence for Granger Causality</td>
-<td>Strong Evidence for Granger Causality</td>
-<td>-</td>
-<td>Strong Evidence for Granger Causality</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
 </tr>
 <tr class="even">
 <td><strong>Australia</strong></td>
-<td>Strong Evidence for Granger Causality</td>
-<td>Strong Evidence for Granger Causality</td>
-<td>Strong Evidence <strong>against</strong> Granger Causality</td>
-<td>-</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
 </tr>
 </tbody>
 </table>
+<p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=5 lags, no country Granger-causes the economic indicators of another country. However, the lags of each country do Granger-cause their own economic indicators. We will test p = 4 lags next.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 352.230000 seconds"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP          AU
+CN -272960.5910     1042.926     1056.942    1099.940
+US    1188.0282 -1638597.076     1458.310    1478.405
+JP     918.1063     1287.356 -1616055.722    1359.913
+AU    1316.9405     1333.768     1459.371 -966899.803</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=4 lags, no country Granger-causes the economic indicators of another country. However, the lags of each country do Granger-cause their own economic indicators. We will test the model for pre-covid and post_covid period next.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 671.645000 seconds"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP          AU
+CN -314680.5342     1057.100     1049.716    1110.877
+US    1052.6074 -1619446.107     1365.653    1418.698
+JP     950.7971     1143.669 -1609776.548    1277.014
+AU    1197.0614     1295.412     1365.178 -944295.423</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=4 lags, no country Granger-causes the economic indicators of another country in the pre-Covid period from 1994 Q1 to 2019 Q4. Next, we test the hypothesis on data from Q1 2004, two years after China joined the World Trade Organization.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 672.771000 seconds"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP          AU
+CN -319453.0737     1113.804     1047.330    1094.916
+US    1095.5090 -1613266.393     1357.081    1372.285
+JP     945.0979     1137.518 -1602505.247    1253.436
+AU    1180.1254     1271.541     1346.508 -961943.542</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="large-bvar-model-with-ma1-gaussian-innovations" class="level2">
@@ -1291,73 +1600,76 @@ e_T^T
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.2375</code></pre>
+[1] 0.1785</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fit MA BVAR on 1000 bi-variate random walk for 2000 iterations took: 3887.012000 seconds"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]
-[1,]  0.059 0.165
-[2,]  0.999 0.001
-[3,] -0.002 0.995</code></pre>
+[1,]  0.068 0.175
+[2,]  0.999 0.002
+[3,] -0.003 0.995</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.082 0.069
-[2,] 0.003 0.002
-[3,] 0.003 0.002</code></pre>
+[1,] 0.073 0.074
+[2,] 0.003 0.003
+[3,] 0.002 0.002</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 1.162 0.066
-[2,] 0.066 1.047</code></pre>
+[1,] 1.150 0.063
+[2,] 0.063 1.048</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of row specific covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.047 0.032
-[2,] 0.032 0.046</code></pre>
+[1,] 0.053 0.035
+[2,] 0.035 0.045</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,]  1.002 -0.035  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [2,] -0.035  1.002 -0.035  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [3,]  0.000 -0.035  1.002 -0.035  0.000  0.000  0.000  0.000  0.000  0.000
- [4,]  0.000  0.000 -0.035  1.002 -0.035  0.000  0.000  0.000  0.000  0.000
- [5,]  0.000  0.000  0.000 -0.035  1.002 -0.035  0.000  0.000  0.000  0.000
- [6,]  0.000  0.000  0.000  0.000 -0.035  1.002 -0.035  0.000  0.000  0.000
- [7,]  0.000  0.000  0.000  0.000  0.000 -0.035  1.002 -0.035  0.000  0.000
- [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.035  1.002 -0.035  0.000
- [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.035  1.002 -0.035
-[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.035  1.002</code></pre>
+ [1,]  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [2,] -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [3,]  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000
+ [4,]  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000
+ [5,]  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000
+ [6,]  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000
+ [7,]  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000
+ [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000
+ [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028
+[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
- [1,] 0.002 0.026 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [2,] 0.026 0.002 0.026 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [3,] 0.000 0.026 0.002 0.026 0.000 0.000 0.000 0.000 0.000 0.000
- [4,] 0.000 0.000 0.026 0.002 0.026 0.000 0.000 0.000 0.000 0.000
- [5,] 0.000 0.000 0.000 0.026 0.002 0.026 0.000 0.000 0.000 0.000
- [6,] 0.000 0.000 0.000 0.000 0.026 0.002 0.026 0.000 0.000 0.000
- [7,] 0.000 0.000 0.000 0.000 0.000 0.026 0.002 0.026 0.000 0.000
- [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.026 0.002 0.026 0.000
- [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.026 0.002 0.026
-[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.026 0.002</code></pre>
+ [1,] 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [2,] 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [3,] 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000
+ [4,] 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000
+ [5,] 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000
+ [6,] 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000
+ [7,] 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000
+ [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000
+ [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022
+[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001</code></pre>
 </div>
 </div>
 </section>
@@ -1367,72 +1679,75 @@ e_T^T
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.28</code></pre>
+[1] 0.2496</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 3887.012000 seconds"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.113 -0.246  0.042 -0.185 -0.063  0.068 0.001  0.017  5.657 -0.204
- [2,]  0.992  0.001 -0.009 -0.001  0.000  0.000 0.000  0.000 -0.001  0.000
- [3,]  0.008  0.963  0.010 -0.006  0.000  0.003 0.000  0.000  0.009 -0.001
- [4,]  0.000 -0.004  0.986 -0.002  0.000  0.000 0.000  0.000  0.042  0.000
- [5,]  0.000 -0.001 -0.006  0.992  0.000  0.000 0.000  0.000  0.036  0.000
- [6,]  0.000 -0.001 -0.001  0.000  1.000  0.000 0.000  0.000 -0.001  0.000
- [7,]  0.001  0.002  0.001  0.003  0.000  0.998 0.000  0.000 -0.002  0.001
- [8,] -0.001 -0.001 -0.001  0.000  0.000  0.000 1.000  0.000  0.002  0.000
- [9,]  0.000  0.002  0.000  0.001  0.000  0.000 0.000  1.000 -0.010  0.001
-[10,]  0.003 -0.002 -0.006 -0.002 -0.001 -0.001 0.000 -0.001  1.140  0.002
-[11,]  0.000 -0.002  0.000 -0.001  0.000  0.000 0.000  0.001  0.013  0.998
-[12,]  0.001  0.002  0.001  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[13,]  0.001 -0.001 -0.001 -0.001  0.000  0.000 0.000  0.000  0.006  0.000
-[14,]  0.000 -0.008 -0.003  0.000  0.000 -0.001 0.000  0.000  0.000  0.000
-[15,] -0.001  0.004 -0.004 -0.002  0.000  0.000 0.000  0.000  0.008  0.000
-[16,]  0.000  0.000 -0.001 -0.001  0.000  0.000 0.000  0.000  0.014  0.000
-[17,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[18,] -0.001  0.002  0.000  0.001  0.000  0.000 0.000  0.000 -0.001  0.000
-[19,]  0.001  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[20,]  0.000  0.002  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[21,] -0.004  0.003  0.003  0.000  0.001  0.001 0.000  0.001 -0.087  0.000
-[22,]  0.000  0.002  0.001  0.001  0.000  0.000 0.000  0.000 -0.004 -0.001
-[23,]  0.000  0.000  0.000  0.001  0.000  0.000 0.000  0.000  0.003  0.000
+ [1,]  0.104 -0.248  0.043 -0.127 -0.059  0.075 0.003  0.023  5.413 -0.204
+ [2,]  0.992  0.000 -0.008 -0.002  0.000  0.000 0.000  0.000  0.020  0.000
+ [3,]  0.008  0.964  0.008 -0.005  0.000  0.003 0.000  0.000  0.020 -0.001
+ [4,]  0.002 -0.006  0.988 -0.001  0.000 -0.001 0.000  0.000  0.039  0.000
+ [5,]  0.001 -0.002 -0.006  0.990  0.000 -0.001 0.000  0.000  0.034  0.000
+ [6,]  0.000  0.001  0.000  0.000  1.000  0.000 0.000  0.000  0.001  0.000
+ [7,]  0.002  0.001  0.000  0.002  0.000  0.998 0.000  0.000 -0.004  0.002
+ [8,]  0.000  0.001  0.000  0.001  0.000  0.000 1.000  0.000  0.003  0.000
+ [9,]  0.000  0.002  0.000  0.001  0.000  0.000 0.000  1.000 -0.004  0.000
+[10,]  0.003 -0.001 -0.006 -0.002 -0.001 -0.001 0.000 -0.001  1.146  0.002
+[11,]  0.000 -0.003  0.000 -0.001  0.000  0.000 0.000  0.001  0.005  0.998
+[12,]  0.000  0.000  0.001  0.000  0.000  0.000 0.000  0.000  0.004  0.000
+[13,]  0.000  0.000 -0.001 -0.001  0.000  0.000 0.000  0.000  0.007  0.000
+[14,]  0.001 -0.007 -0.002 -0.001  0.000 -0.001 0.000  0.000  0.000  0.000
+[15,] -0.001  0.002 -0.003 -0.001  0.000  0.000 0.000  0.000  0.009  0.000
+[16,]  0.000  0.000 -0.001 -0.001  0.000  0.000 0.000  0.000  0.009  0.000
+[17,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[18,] -0.001  0.002  0.000  0.001  0.000  0.000 0.000  0.000  0.002  0.000
+[19,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[20,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[21,] -0.003  0.002  0.003  0.001  0.001  0.001 0.000  0.001 -0.092  0.000
+[22,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001 -0.001
+[23,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
 [24,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.004  0.000
-[25,]  0.000  0.000 -0.002 -0.001  0.000 -0.001 0.000  0.000  0.003  0.000
-[26,]  0.000  0.000  0.001  0.001  0.000  0.000 0.000  0.000  0.007  0.000
-[27,]  0.000  0.000  0.000 -0.001  0.000  0.000 0.000  0.000  0.001  0.000
+[25,] -0.001  0.000 -0.002 -0.001  0.000 -0.001 0.000  0.000  0.000  0.000
+[26,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
+[27,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
 [28,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[29,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[30,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.004  0.000
-[31,]  0.000  0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.002  0.000
-[32,]  0.000  0.001  0.002  0.001  0.000  0.000 0.000  0.000 -0.035  0.000
-[33,] -0.001  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
+[29,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
+[30,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[31,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[32,]  0.000  0.000  0.003  0.001  0.000  0.000 0.000  0.000 -0.037  0.000
+[33,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
 [34,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[35,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[36,]  0.000  0.000  0.000 -0.001  0.000  0.000 0.000  0.000  0.009  0.000
-[37,]  0.000 -0.001  0.001  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[38,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[39,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.003  0.000
-[40,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[41,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[42,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[43,]  0.000 -0.001  0.001  0.001  0.000  0.000 0.000  0.000 -0.032  0.000
-[44,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[35,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[36,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
+[37,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
+[38,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[39,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[40,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[41,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[42,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[43,]  0.000 -0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.034  0.000
+[44,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
 [45,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
 [46,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[47,]  0.000 -0.002  0.000  0.000  0.000  0.000 0.000  0.000  0.007  0.000
-[48,]  0.000  0.000 -0.001  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[49,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[50,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[51,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[47,]  0.000 -0.002  0.001  0.000  0.000  0.000 0.000  0.000  0.004  0.000
+[48,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[49,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[50,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
+[51,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
 [52,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[53,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[54,]  0.000  0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.033  0.000
-[55,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[56,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
+[53,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[54,]  0.000  0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.030  0.000
+[55,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
+[56,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
        [,11]
- [1,]  0.001
- [2,]  0.000
+ [1,] -0.012
+ [2,]  0.001
  [3,]  0.000
  [4,]  0.000
  [5,]  0.000
@@ -1493,89 +1808,89 @@ e_T^T
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.582 1.063 0.659 0.692 0.080 0.305 0.082 0.095 4.499 0.118 0.098
- [2,] 0.015 0.026 0.015 0.015 0.002 0.008 0.002 0.002 0.102 0.003 0.002
- [3,] 0.013 0.023 0.017 0.015 0.002 0.007 0.002 0.002 0.095 0.003 0.002
- [4,] 0.013 0.025 0.015 0.014 0.002 0.007 0.002 0.002 0.099 0.003 0.002
- [5,] 0.014 0.025 0.016 0.015 0.002 0.007 0.002 0.002 0.104 0.003 0.002
- [6,] 0.015 0.026 0.016 0.015 0.002 0.007 0.002 0.002 0.109 0.003 0.002
- [7,] 0.014 0.023 0.014 0.013 0.002 0.007 0.002 0.002 0.096 0.003 0.002
- [8,] 0.015 0.026 0.015 0.015 0.002 0.008 0.002 0.002 0.103 0.003 0.002
- [9,] 0.013 0.023 0.015 0.015 0.002 0.007 0.002 0.002 0.102 0.003 0.002
-[10,] 0.007 0.011 0.007 0.006 0.001 0.003 0.001 0.001 0.048 0.001 0.001
-[11,] 0.013 0.023 0.017 0.014 0.002 0.007 0.002 0.002 0.101 0.003 0.002
-[12,] 0.016 0.024 0.016 0.015 0.002 0.008 0.002 0.002 0.099 0.003 0.002
-[13,] 0.007 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.052 0.001 0.001
-[14,] 0.007 0.013 0.007 0.007 0.001 0.004 0.001 0.001 0.052 0.002 0.001
-[15,] 0.007 0.012 0.008 0.007 0.001 0.004 0.001 0.001 0.053 0.002 0.001
-[16,] 0.007 0.012 0.008 0.007 0.001 0.004 0.001 0.001 0.052 0.002 0.001
-[17,] 0.007 0.012 0.008 0.007 0.001 0.004 0.001 0.001 0.055 0.002 0.001
-[18,] 0.007 0.013 0.008 0.007 0.001 0.004 0.001 0.001 0.050 0.002 0.001
-[19,] 0.007 0.012 0.008 0.007 0.001 0.004 0.001 0.001 0.053 0.002 0.001
-[20,] 0.008 0.013 0.008 0.007 0.001 0.004 0.001 0.001 0.052 0.002 0.001
-[21,] 0.006 0.010 0.007 0.006 0.001 0.003 0.001 0.001 0.043 0.001 0.001
-[22,] 0.007 0.012 0.007 0.007 0.001 0.004 0.001 0.001 0.049 0.001 0.001
-[23,] 0.007 0.012 0.007 0.007 0.001 0.004 0.001 0.001 0.051 0.001 0.001
-[24,] 0.005 0.008 0.005 0.005 0.001 0.002 0.001 0.001 0.035 0.001 0.001
-[25,] 0.005 0.009 0.005 0.005 0.001 0.003 0.001 0.001 0.034 0.001 0.001
-[26,] 0.005 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.035 0.001 0.001
-[27,] 0.005 0.009 0.005 0.005 0.001 0.003 0.001 0.001 0.034 0.001 0.001
-[28,] 0.005 0.009 0.005 0.005 0.001 0.003 0.001 0.001 0.034 0.001 0.001
-[29,] 0.005 0.008 0.005 0.004 0.001 0.002 0.001 0.001 0.032 0.001 0.001
-[30,] 0.005 0.008 0.005 0.005 0.001 0.002 0.001 0.001 0.030 0.001 0.001
-[31,] 0.005 0.008 0.005 0.005 0.001 0.002 0.001 0.001 0.032 0.001 0.001
-[32,] 0.005 0.008 0.004 0.004 0.001 0.002 0.001 0.001 0.032 0.001 0.001
-[33,] 0.005 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.035 0.001 0.001
-[34,] 0.005 0.008 0.005 0.005 0.001 0.002 0.001 0.001 0.032 0.001 0.001
-[35,] 0.004 0.006 0.004 0.004 0.000 0.002 0.000 0.001 0.026 0.001 0.001
-[36,] 0.003 0.006 0.004 0.004 0.001 0.002 0.000 0.001 0.024 0.001 0.001
-[37,] 0.004 0.006 0.004 0.003 0.001 0.002 0.001 0.001 0.025 0.001 0.001
-[38,] 0.003 0.006 0.004 0.004 0.001 0.002 0.001 0.001 0.026 0.001 0.001
-[39,] 0.003 0.006 0.004 0.004 0.001 0.002 0.001 0.001 0.024 0.001 0.001
-[40,] 0.003 0.006 0.004 0.004 0.001 0.002 0.000 0.001 0.026 0.001 0.000
-[41,] 0.003 0.006 0.004 0.004 0.001 0.002 0.000 0.001 0.026 0.001 0.001
-[42,] 0.004 0.006 0.004 0.004 0.000 0.002 0.000 0.001 0.026 0.001 0.001
-[43,] 0.003 0.005 0.004 0.003 0.000 0.002 0.000 0.001 0.022 0.001 0.001
-[44,] 0.004 0.006 0.004 0.003 0.001 0.002 0.000 0.001 0.027 0.001 0.001
-[45,] 0.004 0.006 0.004 0.003 0.001 0.002 0.000 0.001 0.025 0.001 0.001
-[46,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.022 0.001 0.000
-[47,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.001 0.020 0.001 0.000
-[48,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.018 0.001 0.000
-[49,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.021 0.001 0.000
-[50,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.021 0.001 0.000
-[51,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.019 0.001 0.000
-[52,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.021 0.001 0.000
-[53,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.020 0.001 0.000
-[54,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.017 0.001 0.000
-[55,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.021 0.001 0.000
-[56,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.021 0.001 0.000</code></pre>
+ [1,] 0.563 1.211 0.651 0.609 0.082 0.266 0.080 0.083 4.126 0.120 0.097
+ [2,] 0.014 0.029 0.016 0.015 0.002 0.006 0.002 0.002 0.099 0.003 0.002
+ [3,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.096 0.003 0.002
+ [4,] 0.014 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
+ [5,] 0.014 0.029 0.016 0.015 0.002 0.006 0.002 0.002 0.099 0.003 0.002
+ [6,] 0.014 0.028 0.015 0.015 0.002 0.006 0.002 0.002 0.101 0.003 0.002
+ [7,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.095 0.003 0.002
+ [8,] 0.014 0.029 0.015 0.015 0.002 0.006 0.002 0.002 0.100 0.003 0.002
+ [9,] 0.014 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
+[10,] 0.006 0.012 0.007 0.006 0.001 0.003 0.001 0.001 0.047 0.001 0.001
+[11,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
+[12,] 0.014 0.029 0.015 0.015 0.002 0.007 0.002 0.002 0.100 0.003 0.002
+[13,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[14,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[15,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.051 0.001 0.001
+[16,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[17,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[18,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[19,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[20,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[21,] 0.006 0.012 0.007 0.006 0.001 0.003 0.001 0.001 0.044 0.001 0.001
+[22,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.051 0.001 0.001
+[23,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
+[24,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[25,] 0.004 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
+[26,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[27,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[28,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[29,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
+[30,] 0.005 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
+[31,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[32,] 0.004 0.009 0.005 0.004 0.001 0.002 0.001 0.001 0.030 0.001 0.001
+[33,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[34,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
+[35,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[36,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[37,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
+[38,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[39,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[40,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[41,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
+[42,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
+[43,] 0.003 0.007 0.004 0.003 0.000 0.001 0.000 0.000 0.023 0.001 0.001
+[44,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[45,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
+[46,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[47,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[48,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[49,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[50,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[51,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[52,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[53,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[54,] 0.002 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.018 0.001 0.000
+[55,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
+[56,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.379 -0.152  0.159  0.051  0.001 -0.036 0.001  0.004  0.126  0.003
- [2,] -0.152  1.533 -0.065  0.101  0.006  0.002 0.006  0.018 -0.744  0.002
- [3,]  0.159 -0.065  0.572  0.194  0.001  0.026 0.005  0.018  0.252 -0.016
- [4,]  0.051  0.101  0.194  0.424  0.001  0.017 0.005  0.011 -0.016 -0.006
- [5,]  0.001  0.006  0.001  0.001  0.011 -0.002 0.000  0.000 -0.263 -0.002
- [6,] -0.036  0.002  0.026  0.017 -0.002  0.086 0.002  0.007  0.129 -0.002
- [7,]  0.001  0.006  0.005  0.005  0.000  0.002 0.009  0.000  0.017  0.000
- [8,]  0.004  0.018  0.018  0.011  0.000  0.007 0.000  0.014 -0.053 -0.002
- [9,]  0.126 -0.744  0.252 -0.016 -0.263  0.129 0.017 -0.053 30.694  0.202
-[10,]  0.003  0.002 -0.016 -0.006 -0.002 -0.002 0.000 -0.002  0.202  0.026
-[11,] -0.013 -0.015 -0.024 -0.011 -0.001 -0.002 0.000 -0.005  0.111  0.002
+ [1,]  0.376 -0.159  0.154  0.049  0.001 -0.036 0.001  0.005  0.142  0.003
+ [2,] -0.159  1.502 -0.073  0.099  0.006  0.003 0.005  0.017 -0.727 -0.001
+ [3,]  0.154 -0.073  0.571  0.192  0.001  0.026 0.004  0.018  0.243 -0.017
+ [4,]  0.049  0.099  0.192  0.421  0.001  0.014 0.004  0.012 -0.023 -0.006
+ [5,]  0.001  0.006  0.001  0.001  0.011 -0.002 0.000  0.001 -0.263 -0.002
+ [6,] -0.036  0.003  0.026  0.014 -0.002  0.086 0.002  0.007  0.133 -0.002
+ [7,]  0.001  0.005  0.004  0.004  0.000  0.002 0.009  0.000  0.017  0.000
+ [8,]  0.005  0.017  0.018  0.012  0.001  0.007 0.000  0.014 -0.054 -0.002
+ [9,]  0.142 -0.727  0.243 -0.023 -0.263  0.133 0.017 -0.054 30.696  0.198
+[10,]  0.003 -0.001 -0.017 -0.006 -0.002 -0.002 0.000 -0.002  0.198  0.026
+[11,] -0.012 -0.014 -0.024 -0.011 -0.001 -0.002 0.000 -0.005  0.115  0.002
        [,11]
- [1,] -0.013
- [2,] -0.015
+ [1,] -0.012
+ [2,] -0.014
  [3,] -0.024
  [4,] -0.011
  [5,] -0.001
  [6,] -0.002
  [7,]  0.000
  [8,] -0.005
- [9,]  0.111
+ [9,]  0.115
 [10,]  0.002
 [11,]  0.015</code></pre>
 </div>
@@ -1584,326 +1899,86 @@ e_T^T
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.048 0.072 0.045 0.037 0.006 0.017 0.006 0.006 0.322 0.009 0.007
- [2,] 0.072 0.210 0.084 0.071 0.013 0.035 0.011 0.014 0.655 0.019 0.014
- [3,] 0.045 0.084 0.068 0.050 0.008 0.022 0.007 0.008 0.388 0.011 0.009
- [4,] 0.037 0.071 0.050 0.058 0.006 0.018 0.005 0.007 0.347 0.009 0.008
- [5,] 0.006 0.013 0.008 0.006 0.001 0.003 0.001 0.001 0.059 0.002 0.001
- [6,] 0.017 0.035 0.022 0.018 0.003 0.012 0.003 0.003 0.151 0.005 0.003
- [7,] 0.006 0.011 0.007 0.005 0.001 0.003 0.001 0.001 0.050 0.002 0.001
- [8,] 0.006 0.014 0.008 0.007 0.001 0.003 0.001 0.002 0.058 0.002 0.001
- [9,] 0.322 0.655 0.388 0.347 0.059 0.151 0.050 0.058 4.260 0.092 0.061
-[10,] 0.009 0.019 0.011 0.009 0.002 0.005 0.002 0.002 0.092 0.003 0.002
-[11,] 0.007 0.014 0.009 0.008 0.001 0.003 0.001 0.001 0.061 0.002 0.002</code></pre>
+ [1,] 0.052 0.073 0.046 0.038 0.006 0.017 0.005 0.007 0.320 0.009 0.007
+ [2,] 0.073 0.206 0.089 0.076 0.012 0.034 0.011 0.013 0.649 0.019 0.015
+ [3,] 0.046 0.089 0.078 0.049 0.008 0.021 0.007 0.009 0.401 0.011 0.009
+ [4,] 0.038 0.076 0.049 0.057 0.007 0.018 0.006 0.007 0.339 0.010 0.008
+ [5,] 0.006 0.012 0.008 0.007 0.002 0.003 0.001 0.001 0.061 0.002 0.001
+ [6,] 0.017 0.034 0.021 0.018 0.003 0.012 0.003 0.003 0.156 0.004 0.003
+ [7,] 0.005 0.011 0.007 0.006 0.001 0.003 0.001 0.001 0.049 0.001 0.001
+ [8,] 0.007 0.013 0.009 0.007 0.001 0.003 0.001 0.002 0.061 0.002 0.001
+ [9,] 0.320 0.649 0.401 0.339 0.061 0.156 0.049 0.061 4.236 0.086 0.066
+[10,] 0.009 0.019 0.011 0.010 0.002 0.004 0.001 0.002 0.086 0.004 0.002
+[11,] 0.007 0.015 0.009 0.008 0.001 0.003 0.001 0.001 0.066 0.002 0.002</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,]  1.187 -0.513  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [2,] -0.513  1.224 -0.431  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [3,]  0.000 -0.431  1.187 -0.431  0.000  0.000  0.000  0.000  0.000  0.000
- [4,]  0.000  0.000 -0.431  1.187 -0.431  0.000  0.000  0.000  0.000  0.000
- [5,]  0.000  0.000  0.000 -0.431  1.187 -0.431  0.000  0.000  0.000  0.000
- [6,]  0.000  0.000  0.000  0.000 -0.431  1.187 -0.431  0.000  0.000  0.000
- [7,]  0.000  0.000  0.000  0.000  0.000 -0.431  1.187 -0.431  0.000  0.000
- [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.431  1.187 -0.431  0.000
- [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.431  1.187 -0.431
-[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.431  1.187</code></pre>
+ [1,]  1.192 -0.521  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [2,] -0.521  1.230 -0.436  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+ [3,]  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000  0.000  0.000
+ [4,]  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000  0.000
+ [5,]  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000
+ [6,]  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000
+ [7,]  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000
+ [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000
+ [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436
+[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
- [1,] 0.033 0.060 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [2,] 0.060 0.045 0.039 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [3,] 0.000 0.039 0.033 0.039 0.000 0.000 0.000 0.000 0.000 0.000
- [4,] 0.000 0.000 0.039 0.033 0.039 0.000 0.000 0.000 0.000 0.000
- [5,] 0.000 0.000 0.000 0.039 0.033 0.039 0.000 0.000 0.000 0.000
- [6,] 0.000 0.000 0.000 0.000 0.039 0.033 0.039 0.000 0.000 0.000
- [7,] 0.000 0.000 0.000 0.000 0.000 0.039 0.033 0.039 0.000 0.000
- [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.039 0.033 0.039 0.000
- [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.039 0.033 0.039
-[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.039 0.033</code></pre>
+ [1,] 0.038 0.070 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [2,] 0.070 0.053 0.045 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ [3,] 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000 0.000 0.000
+ [4,] 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000 0.000
+ [5,] 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000
+ [6,] 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000
+ [7,] 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000
+ [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000
+ [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045
+[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038</code></pre>
 </div>
 </div>
 <p><strong>2. Prediction Plots </strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Predict 8 periods ahead MA BVAR on data for 10000 iterations took: 285.658000 seconds"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
 <p><strong>2. Forecasts Model Parameters</strong></p>
 <p><strong>3. Test for Granger Causality</strong></p>
-<p><strong>4. Test Time Change </strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.24</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.2133333</code></pre>
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 674.808000 seconds"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.031 -0.196  0.026 -0.176 -0.063  0.084 0.005  0.017  5.891 -0.211
- [2,]  0.992  0.001 -0.010 -0.004  0.000  0.000 0.000  0.000  0.007  0.000
- [3,]  0.005  0.965  0.009 -0.004  0.000  0.002 0.000  0.000  0.020 -0.001
- [4,]  0.001 -0.009  0.988 -0.003  0.000  0.000 0.000  0.000  0.041  0.000
- [5,]  0.000 -0.003 -0.007  0.991  0.000 -0.001 0.000  0.000  0.038  0.000
- [6,]  0.002  0.000 -0.001  0.001  1.000  0.000 0.000  0.000 -0.003  0.000
- [7,]  0.000  0.001 -0.001  0.002  0.000  0.998 0.000 -0.001 -0.009  0.001
- [8,]  0.002  0.000  0.000  0.001  0.000  0.000 1.000  0.000 -0.002  0.000
- [9,]  0.002 -0.002  0.002  0.000  0.000  0.000 0.000  1.000  0.003  0.001
-[10,]  0.003 -0.001 -0.006 -0.001 -0.001  0.000 0.000 -0.001  1.143  0.002
-[11,]  0.003 -0.001  0.002 -0.002  0.000  0.000 0.000  0.001 -0.004  0.999
-[12,]  0.000 -0.001  0.001  0.001  0.000  0.000 0.000  0.000  0.005  0.000
-[13,]  0.000  0.001 -0.001 -0.001  0.000  0.000 0.000  0.000  0.004  0.000
-[14,]  0.001 -0.008 -0.002 -0.002  0.000 -0.001 0.000  0.000  0.001  0.000
-[15,] -0.001  0.001 -0.003 -0.001  0.000  0.000 0.000  0.000  0.005  0.000
-[16,]  0.000 -0.002  0.000 -0.001  0.000  0.000 0.000  0.000  0.010  0.000
-[17,] -0.001  0.003  0.000  0.001  0.000  0.000 0.000  0.000 -0.002  0.000
-[18,] -0.001  0.003 -0.001  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[19,]  0.001  0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.001  0.000
-[20,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[21,] -0.003  0.001  0.002 -0.001  0.001  0.000 0.000  0.000 -0.093  0.000
-[22,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[23,] -0.001 -0.001  0.001  0.000  0.000  0.000 0.000  0.000 -0.003  0.000
-[24,] -0.001 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[25,] -0.001  0.001 -0.003 -0.001  0.000  0.000 0.000  0.000  0.000  0.000
-[26,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[27,] -0.001  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[28,]  0.000  0.000  0.001  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[29,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[30,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[31,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[32,] -0.001  0.000  0.003  0.001  0.000  0.000 0.000  0.000 -0.039  0.000
-[33,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.005  0.000
-[34,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[35,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[36,]  0.000  0.001  0.000 -0.001  0.000  0.000 0.000  0.000  0.003  0.000
-[37,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[38,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[39,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[40,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.002  0.000
-[41,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[42,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[43,]  0.000  0.000  0.000  0.001  0.000  0.000 0.000  0.000 -0.033  0.000
-[44,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[45,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.005  0.000
-[46,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[47,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[48,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[49,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[50,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[51,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-[52,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[53,]  0.000  0.000  0.000 -0.001  0.000  0.000 0.000  0.000  0.001  0.000
-[54,]  0.000  0.000  0.000  0.001  0.000  0.000 0.000  0.000 -0.028  0.000
-[55,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[56,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.002  0.000
-       [,11]
- [1,] -0.005
- [2,]  0.001
- [3,] -0.001
- [4,]  0.001
- [5,]  0.001
- [6,]  0.000
- [7,]  0.000
- [8,]  0.000
- [9,]  0.000
-[10,]  0.001
-[11,] -0.001
-[12,]  1.000
-[13,]  0.000
-[14,]  0.000
-[15,]  0.000
-[16,]  0.000
-[17,]  0.000
-[18,]  0.000
-[19,]  0.000
-[20,]  0.000
-[21,] -0.001
-[22,]  0.000
-[23,]  0.000
-[24,]  0.000
-[25,]  0.000
-[26,]  0.000
-[27,]  0.000
-[28,]  0.000
-[29,]  0.000
-[30,]  0.000
-[31,]  0.000
-[32,]  0.000
-[33,]  0.000
-[34,]  0.000
-[35,]  0.000
-[36,]  0.000
-[37,]  0.000
-[38,]  0.000
-[39,]  0.000
-[40,]  0.000
-[41,]  0.000
-[42,]  0.000
-[43,]  0.000
-[44,]  0.000
-[45,]  0.000
-[46,]  0.000
-[47,]  0.000
-[48,]  0.000
-[49,]  0.000
-[50,]  0.000
-[51,]  0.000
-[52,]  0.000
-[53,]  0.000
-[54,]  0.000
-[55,]  0.000
-[56,]  0.000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.617 1.173 0.709 0.676 0.077 0.324 0.087 0.105 4.017 0.113 0.107
- [2,] 0.017 0.028 0.018 0.016 0.002 0.008 0.002 0.002 0.102 0.003 0.002
- [3,] 0.014 0.026 0.016 0.015 0.002 0.007 0.002 0.002 0.102 0.003 0.003
- [4,] 0.015 0.026 0.018 0.014 0.002 0.008 0.002 0.003 0.100 0.003 0.002
- [5,] 0.015 0.025 0.017 0.015 0.002 0.007 0.002 0.002 0.099 0.003 0.003
- [6,] 0.015 0.026 0.018 0.018 0.002 0.007 0.002 0.002 0.094 0.003 0.002
- [7,] 0.014 0.024 0.017 0.015 0.002 0.007 0.002 0.002 0.094 0.003 0.002
- [8,] 0.015 0.027 0.016 0.016 0.002 0.007 0.002 0.002 0.106 0.003 0.002
- [9,] 0.016 0.028 0.017 0.015 0.002 0.008 0.002 0.002 0.094 0.003 0.002
-[10,] 0.007 0.012 0.008 0.007 0.001 0.003 0.001 0.001 0.045 0.001 0.001
-[11,] 0.015 0.026 0.016 0.017 0.002 0.007 0.002 0.002 0.095 0.003 0.003
-[12,] 0.015 0.028 0.016 0.016 0.002 0.008 0.002 0.002 0.099 0.003 0.002
-[13,] 0.008 0.013 0.009 0.008 0.001 0.004 0.001 0.001 0.047 0.002 0.001
-[14,] 0.008 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.051 0.001 0.001
-[15,] 0.008 0.014 0.009 0.008 0.001 0.004 0.001 0.001 0.048 0.002 0.001
-[16,] 0.007 0.013 0.009 0.009 0.001 0.004 0.001 0.001 0.053 0.002 0.001
-[17,] 0.007 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.050 0.002 0.001
-[18,] 0.008 0.014 0.009 0.008 0.001 0.004 0.001 0.001 0.047 0.001 0.001
-[19,] 0.008 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.049 0.001 0.001
-[20,] 0.007 0.014 0.008 0.008 0.001 0.004 0.001 0.001 0.049 0.002 0.001
-[21,] 0.007 0.013 0.007 0.007 0.001 0.004 0.001 0.001 0.040 0.001 0.001
-[22,] 0.008 0.014 0.009 0.008 0.001 0.004 0.001 0.001 0.044 0.001 0.001
-[23,] 0.007 0.014 0.009 0.008 0.001 0.004 0.001 0.001 0.050 0.001 0.001
-[24,] 0.005 0.010 0.006 0.006 0.001 0.003 0.001 0.001 0.034 0.001 0.001
-[25,] 0.005 0.009 0.006 0.006 0.001 0.003 0.001 0.001 0.032 0.001 0.001
-[26,] 0.005 0.009 0.006 0.005 0.001 0.003 0.001 0.001 0.029 0.001 0.001
-[27,] 0.005 0.009 0.006 0.005 0.001 0.003 0.001 0.001 0.035 0.001 0.001
-[28,] 0.005 0.009 0.006 0.006 0.001 0.003 0.001 0.001 0.031 0.001 0.001
-[29,] 0.005 0.009 0.006 0.005 0.001 0.003 0.001 0.001 0.036 0.001 0.001
-[30,] 0.005 0.009 0.006 0.005 0.001 0.003 0.001 0.001 0.031 0.001 0.001
-[31,] 0.006 0.009 0.006 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[32,] 0.005 0.008 0.005 0.004 0.001 0.002 0.001 0.001 0.029 0.001 0.001
-[33,] 0.005 0.010 0.006 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[34,] 0.005 0.009 0.006 0.006 0.001 0.003 0.001 0.001 0.031 0.001 0.001
-[35,] 0.004 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[36,] 0.004 0.006 0.004 0.004 0.001 0.002 0.000 0.001 0.023 0.001 0.001
-[37,] 0.004 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.022 0.001 0.001
-[38,] 0.004 0.007 0.004 0.004 0.001 0.002 0.000 0.001 0.023 0.001 0.001
-[39,] 0.003 0.007 0.004 0.004 0.001 0.002 0.000 0.001 0.026 0.001 0.001
-[40,] 0.004 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[41,] 0.004 0.008 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[42,] 0.003 0.007 0.004 0.004 0.001 0.002 0.000 0.001 0.023 0.001 0.001
-[43,] 0.003 0.006 0.004 0.003 0.000 0.002 0.000 0.001 0.021 0.001 0.001
-[44,] 0.004 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.024 0.001 0.001
-[45,] 0.004 0.006 0.005 0.004 0.001 0.002 0.000 0.001 0.024 0.001 0.001
-[46,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.020 0.001 0.000
-[47,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.001 0.019 0.001 0.000
-[48,] 0.003 0.006 0.003 0.003 0.000 0.002 0.000 0.001 0.019 0.001 0.001
-[49,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.019 0.001 0.000
-[50,] 0.003 0.005 0.004 0.003 0.000 0.002 0.000 0.000 0.017 0.001 0.000
-[51,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.020 0.001 0.000
-[52,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.020 0.001 0.001
-[53,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.000 0.019 0.001 0.001
-[54,] 0.003 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.018 0.000 0.000
-[55,] 0.003 0.005 0.003 0.003 0.000 0.002 0.000 0.001 0.020 0.001 0.000
-[56,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.019 0.001 0.000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.382 -0.160  0.155  0.051  0.000 -0.035 0.001  0.004  0.140  0.004
- [2,] -0.160  1.509 -0.076  0.098  0.007  0.003 0.004  0.016 -0.785 -0.002
- [3,]  0.155 -0.076  0.574  0.192  0.001  0.029 0.004  0.017  0.253 -0.016
- [4,]  0.051  0.098  0.192  0.425  0.001  0.013 0.003  0.011 -0.003 -0.006
- [5,]  0.000  0.007  0.001  0.001  0.011 -0.002 0.000  0.000 -0.261 -0.002
- [6,] -0.035  0.003  0.029  0.013 -0.002  0.086 0.002  0.007  0.121 -0.002
- [7,]  0.001  0.004  0.004  0.003  0.000  0.002 0.009  0.001  0.019  0.000
- [8,]  0.004  0.016  0.017  0.011  0.000  0.007 0.001  0.013 -0.049 -0.002
- [9,]  0.140 -0.785  0.253 -0.003 -0.261  0.121 0.019 -0.049 30.011  0.200
-[10,]  0.004 -0.002 -0.016 -0.006 -0.002 -0.002 0.000 -0.002  0.200  0.025
-[11,] -0.012 -0.012 -0.024 -0.010 -0.001 -0.002 0.000 -0.005  0.107  0.002
-       [,11]
- [1,] -0.012
- [2,] -0.012
- [3,] -0.024
- [4,] -0.010
- [5,] -0.001
- [6,] -0.002
- [7,]  0.000
- [8,] -0.005
- [9,]  0.107
-[10,]  0.002
-[11,]  0.015</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.049 0.075 0.049 0.037 0.006 0.018 0.005 0.007 0.331 0.009 0.008
- [2,] 0.075 0.210 0.093 0.077 0.012 0.035 0.011 0.014 0.604 0.018 0.013
- [3,] 0.049 0.093 0.072 0.049 0.008 0.022 0.006 0.008 0.388 0.011 0.009
- [4,] 0.037 0.077 0.049 0.057 0.006 0.018 0.006 0.007 0.343 0.009 0.008
- [5,] 0.006 0.012 0.008 0.006 0.002 0.003 0.001 0.001 0.056 0.002 0.001
- [6,] 0.018 0.035 0.022 0.018 0.003 0.012 0.003 0.003 0.152 0.004 0.003
- [7,] 0.005 0.011 0.006 0.006 0.001 0.003 0.001 0.001 0.050 0.001 0.001
- [8,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.002 0.059 0.002 0.001
- [9,] 0.331 0.604 0.388 0.343 0.056 0.152 0.050 0.059 3.872 0.085 0.063
-[10,] 0.009 0.018 0.011 0.009 0.002 0.004 0.001 0.002 0.085 0.003 0.002
-[11,] 0.008 0.013 0.009 0.008 0.001 0.003 0.001 0.001 0.063 0.002 0.002</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,]  1.177 -0.494  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [2,] -0.494  1.210 -0.418  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [3,]  0.000 -0.418  1.177 -0.418  0.000  0.000  0.000  0.000  0.000  0.000
- [4,]  0.000  0.000 -0.418  1.177 -0.418  0.000  0.000  0.000  0.000  0.000
- [5,]  0.000  0.000  0.000 -0.418  1.177 -0.418  0.000  0.000  0.000  0.000
- [6,]  0.000  0.000  0.000  0.000 -0.418  1.177 -0.418  0.000  0.000  0.000
- [7,]  0.000  0.000  0.000  0.000  0.000 -0.418  1.177 -0.418  0.000  0.000
- [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.418  1.177 -0.418  0.000
- [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.418  1.177 -0.418
-[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.418  1.177</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
- [1,] 0.039 0.071 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [2,] 0.071 0.054 0.046 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [3,] 0.000 0.046 0.039 0.046 0.000 0.000 0.000 0.000 0.000 0.000
- [4,] 0.000 0.000 0.046 0.039 0.046 0.000 0.000 0.000 0.000 0.000
- [5,] 0.000 0.000 0.000 0.046 0.039 0.046 0.000 0.000 0.000 0.000
- [6,] 0.000 0.000 0.000 0.000 0.046 0.039 0.046 0.000 0.000 0.000
- [7,] 0.000 0.000 0.000 0.000 0.000 0.046 0.039 0.046 0.000 0.000
- [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.046 0.039 0.046 0.000
- [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.046 0.039 0.046
-[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.046 0.039</code></pre>
+<pre><code>             CN           US           JP           AU
+CN -102804.7576     376.2762     327.0783     379.1168
+US     375.6391 -528073.5117     352.3693     379.6552
+JP     378.5526     378.8469 -522652.2917     374.8028
+AU     376.2018     382.5976     323.0241 -302290.8092</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</h2>
+<section id="model-building-code-and-validation-2" class="level3">
+<h3 class="anchored" data-anchor-id="model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</h3>
 </section>
 <section id="empirical-result-1" class="level3">
 <h3 class="anchored" data-anchor-id="empirical-result-1">4.4.2 Empirical Result</h3>
@@ -1918,11 +1993,14 @@ economic variables are often characterized by distributions that are far from Ga
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Granger_1969" class="csl-entry" role="listitem">
-Chan, Joshua C. 1969. <span>“Investigating Causal Relations by Econometric Models and Cross-Spectral Methods.”</span> <em>Econometrica</em>.
-</div>
 <div id="ref-Chan_2015" class="csl-entry" role="listitem">
-———. 2015. <span>“Large Bayesian Vars: A Flexible Kronecker Error Covariance Structure.”</span> <em>SSRN Electronic Journal</em>.
+Chan, Joshua C. C. 2015. <span>“Large Bayesian VARs: A Flexible Kronecker Error Covariance Structure.”</span> <em>SSRN Electronic Journal</em>.
+</div>
+<div id="ref-Chib1995" class="csl-entry" role="listitem">
+Chib, Siddhartha, and Edward Greenberg. 1995. <span>“Understanding the Metropolis-Hastings Algorithm.”</span> <em>The American Statistician</em> 49 (4): 327–35.
+</div>
+<div id="ref-Granger_1969" class="csl-entry" role="listitem">
+Granger, C. W. J. 1969. <span>“Investigating Causal Relations by Econometric Models and Cross-Spectral Methods.”</span> <em>Econometrica</em>.
 </div>
 <div id="ref-wozniakBsvarsBayesianEstimation2022" class="csl-entry" role="listitem">
 Woźniak, Tomasz. 2022. <em>Bsvars: Bayesian Estimation of Structural Vector Autoregressive Models</em>. R Package. <a href="https://cran.r-project.org/package=bsvars">https://cran.r-project.org/package=bsvars</a>.

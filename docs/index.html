@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -189,11 +223,14 @@ window.Quarto = {
   <li><a href="#large-bvar-model-with-ma1-gaussian-innovations" id="toc-large-bvar-model-with-ma1-gaussian-innovations" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations">4.2 Large BVAR model with MA(1) Gaussian Innovations</a>
   <ul class="collapse">
   <li><a href="#model-building-code-and-validation-1" id="toc-model-building-code-and-validation-1" class="nav-link" data-scroll-target="#model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</a></li>
-  <li><a href="#empirical-results" id="toc-empirical-results" class="nav-link" data-scroll-target="#empirical-results">4.2.1 Empirical Results</a></li>
+  </ul></li>
+  <li><a href="#large-bvar-model-with-common-stochastic-volatility" id="toc-large-bvar-model-with-common-stochastic-volatility" class="nav-link" data-scroll-target="#large-bvar-model-with-common-stochastic-volatility">4.3 Large BVAR model with Common Stochastic Volatility</a>
+  <ul class="collapse">
+  <li><a href="#model-building-code-and-validation-2" id="toc-model-building-code-and-validation-2" class="nav-link" data-scroll-target="#model-building-code-and-validation-2">4.3.1 Model Building Code and Validation</a></li>
   </ul></li>
   <li><a href="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" id="toc-large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="nav-link" data-scroll-target="#large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</a>
   <ul class="collapse">
-  <li><a href="#model-building-code-and-validation-2" id="toc-model-building-code-and-validation-2" class="nav-link" data-scroll-target="#model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</a></li>
+  <li><a href="#model-building-code-and-validation-3" id="toc-model-building-code-and-validation-3" class="nav-link" data-scroll-target="#model-building-code-and-validation-3">4.4.1 Model Building Code and Validation</a></li>
   <li><a href="#empirical-result-1" id="toc-empirical-result-1" class="nav-link" data-scroll-target="#empirical-result-1">4.4.2 Empirical Result</a></li>
   </ul></li>
   </ul></li>
@@ -294,7 +331,7 @@ window.Quarto = {
 <section id="stationarity-check" class="level2">
 <h2 class="anchored" data-anchor-id="stationarity-check">Stationarity Check</h2>
 <p><strong>Stationary Tests</strong></p>
-<p>The Augmented Dickey-Fuller Test is used in this section to test the null hypothesis that a unit root is present in the time series and the time series is non-stationary.</p>
+<p>This section employs the Augmented Dickey-Fuller test to examine the null hypothesis that a unit root is present in these time series. A lag order of 4 was chosen for the ADF test given our data’s quarterly frequency. The results indicate that most of the macroeconomic indicators possess a unit root and are not stationary, with a few exceptions. Specifically, we have enough evidence to reject the null hypothesis for the CPI series in China and the United States at a 5% significance level. Interestingly, Japan’s GDP series is found to be unit-root stationary at this significance level. This implies that Japan’s GDP exhibits a consistent mean and variance over time, contrasting with the general trend observed in other national GDP series. Japan’s GDP growth has been known to be stagnant for quite some years and it’s macroeconomic indicators may respond differently to economic shocks compared to its non-stationary counterparts</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
@@ -336,49 +373,6 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>The lag order chosen in the ADF test is 4, which is appropriate given our data is of quarterly frequency. The result of the ADF test on the CPI data shows that we do not have enough evidence to reject the null hypothesis that the CPI series is unit root non-stationary at 1% significance level, except for China.</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>ADF Test Results for Foreign Direct Investment (% change) Data by Country</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Dickey-Fuller Statistic</th>
-<th style="text-align: left;">Lag Order</th>
-<th style="text-align: left;">P-value</th>
-<th style="text-align: left;">Country</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">-2.26286</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.4686993</td>
-<td style="text-align: left;">JP_FDI</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">-2.7189</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.285367</td>
-<td style="text-align: left;">CN_FDI</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">-3.130793</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.1197816</td>
-<td style="text-align: left;">US_FDI</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">-1.607673</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.7320914</td>
-<td style="text-align: left;">AU_FDI</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>The ADF results shows that we do not have enough evidence to reject the null hypothesis that the foreign direct investment data is not unit-root stationary for Australia, the United States and Japan at 1% significance level and we do have enough evidence to reject the null hypothesis for China at 1% significance level.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
@@ -414,53 +408,10 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>The result of the ADF test on the exchange rate data shows that we do not have enough evidence to reject the null hypothesis that the exchange rate against the dollar series is unit root non-stationary at 1% significance level.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
-<caption>ADF Test Results for Balance of Payments (% change) Data by Country</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Dickey-Fuller Statistic</th>
-<th style="text-align: left;">Lag Order</th>
-<th style="text-align: left;">P-value</th>
-<th style="text-align: left;">Country</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">-2.914308</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.2025054</td>
-<td style="text-align: left;">JP_BOP</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">-2.50488</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.3695164</td>
-<td style="text-align: left;">CN_BOP</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">-2.533578</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.3578101</td>
-<td style="text-align: left;">US_BOP</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">-2.058287</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0.5516879</td>
-<td style="text-align: left;">AU_BOP</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>The result of the ADF test on the balance of payments data shows that we do not have enough evidence to reject the null hypothesis that the balance of payments series is unit root non-stationary at 1% significance level for all countries.</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>ADF Test Results for GDP (% change) Data by Country</caption>
+<caption>ADF Test Results for seasonally adjusted Data by Country</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Dickey-Fuller Statistic</th>
@@ -498,7 +449,16 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>The result of the ADF test on the GDP data shows that we do not have enough evidence to reject the null hypothesis that the GDP series is unit root non-stationary at 5% significance level.</p>
+<p>The ACF plots of seasonally adjusted GDP data shows a strong autocorrelation at smaller lags and the autocorrelation decreases sharply as the lags increase. It is worth noting that the autocorrelations decreases much faster for Japan than for the other countries. Similar phenomenon is observed with exchange rates against the dollar for all three countries. It is worth noting that the autocorrelations for the Chinese series a more persistent than the others, possibly due to the fact that China has a managed floating exchange rate system, where the Chinese central banks sets a target exchange rate. The CPI data for all four countries shows generally low autocorrelation across lags, particularly beyond the first few periods. This suggests that CPI measurements are relatively independent from quarter to quarter. The alternating signs in the autocorrelation function (ACF) plot for Japan and US’s CPI data suggest possible seasonal effects, cyclical patterns or due to data collection methods.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="the-model-and-hypothesis" class="level1">
@@ -1100,312 +1060,82 @@ e_T^T
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Then we estimate a model with a constant term and 1 lag using the simulated data, show that the posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the posterior mean of the constant term is close to a vector of zeros.</p>
+<p>The BVAR_fit function takes in ‘data’ as an argument, where columns of ‘data’ represent different variables and rows correspond to observations over time. It also requires an integer p, which specifies the number of lags to include in the BVAR model. The parameters S1 and S2 denote the number of burn-in samples and actual samples, respectively. Kappa1 is the shrinkage level applied to the autoregressive coefficients, while Kappa2 controls the shrinkage for the constant term. The A_prior and V_prior parameters set the prior mean and covariance matrices for the matrix A. Finally, S_prior and nu_prior define the scale and shape parameters, respectively, for the prior distribution of the covariance matrix <span class="math inline">\(\Sigma\)</span></p>
+<p>We use our function to estimate a model with a constant term and lag order 1 using simulated data from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. We show that sampled posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the sampled posterior mean of the constant term is close to a vector of zeros.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]
-[1,]  0.068 0.165
-[2,]  1.000 0.001
-[3,] -0.003 0.995</code></pre>
+<pre><code>      [,1]  [,2]
+[1,] 0.029 0.019
+[2,] 0.987 0.002
+[3,] 0.006 0.993</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.074 0.071
-[2,] 0.003 0.002
-[3,] 0.002 0.002</code></pre>
+[1,] 0.033 0.033
+[2,] 0.005 0.005
+[3,] 0.006 0.006</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 1.051 0.067
-[2,] 0.067 0.949</code></pre>
+[1,] 0.993 0.037
+[2,] 0.037 1.045</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 0.048 0.032
-[2,] 0.032 0.042</code></pre>
+[1,] 0.045 0.033
+[2,] 0.033 0.047</code></pre>
 </div>
 </div>
 </section>
 <section id="empirical-result" class="level3">
 <h3 class="anchored" data-anchor-id="empirical-result">4.1.2 Empirical Result</h3>
 <p><strong>1. Fitted Model Parameters </strong></p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,] -0.899  0.116 -1.487 -0.685 -0.092  0.305 -0.003 -0.070  5.525  0.136
- [2,]  0.421  0.049 -0.191 -0.034 -0.004  0.071  0.000 -0.002  0.275 -0.006
- [3,]  0.098  0.315  0.157 -0.061 -0.001  0.066  0.000  0.004  0.251 -0.007
- [4,]  0.067 -0.126  0.639  0.032 -0.007  0.016  0.002  0.004  0.510  0.016
- [5,] -0.010  0.055 -0.145  0.518  0.002 -0.046 -0.004 -0.009  0.012 -0.002
- [6,] -0.006 -0.002 -0.004 -0.007  0.998  0.005  0.000 -0.001  0.150  0.003
- [7,]  0.116 -0.112  0.029  0.025  0.007  0.881 -0.003 -0.009 -0.307 -0.005
- [8,] -0.016  0.033  0.022  0.022 -0.002  0.025  1.001  0.004  0.205  0.000
- [9,]  0.002  0.081 -0.004  0.000  0.003  0.020  0.001  1.001 -0.230 -0.009
-[10,]  0.025 -0.003 -0.011 -0.003 -0.001 -0.008  0.000 -0.004  1.180  0.002
-[11,] -0.010  0.043  0.023  0.018  0.000 -0.022  0.001  0.006  0.182  0.982
-[12,] -0.013 -0.066  0.031  0.020 -0.004  0.005 -0.001  0.003  0.362  0.010
-[13,]  0.049 -0.026 -0.041 -0.047 -0.001 -0.032 -0.001 -0.009  0.131  0.003
-[14,]  0.021 -0.103  0.001  0.052  0.004 -0.055 -0.003 -0.007 -0.296  0.000
-[15,] -0.019  0.083 -0.074  0.002 -0.003 -0.003  0.000 -0.004  0.228  0.005
-[16,]  0.003  0.026  0.022  0.015 -0.003  0.010  0.000  0.002  0.347  0.005
-[17,] -0.001  0.005 -0.003 -0.001  0.000  0.000  0.000  0.000  0.028  0.001
-[18,] -0.050  0.020  0.019 -0.003 -0.004  0.028  0.001  0.006  0.302  0.000
-[19,] -0.006  0.008  0.007  0.005 -0.001  0.007  0.000  0.001  0.054  0.000
-[20,] -0.003  0.011  0.003  0.004  0.000  0.009  0.000  0.001  0.002 -0.001
-[21,] -0.022 -0.011  0.010  0.002  0.003  0.014  0.000  0.004 -0.448 -0.002
-[22,] -0.001  0.005  0.010  0.001  0.000 -0.006  0.000  0.001  0.042 -0.008
-[23,] -0.006 -0.009  0.006  0.003  0.000  0.001  0.000  0.002  0.052  0.002
-[24,] -0.021  0.007  0.017  0.013 -0.001  0.025  0.000  0.001  0.187  0.001
-[25,] -0.005  0.027 -0.076 -0.029  0.000 -0.023  0.000 -0.001 -0.155  0.000
-[26,] -0.009  0.017  0.046  0.014  0.000  0.004  0.000 -0.001  0.087 -0.002
-[27,] -0.010 -0.020  0.010  0.005 -0.001  0.001  0.000 -0.001  0.049  0.002
-[28,] -0.001 -0.001 -0.001  0.000  0.000  0.001  0.000  0.000  0.009  0.000
-[29,]  0.009  0.047  0.009 -0.002  0.000  0.005  0.000  0.001 -0.060  0.001
-[30,] -0.002  0.005  0.002  0.002  0.000  0.003  0.000  0.000  0.016  0.000
-[31,]  0.001  0.006  0.002  0.001  0.000  0.002  0.000  0.000 -0.013  0.000
-[32,]  0.006  0.016  0.012  0.001 -0.003 -0.014  0.000 -0.001  0.398  0.001
-[33,]  0.002  0.004  0.006  0.003  0.000 -0.002  0.000  0.000  0.019 -0.003
-[34,] -0.002  0.000  0.001  0.001  0.000  0.000  0.000  0.001  0.016  0.000
-[35,]  0.021 -0.037 -0.002 -0.005 -0.001 -0.013  0.000 -0.002  0.070  0.000
-[36,] -0.012  0.132 -0.004  0.002  0.000  0.007  0.000  0.000  0.000 -0.001
-[37,]  0.013 -0.039  0.020  0.007 -0.001  0.001  0.000 -0.001  0.090  0.000
-[38,]  0.008  0.000 -0.004  0.006  0.000  0.004  0.000  0.001 -0.026  0.000
-[39,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.009  0.000
-[40,] -0.011 -0.007 -0.001  0.006 -0.001  0.019  0.000  0.001  0.051  0.001
-[41,] -0.001  0.002  0.001  0.002  0.000  0.002  0.000  0.000  0.012  0.000
-[42,] -0.001  0.001  0.000  0.001  0.000  0.003  0.000  0.000  0.007  0.000
-[43,]  0.001 -0.021 -0.006  0.000  0.001  0.013  0.000  0.002 -0.147  0.001
-[44,]  0.000  0.002  0.002  0.002  0.000 -0.001  0.000  0.000  0.005 -0.002
-[45,] -0.001  0.002  0.001  0.001  0.000  0.000  0.000  0.000  0.003  0.000
-[46,] -0.014  0.009 -0.004 -0.001  0.000  0.006  0.000  0.001  0.039  0.000
-[47,]  0.004 -0.029  0.015 -0.005  0.000  0.003  0.000  0.000  0.069  0.001
-[48,]  0.002 -0.016  0.002  0.008 -0.001  0.001  0.000  0.001  0.064  0.001
-[49,] -0.003  0.003 -0.002  0.004  0.000 -0.002  0.000  0.001  0.027  0.000
-[50,]  0.000 -0.001  0.000  0.000  0.000  0.000  0.000  0.000  0.006  0.000
-[51,]  0.006 -0.010  0.000  0.001  0.000 -0.008  0.000 -0.001 -0.018  0.000
-[52,] -0.001  0.001  0.001  0.001  0.000  0.001  0.000  0.000  0.005  0.000
-[53,]  0.000  0.000  0.000  0.000  0.000  0.001  0.000  0.000  0.001  0.000
-[54,] -0.004  0.007 -0.002  0.001  0.001 -0.006  0.000 -0.001 -0.097 -0.001
-[55,]  0.000  0.001  0.002  0.001  0.000 -0.001  0.000  0.000 -0.003 -0.002
-[56,]  0.000  0.001  0.001  0.001  0.000  0.000  0.000  0.000  0.002  0.000
-       [,11]
- [1,]  0.154
- [2,]  0.016
- [3,] -0.003
- [4,]  0.004
- [5,]  0.009
- [6,]  0.002
- [7,] -0.004
- [8,] -0.002
- [9,] -0.001
-[10,]  0.003
-[11,] -0.009
-[12,]  0.996
-[13,]  0.007
-[14,]  0.001
-[15,]  0.007
-[16,]  0.000
-[17,]  0.001
-[18,] -0.002
-[19,] -0.001
-[20,]  0.001
-[21,] -0.003
-[22,] -0.002
-[23,] -0.002
-[24,]  0.001
-[25,]  0.002
-[26,]  0.002
-[27,]  0.001
-[28,]  0.000
-[29,] -0.001
-[30,]  0.000
-[31,]  0.000
-[32,]  0.000
-[33,] -0.001
-[34,] -0.001
-[35,]  0.001
-[36,] -0.001
-[37,]  0.000
-[38,] -0.002
-[39,]  0.000
-[40,]  0.000
-[41,]  0.000
-[42,]  0.000
-[43,]  0.000
-[44,]  0.000
-[45,] -0.001
-[46,]  0.000
-[47,]  0.000
-[48,] -0.001
-[49,] -0.001
-[50,]  0.000
-[51,]  0.000
-[52,]  0.000
-[53,]  0.000
-[54,]  0.001
-[55,]  0.000
-[56,]  0.000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]   [,9] [,10] [,11]
- [1,] 2.914 4.910 3.068 3.203 0.507 1.487 0.467 0.541 22.079 0.668 0.548
- [2,] 0.086 0.145 0.091 0.093 0.015 0.044 0.014 0.016  0.651 0.020 0.016
- [3,] 0.052 0.087 0.054 0.057 0.009 0.026 0.008 0.010  0.393 0.012 0.010
- [4,] 0.077 0.130 0.082 0.084 0.014 0.039 0.012 0.014  0.585 0.018 0.014
- [5,] 0.079 0.133 0.083 0.085 0.014 0.040 0.013 0.015  0.601 0.018 0.015
- [6,] 0.115 0.193 0.122 0.126 0.020 0.059 0.018 0.021  0.873 0.026 0.022
- [7,] 0.089 0.149 0.093 0.096 0.015 0.045 0.014 0.016  0.673 0.020 0.017
- [8,] 0.114 0.193 0.121 0.125 0.020 0.058 0.018 0.021  0.864 0.026 0.021
- [9,] 0.111 0.186 0.116 0.121 0.019 0.056 0.018 0.020  0.842 0.025 0.021
-[10,] 0.012 0.020 0.013 0.013 0.002 0.006 0.002 0.002  0.091 0.003 0.002
-[11,] 0.099 0.167 0.103 0.108 0.017 0.050 0.016 0.018  0.751 0.023 0.018
-[12,] 0.115 0.192 0.120 0.124 0.020 0.058 0.018 0.021  0.871 0.026 0.021
-[13,] 0.053 0.090 0.056 0.058 0.009 0.027 0.008 0.010  0.407 0.012 0.010
-[14,] 0.040 0.068 0.042 0.044 0.007 0.020 0.006 0.007  0.306 0.009 0.007
-[15,] 0.051 0.086 0.054 0.055 0.009 0.026 0.008 0.009  0.387 0.012 0.009
-[16,] 0.051 0.086 0.054 0.056 0.009 0.026 0.008 0.009  0.392 0.012 0.010
-[17,] 0.059 0.100 0.062 0.064 0.010 0.030 0.009 0.011  0.448 0.014 0.011
-[18,] 0.054 0.092 0.057 0.059 0.009 0.027 0.009 0.010  0.413 0.012 0.010
-[19,] 0.059 0.099 0.062 0.064 0.010 0.030 0.009 0.011  0.449 0.014 0.011
-[20,] 0.059 0.099 0.061 0.064 0.010 0.030 0.009 0.011  0.444 0.013 0.011
-[21,] 0.018 0.030 0.018 0.019 0.003 0.009 0.003 0.003  0.133 0.004 0.003
-[22,] 0.057 0.096 0.060 0.062 0.010 0.029 0.009 0.010  0.435 0.013 0.011
-[23,] 0.059 0.099 0.062 0.064 0.010 0.030 0.009 0.011  0.448 0.014 0.011
-[24,] 0.038 0.064 0.040 0.041 0.007 0.019 0.006 0.007  0.287 0.009 0.007
-[25,] 0.031 0.053 0.033 0.034 0.006 0.016 0.005 0.006  0.238 0.007 0.006
-[26,] 0.037 0.062 0.039 0.040 0.006 0.019 0.006 0.007  0.278 0.008 0.007
-[27,] 0.037 0.062 0.039 0.040 0.006 0.019 0.006 0.007  0.280 0.008 0.007
-[28,] 0.040 0.067 0.042 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
-[29,] 0.038 0.064 0.040 0.042 0.007 0.019 0.006 0.007  0.289 0.009 0.007
-[30,] 0.040 0.067 0.042 0.043 0.007 0.020 0.006 0.007  0.301 0.009 0.007
-[31,] 0.040 0.067 0.041 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
-[32,] 0.016 0.028 0.017 0.018 0.003 0.008 0.003 0.003  0.124 0.004 0.003
-[33,] 0.039 0.065 0.041 0.042 0.007 0.020 0.006 0.007  0.295 0.009 0.007
-[34,] 0.039 0.066 0.041 0.043 0.007 0.020 0.006 0.007  0.299 0.009 0.007
-[35,] 0.029 0.049 0.030 0.031 0.005 0.015 0.005 0.005  0.218 0.007 0.005
-[36,] 0.026 0.043 0.027 0.028 0.004 0.013 0.004 0.005  0.194 0.006 0.005
-[37,] 0.028 0.048 0.030 0.031 0.005 0.014 0.004 0.005  0.214 0.006 0.005
-[38,] 0.029 0.049 0.030 0.031 0.005 0.014 0.005 0.005  0.217 0.007 0.005
-[39,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
-[40,] 0.029 0.049 0.031 0.032 0.005 0.015 0.005 0.005  0.220 0.007 0.005
-[41,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.227 0.007 0.006
-[42,] 0.030 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
-[43,] 0.015 0.026 0.016 0.017 0.003 0.008 0.002 0.003  0.116 0.004 0.003
-[44,] 0.029 0.050 0.031 0.032 0.005 0.015 0.005 0.005  0.223 0.007 0.005
-[45,] 0.030 0.051 0.031 0.032 0.005 0.015 0.005 0.005  0.226 0.007 0.006
-[46,] 0.023 0.039 0.025 0.025 0.004 0.012 0.004 0.004  0.178 0.005 0.004
-[47,] 0.022 0.037 0.023 0.024 0.004 0.011 0.003 0.004  0.166 0.005 0.004
-[48,] 0.023 0.039 0.024 0.025 0.004 0.012 0.004 0.004  0.176 0.005 0.004
-[49,] 0.023 0.039 0.024 0.025 0.004 0.012 0.004 0.004  0.176 0.005 0.004
-[50,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
-[51,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.178 0.005 0.004
-[52,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
-[53,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004
-[54,] 0.011 0.018 0.011 0.012 0.002 0.005 0.002 0.002  0.081 0.002 0.002
-[55,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.179 0.005 0.004
-[56,] 0.024 0.040 0.025 0.026 0.004 0.012 0.004 0.004  0.181 0.005 0.004</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.355 -0.051  0.086  0.038  0.001 -0.058 0.000  0.001 -0.039  0.005
- [2,] -0.051  1.011  0.031  0.093  0.008  0.021 0.004  0.012 -0.647 -0.007
- [3,]  0.086  0.031  0.393  0.169 -0.001 -0.002 0.003  0.012  0.433 -0.010
- [4,]  0.038  0.093  0.169  0.421  0.000  0.016 0.003  0.012  0.178 -0.005
- [5,]  0.001  0.008 -0.001  0.000  0.011 -0.003 0.000  0.000 -0.189 -0.002
- [6,] -0.058  0.021 -0.002  0.016 -0.003  0.092 0.002  0.007  0.208  0.000
- [7,]  0.000  0.004  0.003  0.003  0.000  0.002 0.009  0.000  0.012  0.000
- [8,]  0.001  0.012  0.012  0.012  0.000  0.007 0.000  0.012  0.004 -0.001
- [9,] -0.039 -0.647  0.433  0.178 -0.189  0.208 0.012  0.004 20.485  0.134
-[10,]  0.005 -0.007 -0.010 -0.005 -0.002  0.000 0.000 -0.001  0.134  0.019
-[11,] -0.008 -0.012 -0.014 -0.009  0.000  0.000 0.000 -0.003  0.045  0.001
-       [,11]
- [1,] -0.008
- [2,] -0.012
- [3,] -0.014
- [4,] -0.009
- [5,]  0.000
- [6,]  0.000
- [7,]  0.000
- [8,] -0.003
- [9,]  0.045
-[10,]  0.001
-[11,]  0.012</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.048 0.056 0.036 0.037 0.006 0.018 0.005 0.006 0.255 0.008 0.006
- [2,] 0.056 0.134 0.060 0.062 0.010 0.029 0.009 0.010 0.433 0.013 0.011
- [3,] 0.036 0.060 0.052 0.042 0.006 0.018 0.006 0.007 0.270 0.008 0.007
- [4,] 0.037 0.062 0.042 0.056 0.006 0.018 0.006 0.007 0.277 0.008 0.007
- [5,] 0.006 0.010 0.006 0.006 0.001 0.003 0.001 0.001 0.048 0.001 0.001
- [6,] 0.018 0.029 0.018 0.018 0.003 0.012 0.003 0.003 0.130 0.004 0.003
- [7,] 0.005 0.009 0.006 0.006 0.001 0.003 0.001 0.001 0.040 0.001 0.001
- [8,] 0.006 0.010 0.007 0.007 0.001 0.003 0.001 0.002 0.047 0.001 0.001
- [9,] 0.255 0.433 0.270 0.277 0.048 0.130 0.040 0.047 2.746 0.059 0.048
-[10,] 0.008 0.013 0.008 0.008 0.001 0.004 0.001 0.001 0.059 0.002 0.001
-[11,] 0.006 0.011 0.007 0.007 0.001 0.003 0.001 0.001 0.048 0.001 0.002</code></pre>
-</div>
-</div>
 <p><strong>2. Prediction Plots</strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running prediction for 50000 iterations took: 131.527000 seconds"</code></pre>
+<pre><code>[1] "Running prediction for 50000 iterations took: 150.792000 seconds"</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>3. Test for Granger Causality</strong> We first perform Granger Causality test for each country, we test whether the macroeconomic factor of one country has some predictive power on the macroeconomic factors of another. Specifically, we test the following hypothesis:</p>
-<ol type="1">
-<li>$H_0: $ The consumer price index, interest rate, foreign direct investment, balance of payments, gross domestic product, exchange rate against the dollar of country A has no impact on these variables in the country B$</li>
-</ol>
+<p><span class="math inline">\(H_0:\)</span> The consumer price index, interest rate, foreign direct investment, balance of payments, gross domestic product, exchange rate against the dollar of country A has no impact on these variables in the country B$</p>
 <p>The Baye’s factor in this case is defined as:</p>
 <p><span class="math display">\[B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij} = 0|Y, X,\Sigma)d \Sigma}{\int p_1(A_{ij}=0, \Sigma)d\Sigma}\]</span> <span class="math display">\[p_1(A_{ij} = 0|Y, X,\Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A_{ij}}, \Sigma_{ij}, \bar{V}_{ij})\]</span> <span class="math display">\[p_1(A_{ij} = 0, \Sigma) \sim \mathcal{NIW}_{K \times N}(A_{0, ij}, V_{A, ij}, S_{0, ij}, \nu_{0, ij})\]</span> <span class="math display">\[p_1(A_{ij} = 0, \Sigma) = p(A_{ij}|\Sigma)\times p(\Sigma)\]</span> <span class="math display">\[A_{ij}|\Sigma \sim \mathcal{MN}_{K \times N} (A_{0,ij}, \Sigma, V_{A, ij}) \]</span> <span class="math display">\[\Sigma \sim \mathcal{IW}(S_0, \nu_0)\]</span> and we test the bi-lateral relationship between each of these countries.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 671.543000 seconds"</code></pre>
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 789.064000 seconds"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             CN           US           JP          AU
-CN -318685.2027     1070.657     1051.494    1112.069
-US    1079.5498 -1618774.333     1348.506    1358.446
-JP     932.3779     1159.568 -1602272.595    1284.957
-AU    1150.6094     1301.027     1326.103 -945759.463</code></pre>
+CN -317580.5237     1089.429     1085.807    1092.836
+US    1101.7079 -1620359.059     1365.100    1387.193
+JP     970.7232     1173.675 -1615075.537    1274.899
+AU    1176.9835     1252.898     1382.705 -934788.054</code></pre>
 </div>
 </div>
 <table class="table">
@@ -1459,14 +1189,14 @@ AU    1150.6094     1301.027     1326.103 -945759.463</code></pre>
 <p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=5 lags, no country Granger-causes the economic indicators of another country. However, the lags of each country do Granger-cause their own economic indicators. We will test p = 4 lags next.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 352.230000 seconds"</code></pre>
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 419.345000 seconds"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             CN           US           JP          AU
-CN -272960.5910     1042.926     1056.942    1099.940
-US    1188.0282 -1638597.076     1458.310    1478.405
-JP     918.1063     1287.356 -1616055.722    1359.913
-AU    1316.9405     1333.768     1459.371 -966899.803</code></pre>
+CN -267991.2859     1000.911     1075.129    1072.120
+US    1185.1994 -1634313.502     1442.189    1496.028
+JP     903.4911     1257.867 -1630903.634    1337.353
+AU    1283.7351     1367.249     1445.831 -961567.913</code></pre>
 </div>
 </div>
 <table class="table">
@@ -1517,17 +1247,68 @@ AU    1316.9405     1333.768     1459.371 -966899.803</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=4 lags, no country Granger-causes the economic indicators of another country. However, the lags of each country do Granger-cause their own economic indicators. We will test the model for pre-covid and post_covid period next.</p>
+<p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=4 lags, no country Granger-causes the economic indicators of another country. However, the lags of each country do Granger-cause their own economic indicators. We will test the model for pre-covid and post-covid period next.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[final_df<span class="sc">$</span>Time <span class="sc">&lt;=</span><span class="fu">as.yearqtr</span>(<span class="st">'2020 Q1'</span>),<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>A_prior <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N,N)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>A_prior[<span class="dv">2</span><span class="sc">:</span>(N <span class="sc">+</span> <span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>S_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>, N)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>nu_prior  <span class="ot">=</span> <span class="fu">ncol</span>(data)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> <span class="fu">as.matrix</span>(Y)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>posterior_V <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">solve</span>(V_prior) <span class="sc">+</span> <span class="fu">diag</span>(lambda, <span class="at">nrow =</span> <span class="fu">ncol</span>(X)))</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="ot">=</span> <span class="fu">BVAR_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>posterior_samples_A <span class="ot">=</span> posterior_samples[[<span class="dv">1</span>]]</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma <span class="ot">=</span> posterior_samples[[<span class="dv">2</span>]]</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>bayesfactor <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>      bayesfactor[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor</span>(country_a, country_b, S)))</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 671.645000 seconds"</code></pre>
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 794.595000 seconds"</code></pre>
 </div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>             CN           US           JP          AU
-CN -314680.5342     1057.100     1049.716    1110.877
-US    1052.6074 -1619446.107     1365.653    1418.698
-JP     950.7971     1143.669 -1609776.548    1277.014
-AU    1197.0614     1295.412     1365.178 -944295.423</code></pre>
+<pre><code>             CN            US           JP           AU
+CN -281998.1392      973.1642     1056.472     925.4674
+US    1099.3353 -1251164.6365     1156.950    1171.8745
+JP     782.9349     1125.0988 -1261986.661    1101.2836
+AU    1114.7368     1166.8979     1124.335 -726447.7069</code></pre>
 </div>
 </div>
 <table class="table">
@@ -1580,17 +1361,231 @@ AU    1197.0614     1295.412     1365.178 -944295.423</code></pre>
 </table>
 <p>Testing our null hypothesis using the Savage-Dickey ratio indicates that with p=4 lags, no country Granger-causes the economic indicators of another country in the pre-Covid period from 1994 Q1 to 2019 Q4. Next, we test the hypothesis on data from Q1 2004, two years after China joined the World Trade Organization.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[final_df<span class="sc">$</span>Time <span class="sc">&gt;=</span><span class="fu">as.yearqtr</span>(<span class="st">'2007 Q1'</span>),<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>A_prior <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N,N)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>A_prior[<span class="dv">2</span><span class="sc">:</span>(N <span class="sc">+</span> <span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>S_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>, N)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>nu_prior  <span class="ot">=</span> <span class="fu">ncol</span>(data)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> <span class="fu">as.matrix</span>(Y)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>posterior_V <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">solve</span>(V_prior) <span class="sc">+</span> <span class="fu">diag</span>(lambda, <span class="at">nrow =</span> <span class="fu">ncol</span>(X)))</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="ot">=</span> <span class="fu">BVAR_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="ot">=</span> <span class="fu">BVAR_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior)</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>posterior_samples_A <span class="ot">=</span> posterior_samples[[<span class="dv">1</span>]]</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma <span class="ot">=</span> posterior_samples[[<span class="dv">2</span>]]</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>bayesfactor <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>      bayesfactor[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor</span>(country_a, country_b, S)))</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 672.771000 seconds"</code></pre>
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 734.097000 seconds"</code></pre>
 </div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>             CN           US           JP          AU
-CN -319453.0737     1113.804     1047.330    1094.916
-US    1095.5090 -1613266.393     1357.081    1372.285
-JP     945.0979     1137.518 -1602505.247    1253.436
-AU    1180.1254     1271.541     1346.508 -961943.542</code></pre>
+<pre><code>             CN           US           JP           AU
+CN -503928.9576     805.5069     559.2700     810.7126
+US     512.0541 -534553.6767     794.4756     808.6964
+JP     435.0394     681.8808 -538763.0290     704.4582
+AU     697.0203     808.4421     795.2099 -341018.5352</code></pre>
 </div>
 </div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[(final_df<span class="sc">$</span>Time <span class="sc">&lt;=</span><span class="fu">as.yearqtr</span>(<span class="st">'2020 Q1'</span>))<span class="sc">&amp;</span>(final_df<span class="sc">$</span>Time <span class="sc">&gt;=</span><span class="fu">as.yearqtr</span>(<span class="st">'2007 Q1'</span>)),<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>A_prior <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N,N)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>A_prior[<span class="dv">2</span><span class="sc">:</span>(N <span class="sc">+</span> <span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>S_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>, N)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>nu_prior  <span class="ot">=</span> <span class="fu">ncol</span>(data)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">50000</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> <span class="fu">as.matrix</span>(Y)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>posterior_V <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">solve</span>(V_prior) <span class="sc">+</span> <span class="fu">diag</span>(lambda, <span class="at">nrow =</span> <span class="fu">ncol</span>(X)))</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="ot">=</span> <span class="fu">BVAR_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior)</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="ot">=</span> <span class="fu">BVAR_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior)</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>posterior_samples_A <span class="ot">=</span> posterior_samples[[<span class="dv">1</span>]]</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma <span class="ot">=</span> posterior_samples[[<span class="dv">2</span>]]</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>bayesfactor <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>      bayesfactor[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor</span>(country_a, country_b, S)))</span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 740.827000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP           AU
+CN -334805.5105     532.3481     425.6160     542.7338
+US     499.5787 -336461.7507     524.1738     540.4940
+JP     400.0171     510.4894 -348412.1619     523.9333
+AU     533.9248     539.0220     508.9101 -218777.3443</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 <section id="large-bvar-model-with-ma1-gaussian-innovations" class="level2">
@@ -1598,356 +1593,271 @@ AU    1180.1254     1271.541     1346.508 -961943.542</code></pre>
 <section id="model-building-code-and-validation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-building-code-and-validation-1">4.2.1 Model Building Code and Validation</h3>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.1785</code></pre>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>BVAR_MA_fit <span class="ot">&lt;-</span> <span class="cf">function</span>(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  Ty <span class="ot">=</span> <span class="fu">nrow</span>(Y)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">=</span> S1 <span class="sc">+</span> S2</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  tau <span class="ot">=</span> <span class="fl">0.15</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">=</span> <span class="fu">as.matrix</span>(Y)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  nu_bar <span class="ot">=</span> Ty <span class="sc">+</span> nu_prior</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  psi <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  H_psi <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> Ty, <span class="at">ncol =</span> Ty)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  O_psi <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">1</span>, Ty))</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  O_psi[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>psi<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>Ty){</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    H_psi[t,t] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (t <span class="sc">&lt;</span> Ty){</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>      H_psi[t<span class="sc">+</span><span class="dv">1</span>, t] <span class="ot">=</span> psi</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  A_posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">c</span>(K,N),S))),<span class="fu">c</span>(<span class="fu">c</span>(K,N),S))</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  Sigma_posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="at">dim =</span> <span class="fu">c</span>(N,N,S))</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  Omega_posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="at">dim =</span> <span class="fu">c</span>(Ty, Ty, S<span class="sc">+</span><span class="dv">1</span>))</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>  Omega_posterior[,,<span class="dv">1</span>] <span class="ot">=</span> H_psi <span class="sc">%*%</span> O_psi <span class="sc">%*%</span> <span class="fu">t</span>(H_psi)</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>  accept <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>  pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> S)</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>    chol_Omega <span class="ot">=</span> <span class="fu">chol</span>(Omega_posterior[,,s]) <span class="do">#########change </span></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>    chol_Omega_inv <span class="ot">=</span> <span class="fu">solve</span>(chol_Omega)</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">#V_bar = solve(t(X)%*%X + solve(V_prior))</span></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>    V_bar <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(chol_Omega_inv<span class="sc">%*%</span>X)<span class="sc">%*%</span>(chol_Omega_inv<span class="sc">%*%</span>X) <span class="sc">+</span> <span class="fu">solve</span>(V_prior))</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>    L <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V_bar))</span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a>    <span class="co">#A_bar = V_bar%*%(t(X)%*%Y + solve(V_prior)%*%A_prior)</span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>    A_bar <span class="ot">=</span> V_bar<span class="sc">%*%</span>(<span class="fu">t</span>(chol_Omega_inv<span class="sc">%*%</span>X)<span class="sc">%*%</span>(chol_Omega_inv<span class="sc">%*%</span>Y) <span class="sc">+</span> <span class="fu">solve</span>(V_prior)<span class="sc">%*%</span>A_prior)</span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">#S_bar = S_prior +  t(Y)%*%Y + t(A_prior)%*%solve(V_prior)%*%A_prior - t(A_bar)%*%solve(V_bar)%*%A_bar</span></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a>    S_bar <span class="ot">=</span> S_prior <span class="sc">+</span>  <span class="fu">t</span>(chol_Omega_inv<span class="sc">%*%</span>Y)<span class="sc">%*%</span>(chol_Omega_inv<span class="sc">%*%</span>Y) <span class="sc">+</span> <span class="fu">t</span>(A_prior)<span class="sc">%*%</span><span class="fu">solve</span>(V_prior)<span class="sc">%*%</span>A_prior <span class="sc">-</span> <span class="fu">t</span>(A_bar)<span class="sc">%*%</span><span class="fu">solve</span>(V_bar)<span class="sc">%*%</span>A_bar</span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>    S_bar_inv <span class="ot">=</span> <span class="fu">solve</span>(S_bar)</span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>    Sigma_posterior[,,s] <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu_bar, <span class="at">Sigma=</span>S_bar_inv)[,,<span class="dv">1</span>])</span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>    A_posterior[,,s]<span class="ot">=</span> A_bar <span class="sc">+</span> L<span class="sc">%*%</span>A_posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma_posterior[,,<span class="dv">1</span>]) <span class="do">############change </span></span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>    <span class="do">###############MH Step    ##################################</span></span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>    psi_candidate <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">mean =</span> psi, <span class="at">sd =</span> tau)</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">abs</span>(psi_candidate) <span class="sc">&gt;</span> <span class="dv">1</span>){</span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a>      alpha <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{</span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a>      H_psi <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> Ty, <span class="at">ncol =</span> Ty)</span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a>      O_psi <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">1</span>, Ty))</span>
+<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a>      O_psi[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>psi_candidate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>Ty){</span>
+<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a>        H_psi[i,i] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="sc">&lt;</span> Ty){</span>
+<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a>          H_psi[i<span class="sc">+</span><span class="dv">1</span>, i] <span class="ot">=</span> psi_candidate</span>
+<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a>      Omega_draw <span class="ot">=</span> H_psi <span class="sc">%*%</span> O_psi <span class="sc">%*%</span> <span class="fu">t</span>(H_psi)</span>
+<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a>      chol_Omega_draw <span class="ot">=</span> <span class="fu">chol</span>(Omega_draw)</span>
+<span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a>      chol_Omega_draw_inv <span class="ot">=</span> <span class="fu">solve</span>(chol_Omega_draw)</span>
+<span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a>      Sigma_posterior_inv <span class="ot">=</span> <span class="fu">solve</span>(Sigma_posterior[,,s])</span>
+<span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a>      Likelihood_ratio <span class="ot">=</span> ((<span class="dv">1</span><span class="sc">+</span>psi_candidate<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>psi<span class="sc">^</span><span class="dv">2</span>))<span class="sc">^</span>(N<span class="sc">/</span><span class="dv">2</span>) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">tr</span>(</span>
+<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a>        Sigma_posterior_inv<span class="sc">%*%</span><span class="fu">t</span>(chol_Omega_draw_inv<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A_posterior[,,s]))<span class="sc">%*%</span>(chol_Omega_draw_inv<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A_posterior[,,s]))</span>
+<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">-</span> <span class="fu">tr</span>(</span>
+<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a>          Sigma_posterior_inv<span class="sc">%*%</span><span class="fu">t</span>(chol_Omega_inv<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A_posterior[,,s]))<span class="sc">%*%</span>(chol_Omega_inv<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A_posterior[,,s]))))</span>
+<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a>      prior_ratio <span class="ot">=</span> <span class="fu">dtruncnorm</span>(<span class="at">x =</span> psi_candidate, <span class="at">mean =</span> psi_prior, <span class="at">sd =</span> Vpsi_prior)<span class="sc">/</span><span class="fu">dtruncnorm</span>(<span class="at">x =</span> psi, <span class="at">mean =</span> psi_prior, <span class="at">sd =</span> Vpsi_prior)</span>
+<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a>      proposal_ratio <span class="ot">=</span> <span class="fu">dnorm</span>(<span class="at">x =</span> psi, <span class="at">mean =</span> psi_candidate, <span class="at">sd =</span> tau)<span class="sc">/</span><span class="fu">dnorm</span>(<span class="at">x=</span>psi_candidate, <span class="at">mean =</span> psi, <span class="at">sd =</span> tau)</span>
+<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a>      alpha <span class="ot">=</span> <span class="fu">min</span>(<span class="dv">1</span>, Likelihood_ratio, prior_ratio, proposal_ratio)</span>
+<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a>    u <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">1</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
+<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (u <span class="sc">&lt;=</span> alpha){</span>
+<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a>      accept <span class="ot">=</span> accept <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a>      psi <span class="ot">=</span> psi_candidate</span>
+<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a>      Omega_posterior[,,s<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> Omega_draw</span>
+<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{</span>
+<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>      Omega_posterior[,,s<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> Omega_posterior[,,s]}</span>
+<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a>    <span class="do">##################################################    #####</span></span>
+<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a>  A_posterior <span class="ot">=</span> A_posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>(S1<span class="sc">+</span>S2)]</span>
+<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a>  Sigma_posterior <span class="ot">=</span> Sigma_posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>(S1<span class="sc">+</span>S2)]</span>
+<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>  Omega_posterior <span class="ot">=</span> Omega_posterior[,,(S1<span class="sc">+</span><span class="dv">2</span>)<span class="sc">:</span>(S1<span class="sc">+</span>S2<span class="sc">+</span><span class="dv">1</span>)]</span>
+<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"acceptance rate of the Metropolis Hasting Step: "</span>)</span>
+<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(accept<span class="sc">/</span>S)</span>
+<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(A_posterior, Sigma_posterior, Omega_posterior))</span>
+<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Fit MA BVAR on 1000 bi-variate random walk for 2000 iterations took: 3887.012000 seconds"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]
-[1,]  0.068 0.175
-[2,]  0.999 0.002
-[3,] -0.003 0.995</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.073 0.074
-[2,] 0.003 0.003
-[3,] 0.002 0.002</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 1.150 0.063
-[2,] 0.063 1.048</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 0.053 0.035
-[2,] 0.035 0.045</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,]  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [2,] -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [3,]  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000  0.000
- [4,]  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000  0.000
- [5,]  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000  0.000
- [6,]  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000  0.000
- [7,]  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000  0.000
- [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028  0.000
- [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001 -0.028
-[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.028  1.001</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
- [1,] 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [2,] 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [3,] 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000 0.000
- [4,] 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000 0.000
- [5,] 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000 0.000
- [6,] 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000 0.000
- [7,] 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000 0.000
- [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022 0.000
- [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001 0.022
-[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.022 0.001</code></pre>
-</div>
-</div>
-</section>
-<section id="empirical-results" class="level3">
-<h3 class="anchored" data-anchor-id="empirical-results">4.2.1 Empirical Results</h3>
-<p><strong>1. Fitted Model Parameters</strong></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.1</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(random_walk_sample)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>A_prior     <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N, <span class="at">ncol =</span> N)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>V_prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>S_prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>, N)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>nu_prior    <span class="ot">=</span> <span class="fu">ncol</span>(random_walk_sample)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>vh0_prior <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>sh0_prior <span class="ot">=</span> <span class="fl">0.04</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>rho_prior <span class="ot">=</span> <span class="fl">0.9</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>Vrho_prior <span class="ot">=</span> <span class="fl">0.04</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>psi_prior <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>Vpsi_prior <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  posterior_samples_MA <span class="ot">=</span> <span class="fu">BVAR_MA_fit</span>(<span class="at">data =</span> random_walk_sample, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior, N)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
-[1] 0.2496</code></pre>
+[1] 0.2015</code></pre>
 </div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Fit MA BVAR on 1000 bi-variate random walk for %d iterations took: %f seconds"</span>, (S1<span class="sc">+</span>S2), start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 3887.012000 seconds"</code></pre>
+<pre><code>[1] "Fit MA BVAR on 1000 bi-variate random walk for 2000 iterations took: 4393.880000 seconds"</code></pre>
 </div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of autoregressive parameter:')</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_A_MA,1:2,mean),3)</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of autoregressive parameter:')</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_A_MA,1:2,sd),3)</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of row specific covariance matrix:')</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Sigma_MA,1:2,mean),3)</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of row specific covariance matrix:')</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Sigma_MA,1:2,sd),3)</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of column specific covariance matrix (first 10 rows and columns):')</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.02</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[,<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>A_prior <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N,N)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>A_prior[<span class="dv">2</span><span class="sc">:</span>(N <span class="sc">+</span> <span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>S_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>, N)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>nu_prior  <span class="ot">=</span> <span class="fu">ncol</span>(data)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[,<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>vh0_prior <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>sh0_prior <span class="ot">=</span> <span class="fl">0.04</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>rho_prior <span class="ot">=</span> <span class="fl">0.9</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>Vrho_prior <span class="ot">=</span> <span class="fl">0.04</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>psi_prior <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>Vpsi_prior <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>fstart <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  posterior_samples_MA <span class="ot">=</span> <span class="fu">BVAR_MA_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior, N)</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of autoregressive parameter:"</code></pre>
+<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
+[1] 0.2367</code></pre>
 </div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Fit MA BVAR on data for %d iterations took: %f seconds"</span>, (S1<span class="sc">+</span>S2), start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.104 -0.248  0.043 -0.127 -0.059  0.075 0.003  0.023  5.413 -0.204
- [2,]  0.992  0.000 -0.008 -0.002  0.000  0.000 0.000  0.000  0.020  0.000
- [3,]  0.008  0.964  0.008 -0.005  0.000  0.003 0.000  0.000  0.020 -0.001
- [4,]  0.002 -0.006  0.988 -0.001  0.000 -0.001 0.000  0.000  0.039  0.000
- [5,]  0.001 -0.002 -0.006  0.990  0.000 -0.001 0.000  0.000  0.034  0.000
- [6,]  0.000  0.001  0.000  0.000  1.000  0.000 0.000  0.000  0.001  0.000
- [7,]  0.002  0.001  0.000  0.002  0.000  0.998 0.000  0.000 -0.004  0.002
- [8,]  0.000  0.001  0.000  0.001  0.000  0.000 1.000  0.000  0.003  0.000
- [9,]  0.000  0.002  0.000  0.001  0.000  0.000 0.000  1.000 -0.004  0.000
-[10,]  0.003 -0.001 -0.006 -0.002 -0.001 -0.001 0.000 -0.001  1.146  0.002
-[11,]  0.000 -0.003  0.000 -0.001  0.000  0.000 0.000  0.001  0.005  0.998
-[12,]  0.000  0.000  0.001  0.000  0.000  0.000 0.000  0.000  0.004  0.000
-[13,]  0.000  0.000 -0.001 -0.001  0.000  0.000 0.000  0.000  0.007  0.000
-[14,]  0.001 -0.007 -0.002 -0.001  0.000 -0.001 0.000  0.000  0.000  0.000
-[15,] -0.001  0.002 -0.003 -0.001  0.000  0.000 0.000  0.000  0.009  0.000
-[16,]  0.000  0.000 -0.001 -0.001  0.000  0.000 0.000  0.000  0.009  0.000
-[17,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[18,] -0.001  0.002  0.000  0.001  0.000  0.000 0.000  0.000  0.002  0.000
-[19,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[20,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[21,] -0.003  0.002  0.003  0.001  0.001  0.001 0.000  0.001 -0.092  0.000
-[22,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.001 -0.001
-[23,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[24,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.004  0.000
-[25,] -0.001  0.000 -0.002 -0.001  0.000 -0.001 0.000  0.000  0.000  0.000
-[26,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.005  0.000
-[27,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
-[28,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[29,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000 -0.001  0.000
-[30,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[31,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[32,]  0.000  0.000  0.003  0.001  0.000  0.000 0.000  0.000 -0.037  0.000
-[33,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[34,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[35,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[36,]  0.000  0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
-[37,]  0.000 -0.001  0.000  0.000  0.000  0.000 0.000  0.000  0.003  0.000
-[38,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[39,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[40,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[41,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[42,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[43,]  0.000 -0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.034  0.000
-[44,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[45,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[46,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[47,]  0.000 -0.002  0.001  0.000  0.000  0.000 0.000  0.000  0.004  0.000
-[48,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[49,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[50,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.001  0.000
-[51,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[52,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[53,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[54,]  0.000  0.001  0.000  0.001  0.000  0.000 0.000  0.000 -0.030  0.000
-[55,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-[56,]  0.000  0.000  0.000  0.000  0.000  0.000 0.000  0.000  0.000  0.000
-       [,11]
- [1,] -0.012
- [2,]  0.001
- [3,]  0.000
- [4,]  0.000
- [5,]  0.000
- [6,]  0.000
- [7,]  0.000
- [8,]  0.000
- [9,]  0.000
-[10,]  0.001
-[11,] -0.001
-[12,]  1.000
-[13,]  0.000
-[14,]  0.000
-[15,]  0.000
-[16,]  0.000
-[17,]  0.000
-[18,]  0.000
-[19,]  0.000
-[20,]  0.000
-[21,] -0.001
-[22,]  0.000
-[23,]  0.000
-[24,]  0.000
-[25,]  0.000
-[26,]  0.000
-[27,]  0.000
-[28,]  0.000
-[29,]  0.000
-[30,]  0.000
-[31,]  0.000
-[32,]  0.000
-[33,]  0.000
-[34,]  0.000
-[35,]  0.000
-[36,]  0.000
-[37,]  0.000
-[38,]  0.000
-[39,]  0.000
-[40,]  0.000
-[41,]  0.000
-[42,]  0.000
-[43,]  0.000
-[44,]  0.000
-[45,]  0.000
-[46,]  0.000
-[47,]  0.000
-[48,]  0.000
-[49,]  0.000
-[50,]  0.000
-[51,]  0.000
-[52,]  0.000
-[53,]  0.000
-[54,]  0.000
-[55,]  0.000
-[56,]  0.000</code></pre>
+<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 4393.880000 seconds"</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of autoregressive parameter:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.563 1.211 0.651 0.609 0.082 0.266 0.080 0.083 4.126 0.120 0.097
- [2,] 0.014 0.029 0.016 0.015 0.002 0.006 0.002 0.002 0.099 0.003 0.002
- [3,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.096 0.003 0.002
- [4,] 0.014 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
- [5,] 0.014 0.029 0.016 0.015 0.002 0.006 0.002 0.002 0.099 0.003 0.002
- [6,] 0.014 0.028 0.015 0.015 0.002 0.006 0.002 0.002 0.101 0.003 0.002
- [7,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.095 0.003 0.002
- [8,] 0.014 0.029 0.015 0.015 0.002 0.006 0.002 0.002 0.100 0.003 0.002
- [9,] 0.014 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
-[10,] 0.006 0.012 0.007 0.006 0.001 0.003 0.001 0.001 0.047 0.001 0.001
-[11,] 0.013 0.028 0.015 0.014 0.002 0.006 0.002 0.002 0.098 0.003 0.002
-[12,] 0.014 0.029 0.015 0.015 0.002 0.007 0.002 0.002 0.100 0.003 0.002
-[13,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[14,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[15,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.051 0.001 0.001
-[16,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[17,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[18,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[19,] 0.007 0.015 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[20,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[21,] 0.006 0.012 0.007 0.006 0.001 0.003 0.001 0.001 0.044 0.001 0.001
-[22,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.051 0.001 0.001
-[23,] 0.007 0.014 0.008 0.007 0.001 0.003 0.001 0.001 0.050 0.001 0.001
-[24,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[25,] 0.004 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
-[26,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[27,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[28,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[29,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
-[30,] 0.005 0.009 0.005 0.005 0.001 0.002 0.001 0.001 0.033 0.001 0.001
-[31,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[32,] 0.004 0.009 0.005 0.004 0.001 0.002 0.001 0.001 0.030 0.001 0.001
-[33,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[34,] 0.005 0.010 0.005 0.005 0.001 0.002 0.001 0.001 0.034 0.001 0.001
-[35,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[36,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[37,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[38,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[39,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[40,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[41,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[42,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.001 0.025 0.001 0.001
-[43,] 0.003 0.007 0.004 0.003 0.000 0.001 0.000 0.000 0.023 0.001 0.001
-[44,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[45,] 0.003 0.007 0.004 0.004 0.000 0.002 0.000 0.000 0.025 0.001 0.001
-[46,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[47,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[48,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[49,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[50,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[51,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[52,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[53,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[54,] 0.002 0.005 0.003 0.003 0.000 0.001 0.000 0.000 0.018 0.001 0.000
-[55,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000
-[56,] 0.003 0.006 0.003 0.003 0.000 0.001 0.000 0.000 0.020 0.001 0.000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]  [,7]   [,8]   [,9]  [,10]
- [1,]  0.376 -0.159  0.154  0.049  0.001 -0.036 0.001  0.005  0.142  0.003
- [2,] -0.159  1.502 -0.073  0.099  0.006  0.003 0.005  0.017 -0.727 -0.001
- [3,]  0.154 -0.073  0.571  0.192  0.001  0.026 0.004  0.018  0.243 -0.017
- [4,]  0.049  0.099  0.192  0.421  0.001  0.014 0.004  0.012 -0.023 -0.006
- [5,]  0.001  0.006  0.001  0.001  0.011 -0.002 0.000  0.001 -0.263 -0.002
- [6,] -0.036  0.003  0.026  0.014 -0.002  0.086 0.002  0.007  0.133 -0.002
- [7,]  0.001  0.005  0.004  0.004  0.000  0.002 0.009  0.000  0.017  0.000
- [8,]  0.005  0.017  0.018  0.012  0.001  0.007 0.000  0.014 -0.054 -0.002
- [9,]  0.142 -0.727  0.243 -0.023 -0.263  0.133 0.017 -0.054 30.696  0.198
-[10,]  0.003 -0.001 -0.017 -0.006 -0.002 -0.002 0.000 -0.002  0.198  0.026
-[11,] -0.012 -0.014 -0.024 -0.011 -0.001 -0.002 0.000 -0.005  0.115  0.002
-       [,11]
- [1,] -0.012
- [2,] -0.014
- [3,] -0.024
- [4,] -0.011
- [5,] -0.001
- [6,] -0.002
- [7,]  0.000
- [8,] -0.005
- [9,]  0.115
-[10,]  0.002
-[11,]  0.015</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of row specific covariance matrix:"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11]
- [1,] 0.052 0.073 0.046 0.038 0.006 0.017 0.005 0.007 0.320 0.009 0.007
- [2,] 0.073 0.206 0.089 0.076 0.012 0.034 0.011 0.013 0.649 0.019 0.015
- [3,] 0.046 0.089 0.078 0.049 0.008 0.021 0.007 0.009 0.401 0.011 0.009
- [4,] 0.038 0.076 0.049 0.057 0.007 0.018 0.006 0.007 0.339 0.010 0.008
- [5,] 0.006 0.012 0.008 0.007 0.002 0.003 0.001 0.001 0.061 0.002 0.001
- [6,] 0.017 0.034 0.021 0.018 0.003 0.012 0.003 0.003 0.156 0.004 0.003
- [7,] 0.005 0.011 0.007 0.006 0.001 0.003 0.001 0.001 0.049 0.001 0.001
- [8,] 0.007 0.013 0.009 0.007 0.001 0.003 0.001 0.002 0.061 0.002 0.001
- [9,] 0.320 0.649 0.401 0.339 0.061 0.156 0.049 0.061 4.236 0.086 0.066
-[10,] 0.009 0.019 0.011 0.010 0.002 0.004 0.001 0.002 0.086 0.004 0.002
-[11,] 0.007 0.015 0.009 0.008 0.001 0.003 0.001 0.001 0.066 0.002 0.002</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior mean of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
- [1,]  1.192 -0.521  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [2,] -0.521  1.230 -0.436  0.000  0.000  0.000  0.000  0.000  0.000  0.000
- [3,]  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000  0.000  0.000
- [4,]  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000  0.000
- [5,]  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000  0.000
- [6,]  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000  0.000
- [7,]  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000  0.000
- [8,]  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436  0.000
- [9,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192 -0.436
-[10,]  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.436  1.192</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10]
- [1,] 0.038 0.070 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [2,] 0.070 0.053 0.045 0.000 0.000 0.000 0.000 0.000 0.000 0.000
- [3,] 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000 0.000 0.000
- [4,] 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000 0.000
- [5,] 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000 0.000
- [6,] 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000 0.000
- [7,] 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000 0.000
- [8,] 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045 0.000
- [9,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038 0.045
-[10,] 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.045 0.038</code></pre>
-</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of autoregressive parameter:')</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_A_MA,1:2,mean),3)</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of autoregressive parameter:')</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_A_MA,1:2,sd),3)</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of row specific covariance matrix:')</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Sigma_MA,1:2,mean),3)</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of row specific covariance matrix:')</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Sigma_MA,1:2,sd),3)</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior mean of column specific covariance matrix (first 10 rows and columns):')</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,mean),3)</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co"># round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p><strong>2. Prediction Plots </strong></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>BVAR_MA_predict <span class="ot">=</span> <span class="cf">function</span>(posterior_samples_A_MA, posterior_samples_Sigma_MA ,posterior_samples_Omega_MA,  data, h){</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">=</span> <span class="fu">dim</span>(posterior_samples_A_MA)[<span class="dv">3</span>]</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">dim</span>(posterior_samples_A_MA)[<span class="dv">2</span>]</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">=</span> (<span class="fu">dim</span>(posterior_samples_A_MA)[<span class="dv">1</span>] <span class="sc">-</span><span class="dv">1</span>) <span class="sc">/</span> N</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#last p observations </span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">=</span> Y[(<span class="fu">nrow</span>(Y)<span class="sc">-</span>p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(Y),]</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># reverse the order t-p t-(p-1)...</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">=</span> x[p<span class="sc">:</span><span class="dv">1</span>,]</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  Y_h   <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>,<span class="fu">c</span>(h,N,S))</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    A     <span class="ot">=</span> posterior_samples_A_MA[,,s]</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    Sigma <span class="ot">=</span> posterior_samples_Sigma_MA[,,s]</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    Omega <span class="ot">=</span> posterior_samples_Omega_MA[]</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>    N <span class="ot">=</span> <span class="fu">ncol</span>(A)</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">=</span> (<span class="fu">nrow</span>(A) <span class="sc">-</span><span class="dv">1</span>) <span class="sc">/</span> N</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    x  <span class="ot">=</span> Y[(<span class="fu">nrow</span>(Y)<span class="sc">-</span>p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(Y),]</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">=</span> x[p<span class="sc">:</span><span class="dv">1</span>,]</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>h){</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>      <span class="co">#x_{{t+1}= (1 y_t y_{t-1},... y_{t-p+1})</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>      x_T               <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,purrr<span class="sc">::</span><span class="fu">as_vector</span>(<span class="fu">t</span>(x)))</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>      <span class="co">#y_t+h = mvnnorm(1, x_t%*%A)</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>      Period_Y               <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">rmvnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> x_T<span class="sc">%*%</span>A, <span class="at">sigma=</span>Sigma)</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">colnames</span>(Period_Y) <span class="ot">=</span> <span class="fu">colnames</span>(x)</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>      x            <span class="ot">=</span> <span class="fu">rbind</span>(Period_Y,x[<span class="dv">1</span><span class="sc">:</span>(p<span class="dv">-1</span>),])</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>      Y_h[i,,s]   <span class="ot">=</span> Period_Y[<span class="dv">1</span><span class="sc">:</span>N]</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Y_h)</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[,<span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">8</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  BVAR_MA_prediction <span class="ot">=</span> <span class="fu">BVAR_MA_predict</span>(<span class="at">posterior_samples_A_MA =</span> posterior_samples_A_MA, </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">posterior_samples_Sigma_MA =</span> posterior_samples_Sigma_MA,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">posterior_samples_Omega_MA =</span> posterior_samples_Omega_MA,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">data =</span> data, <span class="at">h =</span> h)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>}) </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Predict %d periods ahead MA BVAR on data for %d iterations took: %f seconds"</span>, h, S1 <span class="sc">+</span> S2, start[[<span class="st">"elapsed"</span>]]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Predict 8 periods ahead MA BVAR on data for 10000 iterations took: 285.658000 seconds"</code></pre>
+<pre><code>[1] "Predict 8 periods ahead MA BVAR on data for 10000 iterations took: 295.702000 seconds"</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1959,26 +1869,563 @@ AU    1180.1254     1271.541     1346.508 -961943.542</code></pre>
 </div>
 </div>
 </div>
-<p><strong>2. Forecasts Model Parameters</strong></p>
 <p><strong>3. Test for Granger Causality</strong></p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 674.808000 seconds"</code></pre>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>calc_bayes_factor_MA <span class="ot">=</span> <span class="cf">function</span>(country1, country2, posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S) {</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  var_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'_GDP'</span>, <span class="st">'_CPI'</span>, <span class="st">'_XCH'</span>)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>  country1_suffix <span class="ot">=</span> <span class="cf">if</span> (country1 <span class="sc">==</span> <span class="st">"US"</span>) var_list[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(var_list)<span class="sc">-</span><span class="dv">1</span>)] <span class="cf">else</span> var_list</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  country2_suffix <span class="ot">=</span> <span class="cf">if</span> (country2 <span class="sc">==</span> <span class="st">"US"</span>) var_list[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(var_list)<span class="sc">-</span><span class="dv">1</span>)] <span class="cf">else</span> var_list</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  country1_vars <span class="ot">=</span> <span class="fu">paste0</span>(country1, country1_suffix)</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>  country2_vars <span class="ot">=</span> <span class="fu">paste0</span>(country2, country2_suffix)</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>  A_0_mat <span class="ot">=</span> <span class="fu">apply</span>(posterior_samples_A_MA, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, mean)</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(A_0_mat) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"constant"</span>, <span class="fu">rep</span>(<span class="fu">colnames</span>(data), p)), <span class="fu">colnames</span>(data))</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>  A_0_df <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">as.data.frame</span>(A_0_mat), <span class="fu">colnames</span>(A_0_mat))</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set specified entries to zero based on countries</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>  A_0_df[country2_vars, country1_vars] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>  A_0_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(A_0_df)</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>  ratio_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length =</span> S)</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>  total_S <span class="ot">=</span> <span class="fu">dim</span>(posterior_samples_Omega_MA)[<span class="dv">3</span>]</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) {</span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>    posterior_V <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> posterior_samples_Omega_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)] <span class="sc">%*%</span> X <span class="sc">+</span> <span class="fu">solve</span>(V_prior) <span class="sc">+</span> <span class="fu">diag</span>(lambda, <span class="fu">ncol</span>(X)))</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>    prior_Sigma <span class="ot">=</span> MCMCpack<span class="sc">::</span><span class="fu">riwish</span>(<span class="at">v =</span> nu_prior, <span class="at">S =</span> S_prior)</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">=</span> <span class="fu">c</span>(A_prior)</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">=</span> <span class="fu">kronecker</span>(prior_Sigma, V_prior)</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>    A_0 <span class="ot">=</span> <span class="fu">c</span>(A_0_mat)</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>    prior_prob <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">dmvnorm</span>(<span class="at">x =</span> A_0, <span class="at">mean =</span> M, <span class="at">sigma =</span> Q, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">=</span> <span class="fu">c</span>(posterior_samples_A_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)])</span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">=</span> <span class="fu">kronecker</span>(posterior_samples_Sigma_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)], posterior_V)</span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>    posterior_prob <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">dmvnorm</span>(<span class="at">x =</span> A_0, <span class="at">mean =</span> M, <span class="at">sigma =</span> Q, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>    ratio_list[[(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)]] <span class="ot">=</span> posterior_prob <span class="sc">-</span> prior_prob</span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ratio_list)</span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>bf_ma <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>bayesfactor_MA <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>      i <span class="ot">=</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>      bayesfactor_MA[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor_MA</span>(country_a, country_b,posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 729.752000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor_MA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>             CN           US           JP           AU
-CN -102804.7576     376.2762     327.0783     379.1168
-US     375.6391 -528073.5117     352.3693     379.6552
-JP     378.5526     378.8469 -522652.2917     374.8028
-AU     376.2018     382.5976     323.0241 -302290.8092</code></pre>
+CN -102995.2548     376.6218     329.8678     374.3145
+US     384.1965 -519894.1348     346.6272     384.7220
+JP     374.3626     376.6692 -519025.1346     380.5245
+AU     376.5729     384.0064     318.8114 -300157.7369</code></pre>
 </div>
 </div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[final_df<span class="sc">$</span>Time <span class="sc">&lt;=</span> <span class="st">'2020 Q1'</span>, <span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>fstart <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>  posterior_samples_MA <span class="ot">=</span> <span class="fu">BVAR_MA_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior, N)</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
+[1] 0.2785</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Fit MA BVAR on data for %d iterations took: %f seconds"</span>, (S1<span class="sc">+</span>S2), start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 729.752000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>bf_ma <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>bayesfactor_MA <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>      i <span class="ot">=</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>      bayesfactor_MA[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor_MA</span>(country_a, country_b,posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 727.850000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor_MA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            CN          US           JP          AU
+CN -152484.355    1175.141     967.5032    1099.247
+US    1197.693 -669448.716    1055.1428    1212.656
+JP    1023.618    1224.422 -717239.2782    1159.456
+AU    1194.419    1220.634     286.9042 -401502.781</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[final_df<span class="sc">$</span>Time <span class="sc">&gt;=</span> <span class="st">'2007 Q1'</span>, <span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co">#data = final_df[,2:ncol(final_df)]</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>fstart <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a>  posterior_samples_MA <span class="ot">=</span> <span class="fu">BVAR_MA_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior, N)</span>
+<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
+[1] 0.3803</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Fit MA BVAR on data for %d iterations took: %f seconds"</span>, (S1<span class="sc">+</span>S2), start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 727.850000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>calc_bayes_factor_MA <span class="ot">=</span> <span class="cf">function</span>(country1, country2, posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S) {</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  var_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'_GDP'</span>, <span class="st">'_CPI'</span>, <span class="st">'_XCH'</span>)</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  country1_suffix <span class="ot">=</span> <span class="cf">if</span> (country1 <span class="sc">==</span> <span class="st">"US"</span>) var_list[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(var_list)<span class="sc">-</span><span class="dv">1</span>)] <span class="cf">else</span> var_list</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  country2_suffix <span class="ot">=</span> <span class="cf">if</span> (country2 <span class="sc">==</span> <span class="st">"US"</span>) var_list[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(var_list)<span class="sc">-</span><span class="dv">1</span>)] <span class="cf">else</span> var_list</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  country1_vars <span class="ot">=</span> <span class="fu">paste0</span>(country1, country1_suffix)</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  country2_vars <span class="ot">=</span> <span class="fu">paste0</span>(country2, country2_suffix)</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>  A_0_mat <span class="ot">=</span> <span class="fu">apply</span>(posterior_samples_A_MA, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, mean)</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(A_0_mat) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"constant"</span>, <span class="fu">rep</span>(<span class="fu">colnames</span>(data), p)), <span class="fu">colnames</span>(data))</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>  A_0_df <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">as.data.frame</span>(A_0_mat), <span class="fu">colnames</span>(A_0_mat))</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set specified entries to zero based on countries</span></span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>  A_0_df[country2_vars, country1_vars] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-22"><a href="#cb57-22" aria-hidden="true" tabindex="-1"></a>  A_0_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(A_0_df)</span>
+<span id="cb57-23"><a href="#cb57-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-24"><a href="#cb57-24" aria-hidden="true" tabindex="-1"></a>  ratio_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length =</span> S)</span>
+<span id="cb57-25"><a href="#cb57-25" aria-hidden="true" tabindex="-1"></a>  total_S <span class="ot">=</span> <span class="fu">dim</span>(posterior_samples_Omega_MA)[<span class="dv">3</span>]</span>
+<span id="cb57-26"><a href="#cb57-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) {</span>
+<span id="cb57-27"><a href="#cb57-27" aria-hidden="true" tabindex="-1"></a>    posterior_V <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> posterior_samples_Omega_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)] <span class="sc">%*%</span> X <span class="sc">+</span> <span class="fu">solve</span>(V_prior) <span class="sc">+</span> <span class="fu">diag</span>(lambda, <span class="fu">ncol</span>(X)))</span>
+<span id="cb57-28"><a href="#cb57-28" aria-hidden="true" tabindex="-1"></a>    prior_Sigma <span class="ot">=</span> MCMCpack<span class="sc">::</span><span class="fu">riwish</span>(<span class="at">v =</span> nu_prior, <span class="at">S =</span> S_prior)</span>
+<span id="cb57-29"><a href="#cb57-29" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">=</span> <span class="fu">c</span>(A_prior)</span>
+<span id="cb57-30"><a href="#cb57-30" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">=</span> <span class="fu">kronecker</span>(prior_Sigma, V_prior)</span>
+<span id="cb57-31"><a href="#cb57-31" aria-hidden="true" tabindex="-1"></a>    A_0 <span class="ot">=</span> <span class="fu">c</span>(A_0_mat)</span>
+<span id="cb57-32"><a href="#cb57-32" aria-hidden="true" tabindex="-1"></a>    prior_prob <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">dmvnorm</span>(<span class="at">x =</span> A_0, <span class="at">mean =</span> M, <span class="at">sigma =</span> Q, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-33"><a href="#cb57-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb57-34"><a href="#cb57-34" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">=</span> <span class="fu">c</span>(posterior_samples_A_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)])</span>
+<span id="cb57-35"><a href="#cb57-35" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">=</span> <span class="fu">kronecker</span>(posterior_samples_Sigma_MA[,,(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)], posterior_V)</span>
+<span id="cb57-36"><a href="#cb57-36" aria-hidden="true" tabindex="-1"></a>    posterior_prob <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">dmvnorm</span>(<span class="at">x =</span> A_0, <span class="at">mean =</span> M, <span class="at">sigma =</span> Q, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-37"><a href="#cb57-37" aria-hidden="true" tabindex="-1"></a>    ratio_list[[(total_S <span class="sc">-</span> s <span class="sc">+</span><span class="dv">1</span>)]] <span class="ot">=</span> posterior_prob <span class="sc">-</span> prior_prob</span>
+<span id="cb57-38"><a href="#cb57-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb57-39"><a href="#cb57-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ratio_list)</span>
+<span id="cb57-40"><a href="#cb57-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-41"><a href="#cb57-41" aria-hidden="true" tabindex="-1"></a>bf_ma <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb57-42"><a href="#cb57-42" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb57-43"><a href="#cb57-43" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb57-44"><a href="#cb57-44" aria-hidden="true" tabindex="-1"></a>bayesfactor_MA <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb57-45"><a href="#cb57-45" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb57-46"><a href="#cb57-46" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb57-47"><a href="#cb57-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb57-48"><a href="#cb57-48" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb57-49"><a href="#cb57-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb57-50"><a href="#cb57-50" aria-hidden="true" tabindex="-1"></a>      i <span class="ot">=</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb57-51"><a href="#cb57-51" aria-hidden="true" tabindex="-1"></a>      bayesfactor_MA[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor_MA</span>(country_a, country_b,posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))</span>
+<span id="cb57-52"><a href="#cb57-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb57-53"><a href="#cb57-53" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb57-54"><a href="#cb57-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb57-55"><a href="#cb57-55" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb57-56"><a href="#cb57-56" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 728.445000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor_MA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US           JP           AU
+CN -416741.7546     764.5480     290.2978     777.6725
+US     597.3636 -440938.1889    -221.1377     774.1116
+JP     592.5318     702.9991 -466473.5633     712.0873
+AU     680.3600     762.6540     185.4056 -282903.5990</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> final_df[(final_df<span class="sc">$</span>Time <span class="sc">&gt;=</span> <span class="st">'2007 Q1'</span>) <span class="sc">&amp;</span> (final_df<span class="sc">$</span>Time <span class="sc">&lt;=</span> <span class="st">'2020 Q1'</span>), <span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(final_df)]</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co">#data = final_df[,2:ncol(final_df)]</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data),])</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>) </span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>  X     <span class="ot">=</span> <span class="fu">cbind</span>(X, (data[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(data)<span class="sc">-</span>i,]))</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">as.matrix</span>(X)</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="dv">1</span><span class="sc">+</span>p<span class="sc">*</span>N</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>kappa1 <span class="ot">=</span> <span class="fl">0.2</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>kappa2 <span class="ot">=</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>V_prior <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa2,kappa1<span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fl">1e-4</span></span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">=</span> <span class="dv">5000</span></span>
+<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a>fstart <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a>  posterior_samples_MA <span class="ot">=</span> <span class="fu">BVAR_MA_fit</span>(<span class="at">data =</span> data, <span class="at">p =</span> p, <span class="at">S1=</span> S1, <span class="at">S2 =</span> S2, <span class="at">kappa1 =</span> kappa1, <span class="at">kappa2 =</span> kappa2, <span class="at">A_prior =</span> A_prior, <span class="at">V_prior =</span> V_prior, <span class="at">S_prior =</span> S_prior, <span class="at">nu_prior =</span> nu_prior, N)</span>
+<span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "acceptance rate of the Metropolis Hasting Step: "
+[1] 0.4181</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Fit MA BVAR on data for %d iterations took: %f seconds"</span>, (S1<span class="sc">+</span>S2), start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fit MA BVAR on data for 10000 iterations took: 728.445000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>posterior_samples_A_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">1</span>]]</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>posterior_samples_Sigma_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">2</span>]]</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>posterior_samples_Omega_MA <span class="ot">=</span> posterior_samples_MA[[<span class="dv">3</span>]]</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>countries_list <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'CN'</span>, <span class="st">'US'</span>, <span class="st">"JP"</span>, <span class="st">"AU"</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>bf_ma <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>i <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>bayesfactor_MA <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(countries_list), <span class="at">ncol =</span> <span class="fu">length</span>(countries_list), <span class="at">dimnames =</span> <span class="fu">list</span>(countries_list, countries_list))</span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">length</span>(countries_list))</span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>start <span class="ot">=</span> <span class="fu">system.time</span>({</span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (country_a <span class="cf">in</span> countries_list){</span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (country_b <span class="cf">in</span> countries_list){</span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>      i <span class="ot">=</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>      bayesfactor_MA[country_a, country_b] <span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">unlist</span>(<span class="fu">calc_bayes_factor_MA</span>(country_a, country_b,posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))</span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gc</span>()</span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"Running Bayes factor calculation for %d iterations took: %f seconds"</span>, S, start[<span class="st">"elapsed"</span>])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Running Bayes factor calculation for 500 iterations took: 724.450000 seconds"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bayesfactor_MA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             CN           US            JP           AU
+CN -344028.8831     445.3087      42.36911     455.2980
+US     433.8611 -339822.2064    -973.22651     448.3851
+JP     370.0285     420.4815 -378577.96418     444.7938
+AU     472.2898     467.4190    -601.59551 -221156.6646</code></pre>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>China</th>
+<th>United States</th>
+<th>Japan</th>
+<th>Australia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>China</strong></td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>US</strong></td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="odd">
+<td><strong>Japan</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+<td>No Evidence</td>
+</tr>
+<tr class="even">
+<td><strong>Australia</strong></td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>No Evidence</td>
+<td>Strong Evidence</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="large-bvar-model-with-common-stochastic-volatility" class="level2">
+<h2 class="anchored" data-anchor-id="large-bvar-model-with-common-stochastic-volatility">4.3 Large BVAR model with Common Stochastic Volatility</h2>
+<section id="model-building-code-and-validation-2" class="level3">
+<h3 class="anchored" data-anchor-id="model-building-code-and-validation-2">4.3.1 Model Building Code and Validation</h3>
 </section>
 </section>
 <section id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility" class="level2">
 <h2 class="anchored" data-anchor-id="large-bvar-model-with-ma1-gaussian-innovations-and-common-stochastic-volatility">4.4 Large BVAR model with MA(1) Gaussian Innovations and Common Stochastic Volatility</h2>
-<section id="model-building-code-and-validation-2" class="level3">
-<h3 class="anchored" data-anchor-id="model-building-code-and-validation-2">4.4.1 Model Building Code and Validation</h3>
+<section id="model-building-code-and-validation-3" class="level3">
+<h3 class="anchored" data-anchor-id="model-building-code-and-validation-3">4.4.1 Model Building Code and Validation</h3>
 </section>
 <section id="empirical-result-1" class="level3">
 <h3 class="anchored" data-anchor-id="empirical-result-1">4.4.2 Empirical Result</h3>

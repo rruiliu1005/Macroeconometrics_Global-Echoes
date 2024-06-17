@@ -7,6 +7,7 @@ execute:
 bibliography: references.bib
 ---
 
+
 # 1. The Question Objective, and Motivation
 **Objective:**
 Construct a Bayesian Vector Autoregression model to forecast major macroeconomic indicators for the United States, Australia, Japan, and China to facilitate an investigation into the prospective interdependencies between the economies of these nations.
@@ -49,6 +50,7 @@ sf
 
 The variables included in this study were chosen with the objective to include key economic indicators that are susceptible to changes in other nations while also ensuring relatively consistent measures exist for all four nations. These variables were chosen not only for their ability to provide insights into the trade relations, investment dynamics and monetary policy frameworks, but also for their roles as barometers of overall economic health and performance. Exchange rates directly impact trade balances and investment flows, influencing economic performances. By examining the volatility and trends in exchange rates, insights can be gleaned into how monetary policies and economic conditions in one country can affect its trade partners. GDP is the ultimate measure of economic performance, encapsulating the outcome of various economic activities and policies. Analyzing GDP  allows for assessing economic momentum and comparing growth rates across countries and over time, offering a clear picture of economic health and trends. CPI was included because it is a crucial indicator of inflation, reflecting changes in the cost of living and purchasing power, and thus, is helpful in quantifying economic stability and monetary policy effectiveness in each nation.
 The presence of cyclical trends in the variables, alongside the observed impact of lagged values on future outcomes, highlights the suitability of the Bayesian Vector Autoregression model for our analysis. This model can well capture the temporal dynamics and interdependencies inherent in these economic indicators, offering a robust framework for understanding the nuanced interactions and feedback loops that characterize their behavior over time.
+
 
 ```{r, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 library(IMFData)
@@ -865,17 +867,21 @@ print(max(final_df$Time))
 ```
 
 
+
 ## Data Plots 
+
 ```{r, results='hide', message=FALSE, warning=FALSE, fig.width=12, fig.height=13}
 layout <-   (XCH_plot) / (GDP_plot)/ ( CPI_plot)
 #layout <-   (BOP_plot | XCH_plot) / (GDP_plot | FDI_plot) / (CPI_plot)
 #FDI_original_plot | BOP_original_plot) / (XCH_original_plot | GDP_original_plot)
 layout
 ```
+
 ## Stationarity Check 
 **Stationary Tests** 
 
 This section employs the Augmented Dickey-Fuller test to examine the null hypothesis that a unit root is present in these time series. A lag order of 4 was chosen for the ADF test given our data's quarterly frequency. The results indicate that most of the macroeconomic indicators possess a unit root and are not stationary, with a few exceptions. Specifically, we have enough evidence to reject the null hypothesis for the CPI series in China and the United States at a 5% significance level. Interestingly, Japan's GDP series is found to be unit-root stationary at this significance level. This implies that Japan's GDP exhibits a consistent mean and variance over time, contrasting with the general trend observed in other national GDP series. Japan's GDP growth has been known to be stagnant for quite some years and it's macroeconomic indicators may respond differently to economic shocks compared to its non-stationary counterparts
+
 
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 #install.packages("tseries")
@@ -896,7 +902,6 @@ rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for CPI Data by Country")
 ```
 
-
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 results <- sapply(XCH_data[2:nrow(XCH_data),c(2,3,5)], perform_adf_test)
 results_df <- as.data.frame(t(results), stringsAsFactors = FALSE)
@@ -905,8 +910,6 @@ results_df$Country <- rownames(results_df)
 rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for Exchange Rate (% change) Data by Country")
 ```
-
-
 
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 
@@ -917,7 +920,9 @@ results_df$Country <- rownames(results_df)
 rownames(results_df) <- NULL
 kable(results_df, caption = "ADF Test Results for seasonally adjusted Data by Country")
 ```
+
 The ACF plots of seasonally adjusted GDP data shows a strong autocorrelation at smaller lags and the autocorrelation decreases sharply as the lags increase. It is worth noting that the autocorrelations decreases much faster for Japan than for the other countries. Similar phenomenon is observed with exchange rates against the dollar for all three countries. It is worth noting that the autocorrelations for the Chinese series a more persistent than the others, possibly due to the fact that China has a managed floating exchange rate system, where the Chinese central banks sets a target exchange rate. The CPI data for all four countries shows generally low autocorrelation across lags, particularly beyond the first few periods. This suggests that CPI measurements are relatively independent from quarter to quarter. The alternating signs in the autocorrelation function (ACF) plot for Japan and US's CPI data suggest possible seasonal effects, cyclical patterns or due to data collection methods. 
+
 ```{r, results='hide', message=FALSE, warning=FALSE, , fig.width=12, fig.height=8}
 par(mfrow = c(3, 4))
 acf(adjusted_GDP_data[,2],  main = colnames(adjusted_GDP_data)[2])
@@ -936,6 +941,7 @@ acf(CPI_data[,3], main = colnames(CPI_data)[3])
 acf(CPI_data[,4], main = colnames(CPI_data)[4])
 acf(CPI_data[,5], main = colnames(CPI_data)[5])
 ```
+
 # 3. The Model and Hypothesis
 We will employ four models to address our proposed problem. Firstly, we will use a standard Bayesian Vector Autoregressive (BVAR) model with independently and identically distributed innovations, as outlined in details in @wozniakBsvarsBayesianEstimation2022. Additionally, we will investigate a large BVAR model with flexible error covariance structures, following the methodology proposed by @Chan_2015. Specifically, the second model will incorporate MA(1) Gaussian innovations to better account for potential model misspecifications such as omitted variable bias and to facilitate shrinkage in VAR coefficients. Our third model will be a BVAR incorporating common stochastic volatilities to allow for time varying distribution of volatility terms, which will be useful to handle the impact of specific events like the Covid-19 Global Pandemic. The final model will combine a common stochastic volatility frame work with MA(1) Gaussian innovations, offering a robust approach to volatility modelling. 
 
@@ -1755,6 +1761,7 @@ $$\mathbf{y_t} = \begin{pmatrix} y_t,1 \\ y_t,2\end{pmatrix} = \mathbf{y_{t-1}} 
 $$\mathbf{\epsilon} \sim iid \mathcal{N}(\mathbf{0}, \mathbf{I_2} )$$
 
 
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 set.seed(1005)
 
@@ -1780,7 +1787,9 @@ ggplot(mat_plot, aes(x = Index, y = value, color = variable)) +
     theme_minimal()
 ```
 
+
 The BVAR_fit function takes in 'data' as an argument, where columns of 'data' represent different variables and rows correspond to observations over time. It also requires an integer p, which specifies the number of lags to include in the BVAR model. The parameters S1 and S2 denote the number of burn-in samples and actual samples, respectively. $\kappa_1$ is the shrinkage level applied to the autoregressive coefficients, while $\kappa_2$ controls the shrinkage for the constant term. The $A_{prior}$ and $V_{prior}$ parameters set the prior mean and covariance matrices for the matrix A. Finally, $S_{prior}$ and $\nu_{prior}$ define the scale and shape parameters, respectively, for the prior distribution of the covariance matrix $\Sigma$
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior, nu_prior, N){
   Y = (data[(p+1):nrow(data),])
@@ -1817,7 +1826,9 @@ BVAR_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_prior,
 }
 ```
 
+
 We use our function to estimate a model with a constant term and lag order 1 using simulated data from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. We show that sampled posterior mean of the autoregressive and the covariance matrices are close to an identity matrix and that the sampled posterior mean of the constant term is close to a vector of zeros.
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=13}
 p = 1
 kappa1 = 0.02^2
@@ -1845,9 +1856,11 @@ print('Posterior standard deviation of covariance matrix:')
 round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
 
+
 ### 4.1.2 Empirical Result
 
 #### **4.1.2.1 Fitted Models**
+
 ```{r, message=FALSE, warning=FALSE, fig.width=12, fig.height=13}
 p = 5
 kappa1 = 0.2^2
@@ -1877,7 +1890,9 @@ posterior_samples_Sigma = posterior_samples[[2]]
 # print('Posterior standard deviation of covariance matrix:')
 # round(apply(posterior_samples_Sigma,1:2,sd),3)
 ```
+
 #### **4.1.2.2 Prediction Plots**
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 BVAR_predict = function(posterior_samples_A, posterior_samples_Sigma, data, h){
   S = dim(posterior_samples_A)[3]
@@ -1998,6 +2013,7 @@ for (j in 1:ncol(data)){
 
 
 ```
+
 #### **4.1.2.3 Test for Granger Causality**
 We first perform Granger Causality test for each country, we test whether the macroeconomic factor of one country has some predictive power on the macroeconomic factors of another. Specifically, we test the following hypothesis:
 
@@ -2014,6 +2030,7 @@ $$\Sigma \sim \mathcal{IW}(S_0, \nu_0)$$
 and we test the bi-lateral relationship between each of these countries. 
 
 **1. Granger Causality Test for all countries from Q1 1994 to Q3 2023**
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2066,6 +2083,7 @@ calc_bayes_factor = function(country1, country2, S){
   return(ratio_list)
 }
 ```
+
 ```{r, message=FALSE, warning=FALSE, , fig.width=12, fig.height=6}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2109,6 +2127,7 @@ print(sprintf("Running Bayes factor calculation for %d iterations took: %f secon
 print(bayesfactor)
 ```
 
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     No Evidence      |          No Evidence        |
@@ -2117,6 +2136,7 @@ print(bayesfactor)
 | **Australia**|   No Evidence   |     No Evidence     |     No Evidence      |        Strong Evidence      |
 
 **2. Granger Causality Test for all countries from Q1 1994 to Q1 2020 (Pre-Covid)**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2168,6 +2188,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor)
 ```
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     No Evidence      |          No Evidence        |
@@ -2177,6 +2198,7 @@ print(bayesfactor)
 
 
 **3. Granger Causality Test for all countries from Q1 2007 to Q1 2020 (After China joined WTO and before Covid)**
+
 
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
@@ -2232,6 +2254,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor)
 ``` 
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     No Evidence      |          No Evidence        |
@@ -2241,6 +2264,7 @@ print(bayesfactor)
 We see that Granger causality doesn't change much according to the basic model.
 
 **4. Granger Causality Test for all countries (excluding China) from Q1 1994 to Q3 2023**
+
 
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
@@ -2294,6 +2318,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor)
 ```
+
 |              |    United States    |         Japan        |        Australia            |
 |--------------|---------------------|----------------------|-----------------------------|
 | **US**       |  Strong Evidence    |     No Evidence      |          No Evidence        |
@@ -2303,6 +2328,7 @@ print(bayesfactor)
 
 ## 4.2 Large BVAR model with MA(1) Gaussian Innovations 
 ### 4.2.1 Model Building Code and Validation 
+
 
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
@@ -2404,6 +2430,7 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   return(list(A_posterior, Sigma_posterior, Omega_posterior))
 }
 ```
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2446,7 +2473,9 @@ posterior_samples_Omega_MA = posterior_samples_MA[[3]]
 # print('Posterior standard deviation of column specific covariance matrix (first 10 rows and columns):')
 # round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 ```
+
 #### **4.2.2.1 Fitted Models**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2492,7 +2521,9 @@ posterior_samples_Omega_MA = posterior_samples_MA[[3]]
 # round(apply(posterior_samples_Omega_MA[1:10, 1:10,],1:2,sd),3)
 ```
 
+
 #### **4.2.2.2 Prediction Plots ** 
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2592,8 +2623,10 @@ for (j in 1:ncol(data)){
 
 ```
 
+
 #### **4.2.2.3 Test for Granger Causality**
 **1. Granger Causality Test for all countries from Q1 1994 to Q3 2023**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2670,6 +2703,7 @@ calc_bayes_factor_MA = function(country1, country2, posterior_samples_A_MA, post
   return(ratio_list)
 }
 ```
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2697,6 +2731,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor_MA)
 ```
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     No Evidence      |          No Evidence        |
@@ -2705,6 +2740,7 @@ print(bayesfactor_MA)
 | **Australia**|   No Evidence   |     No Evidence     |     No Evidence      |        Strong Evidence      |
 
 **2. Granger Causality Test for all countries from Q1 1994 to Q1 2020 (Pre-Covid)**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2756,6 +2792,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor_MA)
 ```
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     No Evidence      |          No Evidence        |
@@ -2764,6 +2801,7 @@ print(bayesfactor_MA)
 | **Australia**|   No Evidence   |     No Evidence     |     No Evidence      |        Strong Evidence      |
 
 **3. Granger Causality Test for all countries from Q1 2007 to Q1 2020 (After China joined the WTO and after Covid)**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2815,6 +2853,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor_MA)
 ```
+
 |              |       China     |     United States   |         Japan        |        Australia            |
 |--------------|-----------------|---------------------|----------------------|-----------------------------|
 | **China**    | Strong Evidence |     No Evidence     |     Weak evidence    |          No Evidence        |
@@ -2822,6 +2861,7 @@ print(bayesfactor_MA)
 | **Japan**    |   No Evidence   |     No Evidence     |    Strong Evidence   |          No Evidence        |
 | **Australia**|   No Evidence   |     No Evidence     |    Strong evidence   |        Strong Evidence      |
 **4. Granger Causality Test for all countries from Q1 1994 to Q1 2020 (Pre-Covid)**
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2873,6 +2913,7 @@ start = system.time({
 print(sprintf("Running Bayes factor calculation for %d iterations took: %f seconds", S, start["elapsed"])) 
 print(bayesfactor_MA)
 ```
+
 |              |    United States    |         Japan        |        Australia            |
 |--------------|---------------------|----------------------|-----------------------------|
 | **US**       |  Strong Evidence    |     No Evidence      |          No Evidence        |

@@ -3,7 +3,7 @@ title: "Global Echoes: Analyzing the Interplay of Economic Indicators Across Lea
 author: "Rui Liu"
 
 execute:
-  echo: false
+  echo: true
 bibliography: references.bib
 ---
 
@@ -1336,12 +1336,12 @@ $$exp(-\frac{1}{2}tr(\Sigma^{-1}(A-\bar{A})^T\bar{V}^{-1}(A-\bar{A})))$$
 
 Hence, 
 
-$$p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma) p(\Sigma \mid Y, X)$$
+$$p(A, \Sigma \mid Y, X) = p(A \mid Y, X, \Sigma, \Omega) p(\Sigma \mid Y, X, \Omega)$$
 
 
 $$p(A \mid Y, X, \Sigma, \Omega) = \mathcal{MN}_{K \times N}(\bar{A}, \Sigma, \bar{V})$$
 
-$$p(\Sigma \mid Y, X) = \mathcal{IW}_N(\bar{S}, \bar{\nu})$$
+$$p(\Sigma \mid Y, X, \Omega) = \mathcal{IW}_N(\bar{S}, \bar{\nu})$$
 
 where
 
@@ -1379,7 +1379,7 @@ The Metropolis-Hastings Algorithm for Sampling $\psi$ is given as follows:
 
 **Proposal Distribution:**
 
-- Select the proposal distribution $q(\psi' | \psi^{(t)}) \sim N(\psi^{(t)}, \tau^2)$. $\tau^2$ is a tuning parameter that controls the step size.
+- Select the proposal distribution $q(\psi' | \psi^{(t)}) \sim N(\psi^{(t)}, \tau^2)\mathcal{I}(\psi'\in(-1,1))$. $\tau^2$ is a tuning parameter that controls the step size.
     
 **Sampling Loop:**
 
@@ -2005,7 +2005,7 @@ $H_0:$ The consumer price index, interest rate, foreign direct investment, balan
 
 The Baye's factor in this case is defined as: 
 
-$$B_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij} = 0|Y, X,\Sigma)d \Sigma}{\int p_1(A_{ij}=0, \Sigma)d\Sigma}$$
+$$_H = \frac{p_0(Y)}{p_1(Y)} = \frac{p_1(A_{ij} = 0|Y)}{p_1(A_{ij} = 0)}=\frac{\int p_1(A_{ij=0}|Y, \Sigma)p(\Sigma|Y) d \Sigma}{\int p(A_{ij}=0, \Sigma)d\Sigma}$$
 $$p_1(A_{ij} = 0|Y, X,\Sigma) \sim \mathcal{MN}_{K \times N}(\bar{A_{ij}}, \Sigma_{ij}, \bar{V}_{ij})$$
 $$p_1(A_{ij} = 0, \Sigma) \sim \mathcal{NIW}_{K \times N}(A_{0, ij}, V_{A, ij}, S_{0, ij}, \nu_{0, ij})$$
 $$p_1(A_{ij} = 0, \Sigma) = p(A_{ij}|\Sigma)\times p(\Sigma)$$
@@ -2356,36 +2356,35 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
     Sigma_posterior[,,s] = solve(rWishart(1, df=nu_bar, Sigma=S_bar_inv)[,,1])
     A_posterior[,,s]= A_bar + L%*%A_posterior[,,s]%*%chol(Sigma_posterior[,,1]) ############change 
     ###############MH Step    ##################################
-    psi_candidate = rnorm(n = 1, mean = psi, sd = tau)
-    if(abs(psi_candidate) > 1){
-      alpha = 0
-    }
-    else{
-      H_psi = matrix(0, nrow = Ty, ncol = Ty)
-      O_psi = diag(rep(1, Ty))
-      O_psi[1,1] = 1+psi_candidate^2
-      for (i in 1:Ty){
-        H_psi[i,i] = 1
-        if (i < Ty){
-          H_psi[i+1, i] = psi_candidate
-        }
+    # psi_candidate = rnorm(n = 1, mean = psi, sd = tau)
+    # if(abs(psi_candidate) > 1){
+    #   alpha = 0
+    # }
+    psi_candidate = RcppTN::rtn(psi, tau, -1, 1)
+    #else{
+    H_psi = matrix(0, nrow = Ty, ncol = Ty)
+    O_psi = diag(rep(1, Ty))
+    O_psi[1,1] = 1+psi_candidate^2
+    for (i in 1:Ty){
+      H_psi[i,i] = 1
+      if (i < Ty){
+        H_psi[i+1, i] = psi_candidate
       }
-      
-      
-      Omega_draw = H_psi %*% O_psi %*% t(H_psi)
-      chol_Omega_draw = chol(Omega_draw)
-      chol_Omega_draw_inv = solve(chol_Omega_draw)
-      Sigma_posterior_inv = solve(Sigma_posterior[,,s])
-
-      Likelihood_ratio = ((1+psi_candidate^2)/(1+psi^2))^(N/2) * exp(-1/2*(tr(
-        Sigma_posterior_inv%*%t(chol_Omega_draw_inv%*%(Y-X%*%A_posterior[,,s]))%*%(chol_Omega_draw_inv%*%(Y-X%*%A_posterior[,,s]))
-        ) - tr(
-          Sigma_posterior_inv%*%t(chol_Omega_inv%*%(Y-X%*%A_posterior[,,s]))%*%(chol_Omega_inv%*%(Y-X%*%A_posterior[,,s]))))
-        )
-      prior_ratio = dtruncnorm(x = psi_candidate, mean = psi_prior, sd = Vpsi_prior)/dtruncnorm(x = psi, mean = psi_prior, sd = Vpsi_prior)
-      proposal_ratio = dnorm(x = psi, mean = psi_candidate, sd = tau)/dnorm(x=psi_candidate, mean = psi, sd = tau)
-      alpha = min(1, Likelihood_ratio, prior_ratio, proposal_ratio)
     }
+    Omega_draw = H_psi %*% O_psi %*% t(H_psi)
+    chol_Omega_draw = chol(Omega_draw)
+    chol_Omega_draw_inv = solve(chol_Omega_draw)
+    Sigma_posterior_inv = solve(Sigma_posterior[,,s])
+    Likelihood_ratio = ((1+psi_candidate^2)/(1+psi^2))^(N/2) * exp(-1/2*(tr(
+      Sigma_posterior_inv%*%t(chol_Omega_draw_inv%*%(Y-X%*%A_posterior[,,s]))%*%(chol_Omega_draw_inv%*%(Y-X%*%A_posterior[,,s]))
+      ) - tr(
+        Sigma_posterior_inv%*%t(chol_Omega_inv%*%(Y-X%*%A_posterior[,,s]))%*%(chol_Omega_inv%*%(Y-X%*%A_posterior[,,s]))))
+      )
+    prior_ratio = dtruncnorm(x = psi_candidate, mean = psi_prior, sd = Vpsi_prior)/dtruncnorm(x = psi, mean = psi_prior, sd = Vpsi_prior)
+    #proposal_ratio = dnorm(x = psi, mean = psi_candidate, sd = tau)/dnorm(x=psi_candidate, mean = psi, sd = tau)
+    proposal_ratio = RcppTN::dtn(.x = psi, .mean = psi_candidate, .sd = tau, .low = -1, .high = 1) / RcppTN::dtn(.x = psi_candidate, .mean = psi, .sd = tau, .low = -1, .high = 1)
+    alpha = min(1, Likelihood_ratio, prior_ratio, proposal_ratio)
+    #}
     u = runif(1, min = 0, max = 1)
     if (u <= alpha){
       accept = accept + 1
@@ -2404,6 +2403,7 @@ BVAR_MA_fit <- function(data, p, S1, S2, kappa1, kappa2, A_prior, V_prior, S_pri
   return(list(A_posterior, Sigma_posterior, Omega_posterior))
 }
 ```
+
 ```{r, message=FALSE, warning=FALSE, echo = TRUE}
 #| code-fold: true
 #| code-summary: "Show code"
@@ -2787,7 +2787,6 @@ S2 = 5000
 fstart = system.time({
   posterior_samples_MA = BVAR_MA_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, N)
 })
-print(sprintf("Fit MA BVAR on data for %d iterations took: %f seconds", (S1+S2), start["elapsed"])) 
 posterior_samples_A_MA = posterior_samples_MA[[1]]
 posterior_samples_Sigma_MA = posterior_samples_MA[[2]]
 posterior_samples_Omega_MA = posterior_samples_MA[[3]]
@@ -2796,10 +2795,7 @@ X = data.frame(X) %>% rename_with(~ make.unique(.), .cols = names(.)[duplicated(
 X = as.matrix(X)
 countries_list = c('CN', 'US', "JP", "AU")
 bf_ma = list()
-countries_list = c('CN', 'US', "JP", "AU")
-bf_ma = list()
 i = 1
-S = 500
 bayesfactor_MA = matrix(data = NA, nrow = length(countries_list), ncol = length(countries_list), dimnames = list(countries_list, countries_list))
 pb <- progress_bar$new(total = length(countries_list))
 start = system.time({
@@ -2807,7 +2803,7 @@ start = system.time({
     pb$tick()
     for (country_b in countries_list){
       i = i+1
-      bayesfactor_MA[country_a, country_b] = mean(unlist(calc_bayes_factor_MA(country_a, country_b,posterior_samples_A_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))
+      bayesfactor_MA[country_a, country_b] = mean(unlist(calc_bayes_factor_MA(country_a, country_b,posterior_samples_A_MA, posterior_samples_Sigma_MA, posterior_samples_Omega_MA, v_prior, S_prior, A_prior, nu_prior, S)))
       gc()
     }
   }
@@ -2841,6 +2837,10 @@ V_prior = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
 lambda = 1e-4
 S1 = 5000
 S2 = 5000
+A_prior     = matrix(0, 1+p*N, ncol = N)
+V_prior     = diag(c(kappa2,kappa1*((1:p)^(-2))%x%rep(1,N)))
+S_prior     = diag(1, N)
+nu_prior    = N+1
 fstart = system.time({
   posterior_samples_MA = BVAR_MA_fit(data = data, p = p, S1= S1, S2 = S2, kappa1 = kappa1, kappa2 = kappa2, A_prior = A_prior, V_prior = V_prior, S_prior = S_prior, nu_prior = nu_prior, N)
 })
@@ -2875,15 +2875,15 @@ print(bayesfactor_MA)
 ```
 |              |    United States    |         Japan        |        Australia            |
 |--------------|---------------------|----------------------|-----------------------------|
-| **US**       |  Strong Evidence    |     No Evidence      |          No Evidence        |
+| **US**       |    Some Evidence    |     No Evidence      |          Some Evidence      |
 | **Japan**    |      Some Evidence  |    Strong Evidence   |          Some Evidence      |
-| **Australia**|      No Evidence    |     No Evidence      |        Strong Evidence      |
+| **Australia**|    Some Evidence    |     No Evidence      |        Strong Evidence      |
 
 # 5. Conclusion 
 
 Using the **standard BVAR model** with a Savage-Dickey ratio analysis, our findings suggest some evidence that the macroeconomic indicators of China, the US, and Australia Granger-cause those of Japan over p=5 lags. Additionally, within-country indicators also demonstrate Granger causality. This influence can be partly attributed to the fact that the US, China, and Australia are Japan's largest trading partners, as noted by World Bank data. Given the relatively smaller size of Japan’s economy compared to the US and China, its impact on these countries is less pronounced. The reasons for Japan's minimal statistical impact on Australia remain unclear.The model was further applied to pre-COVID (before Q2 2020) and post-COVID periods, yielding consistent results across all analyzed time frames. Analysis extending from Q1 2007 to Q1 2020, which includes five years post-China's WTO accession and pre-COVID, also corroborated these findings. Moreover, considering potential biases in Chinese economic data, we re-evaluated the model excluding China. Surprisingly, the exclusion did not alter the results, suggesting robustness in the observed causal relationships.
 
-The results from the **BVAR model with MA(1) Gaussian Innovations** are very similar to that of the standard BVAR, except for when we tested for the period after China joined the World Trade Organization and prior to the onset of the Covid-19 Pandemic. The over all result suggest a strong Influence of China's economy. Specifically, across different periods, there is strong evidence that China's macroeconomic indicators Granger-cause those of Japan, especially post-WTO accession and in the pre-COVID era. This suggests a significant economic influence of China on Japan, which could be due to increased economic interdependencies following China's integration into the global trade system.The United States shows strong evidence of Granger-causing Japan's economic indicators during the pre-COVID period, reflecting the close economic ties and possibly the direct impact of U.S. economic policies and market dynamics on Japan. Australia's influence on Japan is less consistent and only shows strong evidence of Granger-causality in the pre-COVID era. This could indicate that economic ties or shared sectors of significant impact (like resources and commodities) between Australia and Japan are more sensitive to global economic conditions.Interestingly, Japan shows some evidence of influencing the US and strong evidence in the case of Australia during the post-WTO and pre-COVID era. This could be tied to Japan's role in technology, manufacturing, and investment flows into these countries.Testing the models with and without China's data provides a nuanced view. The similar outcomes when excluding China suggest that while China's data can be impactful, the economic relationships and causal influences between the US, Japan, and Australia are robust enough to be observable even without China's involvement in the analysis.
+The results from the **BVAR model with MA(1) Gaussian Innovations** are very similar to that of the standard BVAR, except for when we tested for the period after China joined the World Trade Organization and prior to the onset of the Covid-19 Pandemic and after removing China. The over all result suggest a strong Influence of China's economy. Specifically, across different periods, there is strong evidence that China's macroeconomic indicators Granger-cause those of Japan, especially post-WTO accession and in the pre-COVID era. This suggests a significant economic influence of China on Japan, which could be due to increased economic interdependencies following China's integration into the global trade system.The United States shows strong evidence of Granger-causing Japan's economic indicators during the pre-COVID period, reflecting the close economic ties and possibly the direct impact of U.S. economic policies and market dynamics on Japan. Australia's influence on Japan is less consistent and only shows strong evidence of Granger-causality in the pre-COVID era. This could indicate that economic ties or shared sectors of significant impact (like resources and commodities) between Australia and Japan are more sensitive to global economic conditions.Interestingly, Japan shows some evidence of influencing the US and strong evidence in the case of Australia during the post-WTO and pre-COVID era. This could be tied to Japan's role in technology, manufacturing, and investment flows into these countries.Testing the models with and without China's data provides a nuanced view. The outcomes when excluding China suggest that while China's data can be impactful, the inaccurate nature of it means including China could mask the trueeconomic relationships and causal influences between the US, Japan, and Australia. 
 
 Furthermore, the BVAR model enhanced with MA(1) Gaussian innovations appears to demonstrate an increased sensitivity to subtle trend shifts, particularly in capturing the impact of the COVID-19 pandemic. This refinement in the model's structure is evident as it identifies distinct Granger causal relationships prior to the pandemic, despite showing no Granger causality across all periods as a whole. This suggests that the MA(1) component is crucial for discerning the dynamic economic interactions that become more pronounced under specific conditions such as those presented by the pandemic. This enhanced detection capability underscores the model's utility in analyzing periods of economic volatility and change.
 
